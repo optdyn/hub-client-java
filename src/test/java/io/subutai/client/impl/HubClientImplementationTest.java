@@ -17,8 +17,8 @@ public class HubClientImplementationTest
 {
 
     //TODO change before commit to Git
-    private static final String username = "dilshat.aliev@gmail.com";
-    private static final String password = "sadilya";
+    private static final String username = "dummy";
+    private static final String password = "dummy";
 
     HubClient hubClient;
 
@@ -27,12 +27,6 @@ public class HubClientImplementationTest
     public void setUp() throws Exception
     {
         hubClient = HubClients.getClient( HubClientImplementation.HubEnv.DEV );
-    }
-
-
-    @Test
-    public void testLogin() throws Exception
-    {
         hubClient.login( username, password );
     }
 
@@ -40,9 +34,6 @@ public class HubClientImplementationTest
     @Test
     public void testGetEnvironments() throws Exception
     {
-        //call to initiate session
-        hubClient.login( username, password );
-
         List<Environment> environments = hubClient.getEnvironments();
 
         for ( Environment e : environments )
