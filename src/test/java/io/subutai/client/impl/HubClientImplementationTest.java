@@ -1,17 +1,24 @@
 package io.subutai.client.impl;
 
 
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import io.subutai.client.api.Environment;
 import io.subutai.client.api.HubClient;
 
 
 @RunWith( MockitoJUnitRunner.class )
 public class HubClientImplementationTest
 {
+
+    //TODO change before commit to Git
+    private static final String username = "dilshat.aliev@gmail.com";
+    private static final String password = "sadilya";
 
     HubClient hubClient;
 
@@ -26,7 +33,7 @@ public class HubClientImplementationTest
     @Test
     public void testLogin() throws Exception
     {
-        hubClient.login( "dilshat.aliev@gmail.com", "sadilya" );
+        hubClient.login( username, password );
     }
 
 
@@ -34,8 +41,13 @@ public class HubClientImplementationTest
     public void testGetEnvironments() throws Exception
     {
         //call to initiate session
-        hubClient.login( "dilshat.aliev@gmail.com", "sadilya" );
+        hubClient.login( username, password );
 
-        hubClient.getEnvironments();
+        List<Environment> environments = hubClient.getEnvironments();
+
+        for ( Environment e : environments )
+        {
+            System.out.println( e );
+        }
     }
 }

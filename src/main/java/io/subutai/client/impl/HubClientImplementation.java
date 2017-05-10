@@ -26,6 +26,8 @@ import org.apache.http.util.EntityUtils;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import io.subutai.client.api.Environment;
 import io.subutai.client.api.HubClient;
@@ -33,9 +35,10 @@ import io.subutai.client.api.HubClient;
 
 public class HubClientImplementation implements HubClient
 {
-    CloseableHttpClient httpclient = HttpClients.createDefault();
-    CookieStore cookieStore = new BasicCookieStore();
-    HttpContext httpContext = new BasicHttpContext();
+    private CloseableHttpClient httpclient = HttpClients.createDefault();
+    private CookieStore cookieStore = new BasicCookieStore();
+    private HttpContext httpContext = new BasicHttpContext();
+    private Gson gson = new Gson();
     private final HubEnv hubEnv;
 
 
@@ -59,7 +62,7 @@ public class HubClientImplementation implements HubClient
     }
 
 
-    public HubClientImplementation( HubEnv hubEnv )
+    HubClientImplementation( HubEnv hubEnv )
     {
         Preconditions.checkNotNull( hubEnv );
 
@@ -119,8 +122,13 @@ public class HubClientImplementation implements HubClient
             }
 
             HttpEntity entity = response.getEntity();
-            //TODO fill environments
-            System.out.println( EntityUtils.toString( entity ) );
+
+
+            List<Environment> envList =
+                    gson.fromJson( EntityUtils.toString( entity ), new TypeToken<ArrayList<EnvironmentImpl>>()
+                    {
+                    }.getType() );
+            environments.addAll( envList );
 
             EntityUtils.consume( entity );
         }
