@@ -75,7 +75,7 @@ public class HubClientImplementation implements HubClient
     {
         //TODO add own REST endpoints, for now temp usage of tray routes
         HttpPost httpPost =
-                new HttpPost( String.format( "https://%s.subut.ai/rest/v1/tray/login", hubEnv.getUrlPrefix() ) );
+                new HttpPost( String.format( "https://%s.subut.ai/rest/v1/client/login", hubEnv.getUrlPrefix() ) );
 
         List<NameValuePair> nvps = new ArrayList<NameValuePair>();
         nvps.add( new BasicNameValuePair( "email", username ) );
@@ -109,7 +109,7 @@ public class HubClientImplementation implements HubClient
         List<Environment> environments = Lists.newArrayList();
 
         HttpGet httpGet =
-                new HttpGet( String.format( "https://%s.subut.ai/rest/v1/tray/environments", hubEnv.getUrlPrefix() ) );
+                new HttpGet( String.format( "https://%s.subut.ai/rest/v1/client/environments", hubEnv.getUrlPrefix() ) );
 
         CloseableHttpResponse response = httpclient.execute( httpGet, httpContext );
 

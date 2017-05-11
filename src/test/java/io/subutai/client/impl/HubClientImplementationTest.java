@@ -17,8 +17,8 @@ public class HubClientImplementationTest
 {
 
     //TODO change before commit to Git
-    private static final String username = "dummy";
-    private static final String password = "dummy";
+    private static final String username = "test.d@mail.com";
+    private static final String password = "test";
 
     HubClient hubClient;
 
