@@ -12,8 +12,8 @@ public class HubClients
     }
 
 
-    public static HubClient getClient( HubClientImplementation.HubEnv hubEnv)
+    public static HubClient getClient( HubClient.HubEnv hubEnv )
     {
-        return new HubClientImplementation(hubEnv);
+        return new HubClientImplementation( hubEnv );
     }
 }

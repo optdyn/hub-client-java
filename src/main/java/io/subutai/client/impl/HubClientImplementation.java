@@ -36,30 +36,9 @@ import io.subutai.client.api.HubClient;
 public class HubClientImplementation implements HubClient
 {
     private CloseableHttpClient httpclient = HttpClients.createDefault();
-    private CookieStore cookieStore = new BasicCookieStore();
     private HttpContext httpContext = new BasicHttpContext();
     private Gson gson = new Gson();
     private final HubEnv hubEnv;
-
-
-    public enum HubEnv
-    {
-        DEV( "dev" ), STAGE( "stage" ), PROD( "hub" );
-
-        private String urlPrefix;
-
-
-        HubEnv( final String urlPrefix )
-        {
-            this.urlPrefix = urlPrefix;
-        }
-
-
-        public String getUrlPrefix()
-        {
-            return urlPrefix;
-        }
-    }
 
 
     HubClientImplementation( HubEnv hubEnv )
@@ -67,13 +46,13 @@ public class HubClientImplementation implements HubClient
         Preconditions.checkNotNull( hubEnv );
 
         this.hubEnv = hubEnv;
+        final CookieStore cookieStore = new BasicCookieStore();
         httpContext.setAttribute( HttpClientContext.COOKIE_STORE, cookieStore );
     }
 
 
     public void login( final String username, final String password ) throws IOException, FailedLoginException
     {
-        //TODO add own REST endpoints, for now temp usage of tray routes
         HttpPost httpPost =
                 new HttpPost( String.format( "https://%s.subut.ai/rest/v1/client/login", hubEnv.getUrlPrefix() ) );
 
@@ -88,14 +67,10 @@ public class HubClientImplementation implements HubClient
         {
             if ( response.getStatusLine().getStatusCode() != HttpStatus.SC_OK )
             {
-                throw new FailedLoginException();
+                throw new FailedLoginException(String.format( "Failed to login: %s", response.getStatusLine() ));
             }
 
-            System.out.println( response.getStatusLine() );
-            HttpEntity entity = response.getEntity();
-            // do something useful with the response body
-            // and ensure it is fully consumed
-            EntityUtils.consume( entity );
+            EntityUtils.consume( response.getEntity() );
         }
         finally
         {
@@ -123,11 +98,11 @@ public class HubClientImplementation implements HubClient
 
             HttpEntity entity = response.getEntity();
 
-
             List<Environment> envList =
                     gson.fromJson( EntityUtils.toString( entity ), new TypeToken<ArrayList<EnvironmentImpl>>()
                     {
                     }.getType() );
+
             environments.addAll( envList );
 
             EntityUtils.consume( entity );

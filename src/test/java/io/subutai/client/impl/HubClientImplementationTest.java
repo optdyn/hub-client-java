@@ -26,7 +26,7 @@ public class HubClientImplementationTest
     @Before
     public void setUp() throws Exception
     {
-        hubClient = HubClients.getClient( HubClientImplementation.HubEnv.DEV );
+        hubClient = HubClients.getClient( HubClient.HubEnv.DEV );
         hubClient.login( username, password );
     }
 

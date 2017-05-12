@@ -12,4 +12,23 @@ public interface HubClient
     void login( String username, String password ) throws IOException, FailedLoginException;
 
     List<Environment> getEnvironments() throws IOException;
+
+    enum HubEnv
+    {
+        DEV( "dev" ), STAGE( "stage" ), PROD( "hub" );
+
+        private String urlPrefix;
+
+
+        HubEnv( final String urlPrefix )
+        {
+            this.urlPrefix = urlPrefix;
+        }
+
+
+        public String getUrlPrefix()
+        {
+            return urlPrefix;
+        }
+    }
 }
