@@ -4,6 +4,7 @@ package io.subutai.client.impl;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 
 import io.subutai.client.api.Container;
@@ -27,6 +28,18 @@ public class EnvironmentImpl implements Environment
     private String environmentName;
     @SerializedName( "environment_hash" )
     private String environmentHash;
+    @SerializedName( "environment_p2p_subnet" )
+    private String environmentP2pSubnet;
+    @SerializedName( "environment_subnet_cidr" )
+    private String environmentSubnetCidr;
+    @SerializedName( "environment_owner_hub_id" )
+    private long environmentOwnerHubId;
+    @SerializedName( "environment_owner" )
+    private String environmentOwner;
+    @SerializedName( "environment_vni" )
+    private long environmentVni;
+
+
     @SerializedName( "environment_containers" )
     private List<ContainerImpl> containers;
 
@@ -73,6 +86,36 @@ public class EnvironmentImpl implements Environment
     }
 
 
+    public String getEnvironmentP2pSubnet()
+    {
+        return environmentP2pSubnet;
+    }
+
+
+    public String getEnvironmentSubnetCidr()
+    {
+        return environmentSubnetCidr;
+    }
+
+
+    public long getEnvironmentOwnerHubId()
+    {
+        return environmentOwnerHubId;
+    }
+
+
+    public String getEnvironmentOwner()
+    {
+        return environmentOwner;
+    }
+
+
+    public long getEnvironmentVni()
+    {
+        return environmentVni;
+    }
+
+
     public List<Container> getContainers()
     {
         List<Container> containerList = Lists.newArrayList();
@@ -84,10 +127,6 @@ public class EnvironmentImpl implements Environment
     @Override
     public String toString()
     {
-        return "EnvironmentImpl{" + "environmentTtl=" + environmentTtl + ", environmentKey='" + environmentKey + '\''
-                + ", environmentId='" + environmentId + '\'' + ", environmentStatusDescription='"
-                + environmentStatusDescription + '\'' + ", environmentStatus=" + environmentStatus
-                + ", environmentName='" + environmentName + '\'' + ", environmentHash='" + environmentHash + '\''
-                + ", containers=" + containers + '}';
+        return new GsonBuilder().setPrettyPrinting().create().toJson( this );
     }
 }

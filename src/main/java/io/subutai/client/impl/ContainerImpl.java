@@ -1,21 +1,36 @@
 package io.subutai.client.impl;
 
 
+import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 
 import io.subutai.client.api.Container;
+import io.subutai.client.api.ContainerSize;
+import io.subutai.client.api.ContainerState;
 
 
 public class ContainerImpl implements Container
 {
+    @SerializedName( "container_id" )
+    private String containerId;
     @SerializedName( "container_ip" )
     private String containerIp;
     @SerializedName( "container_name" )
     private String containerName;
-    @SerializedName( "container_id" )
-    private String containerId;
+    @SerializedName( "container_hostname" )
+    private String containerHostname;
+    @SerializedName( "container_size" )
+    private ContainerSize containerSize;
+    @SerializedName( "container_state" )
+    private ContainerState containerState;
+    @SerializedName( "container_peer_id" )
+    private String containerPeerId;
+    @SerializedName( "container_template_id" )
+    private String containerTemplateId;
+    @SerializedName( "container_template_name" )
+    private String containerTemplateName;
     @SerializedName( "rh_ip" )
-    private String resourceHostIp;
+    private String rhIp;
 
 
     public String getContainerIp()
@@ -36,16 +51,51 @@ public class ContainerImpl implements Container
     }
 
 
-    public String getResourceHostIp()
+    public String getContainerHostname()
     {
-        return resourceHostIp;
+        return containerHostname;
+    }
+
+
+    public ContainerSize getContainerSize()
+    {
+        return containerSize;
+    }
+
+
+    public ContainerState getContainerState()
+    {
+        return containerState;
+    }
+
+
+    public String getContainerPeerId()
+    {
+        return containerPeerId;
+    }
+
+
+    public String getContainerTemplateId()
+    {
+        return containerTemplateId;
+    }
+
+
+    public String getContainerTemplateName()
+    {
+        return containerTemplateName;
+    }
+
+
+    public String getRhIp()
+    {
+        return rhIp;
     }
 
 
     @Override
     public String toString()
     {
-        return "ContainerImpl{" + "containerIp='" + containerIp + '\'' + ", containerName='" + containerName + '\''
-                + ", containerId='" + containerId + '\'' + ", resourceHostIp='" + resourceHostIp + '\'' + '}';
+        return new GsonBuilder().setPrettyPrinting().create().toJson( this );
     }
 }

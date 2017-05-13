@@ -3,11 +3,32 @@ package io.subutai.client.api;
 
 public interface Container
 {
+    String getContainerId();
+
+
     String getContainerIp();
+
 
     String getContainerName();
 
-    String getContainerId();
 
-    String getResourceHostIp();
+    String getContainerHostname();
+
+
+    ContainerSize getContainerSize();
+
+
+    ContainerState getContainerState();
+
+
+    String getContainerPeerId();
+
+
+    String getContainerTemplateId();
+
+
+    String getContainerTemplateName();
+
+
+    String getRhIp();
 }

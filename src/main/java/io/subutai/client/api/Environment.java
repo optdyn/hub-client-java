@@ -28,4 +28,19 @@ public interface Environment
 
 
     List<Container> getContainers();
+
+
+    String getEnvironmentP2pSubnet();
+
+
+    String getEnvironmentSubnetCidr();
+
+
+    long getEnvironmentOwnerHubId();
+
+
+    String getEnvironmentOwner();
+
+
+    long getEnvironmentVni();
 }
