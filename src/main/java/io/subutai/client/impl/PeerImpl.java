@@ -2,11 +2,14 @@ package io.subutai.client.impl;
 
 
 import java.util.Date;
+import java.util.List;
 
+import com.google.common.collect.Lists;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 
 import io.subutai.client.api.Peer;
+import io.subutai.client.api.ResourceHost;
 
 
 public class PeerImpl implements Peer
@@ -29,6 +32,16 @@ public class PeerImpl implements Peer
     private Date peerRegistrationDate;
     @SerializedName( "peer_scope" )
     private Scope peerScope;
+    @SerializedName( "resource_hosts" )
+    private List<ResourceHostImpl> resourceHosts;
+
+
+    public List<ResourceHost> getResourceHosts()
+    {
+        List<ResourceHost> resourceHostList = Lists.newArrayList();
+        resourceHostList.addAll( resourceHosts );
+        return resourceHostList;
+    }
 
 
     public String getPeerId()

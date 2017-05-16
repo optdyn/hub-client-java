@@ -2,6 +2,7 @@ package io.subutai.client.api;
 
 
 import java.util.Date;
+import java.util.List;
 
 
 public interface Peer
@@ -41,4 +42,6 @@ public interface Peer
     Date getPeerRegistrationDate();
 
     Scope getPeerScope();
+
+    List<ResourceHost> getResourceHosts();
 }
