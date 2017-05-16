@@ -6,6 +6,11 @@ import java.util.Date;
 
 public interface ResourceHost
 {
+    enum P2pStatus
+    {
+        WORKS, FAILS
+    }
+
     String getRhId();
 
 
@@ -30,5 +35,8 @@ public interface ResourceHost
     RhDiskModel getRhDiskModel();
 
     RhNetData getRhNetData();
-    //TODO
+
+    String getRhP2pVersion();
+
+    P2pStatus getRhP2pStatus();
 }

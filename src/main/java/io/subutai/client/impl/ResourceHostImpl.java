@@ -38,7 +38,10 @@ public class ResourceHostImpl implements ResourceHost
     private RhDiskModelImpl rhDiskModel;
     @SerializedName( "rh_net_data" )
     private RhNetDataImpl rhNetData;
-    //TODO
+    @SerializedName( "rh_p2p_version" )
+    private String rhP2pVersion;
+    @SerializedName( "rh_p2p_status" )
+    private P2pStatus rhP2pStatus;
 
 
     public String getRhId()
@@ -104,6 +107,18 @@ public class ResourceHostImpl implements ResourceHost
     public RhNetData getRhNetData()
     {
         return rhNetData;
+    }
+
+
+    public String getRhP2pVersion()
+    {
+        return rhP2pVersion;
+    }
+
+
+    public P2pStatus getRhP2pStatus()
+    {
+        return rhP2pStatus;
     }
 
 
