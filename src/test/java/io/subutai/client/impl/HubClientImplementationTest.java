@@ -10,6 +10,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import io.subutai.client.api.Environment;
 import io.subutai.client.api.HubClient;
+import io.subutai.client.api.Peer;
 
 
 @RunWith( MockitoJUnitRunner.class )
@@ -39,6 +40,18 @@ public class HubClientImplementationTest
         for ( Environment e : environments )
         {
             System.out.println( e );
+        }
+    }
+
+
+    @Test
+    public void testGetPeers() throws Exception
+    {
+        List<Peer> peers = hubClient.getPeers();
+
+        for ( Peer p : peers )
+        {
+            System.out.println( p );
         }
     }
 

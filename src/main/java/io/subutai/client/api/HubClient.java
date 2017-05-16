@@ -32,4 +32,6 @@ public interface HubClient
     void addSshKey( String envId, String sshKey );
 
     void removeSshKey( String envId, String sshKey );
+
+    List<Peer> getPeers();
 }

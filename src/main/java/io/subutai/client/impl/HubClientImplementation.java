@@ -32,6 +32,7 @@ import io.subutai.client.api.Environment;
 import io.subutai.client.api.HubClient;
 import io.subutai.client.api.LoginFailedException;
 import io.subutai.client.api.OperationFailedException;
+import io.subutai.client.api.Peer;
 
 
 public class HubClientImplementation implements HubClient
@@ -208,6 +209,54 @@ public class HubClientImplementation implements HubClient
         {
             closeQuietly( response );
         }
+    }
+
+
+    public List<Peer> getPeers()
+    {
+        List<Peer> peers = Lists.newArrayList();
+
+        HttpGet httpGet =
+                new HttpGet( String.format( "https://%s.subut.ai/rest/v1/client/peers", hubEnv.getUrlPrefix() ) );
+
+        CloseableHttpResponse response;
+        try
+        {
+            response = httpclient.execute( httpGet, httpContext );
+        }
+        catch ( IOException e )
+        {
+            throw new OperationFailedException( "Failed to execute web request", e );
+        }
+
+        try
+        {
+            if ( response.getStatusLine().getStatusCode() != HttpStatus.SC_OK )
+            {
+                throwOperationFailedException( String.format( "Failed to obtain peers: %s", response.getStatusLine() ),
+                        null );
+            }
+
+            HttpEntity entity = response.getEntity();
+
+            List<Peer> peerList = gson.fromJson( EntityUtils.toString( entity ), new TypeToken<ArrayList<PeerImpl>>()
+            {
+            }.getType() );
+
+            peers.addAll( peerList );
+
+            EntityUtils.consumeQuietly( entity );
+        }
+        catch ( IOException e )
+        {
+            throwOperationFailedException( "Failed to parse response", e );
+        }
+        finally
+        {
+            closeQuietly( response );
+        }
+
+        return peers;
     }
 
 
