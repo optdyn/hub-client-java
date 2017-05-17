@@ -64,6 +64,13 @@ public class HubClientImplementationTest
 
 
     @Test
+    public void testStartContainer() throws Exception
+    {
+        hubClient.startContainer( "BC8b8e43-0416-4ad4-a002-a4b8ad61b1f2", "33416CAEC7D07CABD7C73AB0FE1EF92DBA27FCB6" );
+    }
+
+
+    @Test
     public void testAddSshKey() throws Exception
     {
         hubClient.addSshKey( "bc8b8e43-0416-4ad4-a002-a4b8ad61b1f2",
