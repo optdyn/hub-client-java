@@ -1,7 +1,6 @@
 package io.subutai.client.impl;
 
 
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,11 +8,11 @@ import java.util.List;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.CookieStore;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -30,7 +29,6 @@ import com.google.gson.reflect.TypeToken;
 
 import io.subutai.client.api.Environment;
 import io.subutai.client.api.HubClient;
-import io.subutai.client.api.LoginFailedException;
 import io.subutai.client.api.OperationFailedException;
 import io.subutai.client.api.Peer;
 
@@ -48,8 +46,7 @@ public class HubClientImplementation implements HubClient
         Preconditions.checkNotNull( hubEnv );
 
         this.hubEnv = hubEnv;
-        final CookieStore cookieStore = new BasicCookieStore();
-        httpContext.setAttribute( HttpClientContext.COOKIE_STORE, cookieStore );
+        this.httpContext.setAttribute( HttpClientContext.COOKIE_STORE, new BasicCookieStore() );
     }
 
 
@@ -66,26 +63,14 @@ public class HubClientImplementation implements HubClient
         CloseableHttpResponse response = null;
         try
         {
-            response = httpclient.execute( httpPost, httpContext );
-        }
-        catch ( IOException e )
-        {
-            throwOperationFailedException( "Failed to execute web request", e );
-        }
+            response = execute( httpPost );
 
-        try
-        {
-            if ( response.getStatusLine().getStatusCode() != HttpStatus.SC_OK )
-            {
-                throw new LoginFailedException(
-                        String.format( "Failed to login: %s, %s", response.getStatusLine(), readContent( response ) ) );
-            }
-
-            EntityUtils.consumeQuietly( response.getEntity() );
+            checkHttpStatus( response, HttpStatus.SC_OK, "login" );
         }
         finally
         {
-            closeQuietly( response );
+
+            close( response );
         }
     }
 
@@ -97,24 +82,13 @@ public class HubClientImplementation implements HubClient
         HttpGet httpGet = new HttpGet(
                 String.format( "https://%s.subut.ai/rest/v1/client/environments", hubEnv.getUrlPrefix() ) );
 
+
         CloseableHttpResponse response = null;
         try
         {
-            response = httpclient.execute( httpGet, httpContext );
-        }
-        catch ( IOException e )
-        {
-            throwOperationFailedException( "Failed to execute web request", e );
-        }
+            response = execute( httpGet );
 
-        try
-        {
-            if ( response.getStatusLine().getStatusCode() != HttpStatus.SC_OK )
-            {
-                throwOperationFailedException(
-                        String.format( "Failed to obtain environments: %s, %s", response.getStatusLine(),
-                                readContent( response ) ), null );
-            }
+            checkHttpStatus( response, HttpStatus.SC_OK, "obtain environments" );
 
             HttpEntity entity = response.getEntity();
 
@@ -124,19 +98,52 @@ public class HubClientImplementation implements HubClient
                     }.getType() );
 
             environments.addAll( envList );
-
-            EntityUtils.consumeQuietly( entity );
         }
-        catch ( IOException e )
+        catch ( Exception e )
         {
-            throwOperationFailedException( "Failed to parse response", e );
+            throw new OperationFailedException( "Failed to parse response", e );
         }
         finally
         {
-            closeQuietly( response );
+            close( response );
         }
 
         return environments;
+    }
+
+
+    public List<Peer> getPeers()
+    {
+        List<Peer> peers = Lists.newArrayList();
+
+        HttpGet httpGet =
+                new HttpGet( String.format( "https://%s.subut.ai/rest/v1/client/peers", hubEnv.getUrlPrefix() ) );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            response = execute( httpGet );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "obtain peers" );
+
+            HttpEntity entity = response.getEntity();
+
+            List<Peer> peerList = gson.fromJson( EntityUtils.toString( entity ), new TypeToken<ArrayList<PeerImpl>>()
+            {
+            }.getType() );
+
+            peers.addAll( peerList );
+        }
+        catch ( Exception e )
+        {
+            throw new OperationFailedException( "Failed to parse response", e );
+        }
+        finally
+        {
+            close( response );
+        }
+
+        return peers;
     }
 
 
@@ -153,26 +160,13 @@ public class HubClientImplementation implements HubClient
         CloseableHttpResponse response = null;
         try
         {
-            response = httpclient.execute( httpPost, httpContext );
-        }
-        catch ( IOException e )
-        {
-            throwOperationFailedException( "Failed to execute web request", e );
-        }
+            response = execute( httpPost );
 
-        try
-        {
-            if ( response.getStatusLine().getStatusCode() != HttpStatus.SC_CREATED )
-            {
-                throwOperationFailedException( String.format( "Failed to add ssh key: %s, %s", response.getStatusLine(),
-                        readContent( response ) ), null );
-            }
-
-            EntityUtils.consumeQuietly( response.getEntity() );
+            checkHttpStatus( response, HttpStatus.SC_CREATED, "add ssh key" );
         }
         finally
         {
-            closeQuietly( response );
+            close( response );
         }
     }
 
@@ -190,27 +184,13 @@ public class HubClientImplementation implements HubClient
         CloseableHttpResponse response = null;
         try
         {
-            response = httpclient.execute( httpPost, httpContext );
-        }
-        catch ( IOException e )
-        {
-            throwOperationFailedException( "Failed to execute web request", e );
-        }
+            response = execute( httpPost );
 
-        try
-        {
-            if ( response.getStatusLine().getStatusCode() != HttpStatus.SC_NO_CONTENT )
-            {
-                throwOperationFailedException(
-                        String.format( "Failed to remove ssh key: %s, %S", response.getStatusLine(),
-                                readContent( response ) ), null );
-            }
-
-            EntityUtils.consumeQuietly( response.getEntity() );
+            checkHttpStatus( response, HttpStatus.SC_NO_CONTENT, "remove ssh key" );
         }
         finally
         {
-            closeQuietly( response );
+            close( response );
         }
     }
 
@@ -224,27 +204,13 @@ public class HubClientImplementation implements HubClient
         CloseableHttpResponse response = null;
         try
         {
-            response = httpclient.execute( httpPost, httpContext );
-        }
-        catch ( IOException e )
-        {
-            throwOperationFailedException( "Failed to execute web request", e );
-        }
+            response = execute( httpPost );
 
-        try
-        {
-            if ( response.getStatusLine().getStatusCode() != HttpStatus.SC_OK )
-            {
-                throwOperationFailedException(
-                        String.format( "Failed to start container: %s, %s", response.getStatusLine(),
-                                readContent( response ) ), null );
-            }
-
-            EntityUtils.consumeQuietly( response.getEntity() );
+            checkHttpStatus( response, HttpStatus.SC_OK, "start container" );
         }
         finally
         {
-            closeQuietly( response );
+            close( response );
         }
     }
 
@@ -258,77 +224,46 @@ public class HubClientImplementation implements HubClient
         CloseableHttpResponse response = null;
         try
         {
-            response = httpclient.execute( httpPost, httpContext );
-        }
-        catch ( IOException e )
-        {
-            throwOperationFailedException( "Failed to execute web request", e );
-        }
+            response = execute( httpPost );
 
-        try
-        {
-            if ( response.getStatusLine().getStatusCode() != HttpStatus.SC_OK )
-            {
-                throwOperationFailedException(
-                        String.format( "Failed to stop container: %s, %s", response.getStatusLine(),
-                                readContent( response ) ), null );
-            }
-
-            EntityUtils.consumeQuietly( response.getEntity() );
+            checkHttpStatus( response, HttpStatus.SC_OK, "stop container" );
         }
         finally
         {
-            closeQuietly( response );
+            close( response );
         }
     }
 
 
-    public List<Peer> getPeers()
+    private CloseableHttpResponse execute( HttpRequestBase httpRequest )
     {
-        List<Peer> peers = Lists.newArrayList();
-
-        HttpGet httpGet =
-                new HttpGet( String.format( "https://%s.subut.ai/rest/v1/client/peers", hubEnv.getUrlPrefix() ) );
-
-        CloseableHttpResponse response = null;
         try
         {
-            response = httpclient.execute( httpGet, httpContext );
+            return httpclient.execute( httpRequest, httpContext );
         }
-        catch ( IOException e )
+        catch ( Exception e )
         {
-            throwOperationFailedException( "Failed to execute web request", e );
+            throw new OperationFailedException( "Failed to execute http request", e );
         }
+    }
 
-        try
+
+    private void checkHttpStatus( CloseableHttpResponse response, int expectedStatus, String actionName )
+    {
+        if ( response.getStatusLine().getStatusCode() != expectedStatus )
         {
-            if ( response.getStatusLine().getStatusCode() != HttpStatus.SC_OK )
-            {
-                throwOperationFailedException(
-                        String.format( "Failed to obtain peers: %s, %s", response.getStatusLine(),
-                                readContent( response ) ), null );
-            }
-
-            HttpEntity entity = response.getEntity();
-
-            List<Peer> peerList = gson.fromJson( EntityUtils.toString( entity ), new TypeToken<ArrayList<PeerImpl>>()
-            {
-            }.getType() );
-
-            peers.addAll( peerList );
-
-            EntityUtils.consumeQuietly( entity );
+            throw new OperationFailedException(
+                    String.format( "Failed to %s: %s, %s", actionName, response.getStatusLine(),
+                            readContent( response ) ), null );
         }
-        catch ( IOException e )
-        {
-            throwOperationFailedException( "Failed to parse response", e );
-        }
-        finally
-        {
-            closeQuietly( response );
-        }
+    }
 
-        return peers;
+
+    private void close( CloseableHttpResponse response )
+    {
+        EntityUtils.consumeQuietly( response.getEntity() );
+
+        closeQuietly( response );
     }
 
 
@@ -338,16 +273,10 @@ public class HubClientImplementation implements HubClient
         {
             return EntityUtils.toString( response.getEntity() );
         }
-        catch ( IOException e )
+        catch ( Exception e )
         {
             return null;
         }
-    }
-
-
-    private void throwOperationFailedException( String message, Throwable cause )
-    {
-        throw new OperationFailedException( message, cause );
     }
 
 
@@ -357,7 +286,7 @@ public class HubClientImplementation implements HubClient
         {
             response.close();
         }
-        catch ( IOException e )
+        catch ( Exception e )
         {
             //ignore
         }
