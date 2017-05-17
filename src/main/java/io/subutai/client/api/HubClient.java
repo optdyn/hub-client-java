@@ -34,4 +34,6 @@ public interface HubClient
     void removeSshKey( String envId, String sshKey );
 
     List<Peer> getPeers();
+
+    void stopContainer( final String envId, final String contId );
 }

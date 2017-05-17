@@ -160,7 +160,7 @@ public class HubClientImplementation implements HubClient
 
         try
         {
-            if ( response.getStatusLine().getStatusCode() != HttpStatus.SC_NO_CONTENT )
+            if ( response.getStatusLine().getStatusCode() != HttpStatus.SC_CREATED )
             {
                 throw new LoginFailedException(
                         String.format( "Failed to add ssh key: %s", response.getStatusLine() ) );
@@ -201,6 +201,39 @@ public class HubClientImplementation implements HubClient
             {
                 throw new LoginFailedException(
                         String.format( "Failed to remove ssh key: %s", response.getStatusLine() ) );
+            }
+
+            EntityUtils.consumeQuietly( response.getEntity() );
+        }
+        finally
+        {
+            closeQuietly( response );
+        }
+    }
+
+
+    public void stopContainer( final String envId, final String contId )
+    {
+        HttpPost httpPost = new HttpPost(
+                String.format( "https://%s.subut.ai/rest/v1/client/environments/%s/containers/%s/stop",
+                        hubEnv.getUrlPrefix(), envId, contId ) );
+
+        CloseableHttpResponse response;
+        try
+        {
+            response = httpclient.execute( httpPost, httpContext );
+        }
+        catch ( IOException e )
+        {
+            throw new OperationFailedException( "Failed to execute web request", e );
+        }
+
+        try
+        {
+            if ( response.getStatusLine().getStatusCode() != HttpStatus.SC_OK )
+            {
+                throw new LoginFailedException(
+                        String.format( "Failed to stop container: %s", response.getStatusLine() ) );
             }
 
             EntityUtils.consumeQuietly( response.getEntity() );

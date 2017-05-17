@@ -57,9 +57,16 @@ public class HubClientImplementationTest
 
 
     @Test
+    public void testStopContainer() throws Exception
+    {
+        hubClient.stopContainer( "bc8b8e43-0416-4ad4-a002-a4b8ad61b1f2", "33416CAEC7D07CABD7C73AB0FE1EF92DBA27FCB6" );
+    }
+
+
+    @Test
     public void testAddSshKey() throws Exception
     {
-        hubClient.addSshKey( "f9095c75-7b13-4146-ba55-933e91eaee63",
+        hubClient.addSshKey( "bc8b8e43-0416-4ad4-a002-a4b8ad61b1f2",
                 "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCjUo/8VklFC8cRyHE502tUXit15L8Qg2z/47c6PMpQThR0sjhURgoILms"
                         + "/IX180yGqgkpjdX08MIkmANhbXDmSFh6T4lUzqGGoC7lerePwkA2yJWlsP+7JKk9oDSaYJ3lkfvKZnz8ZG7JS1jg"
                         + "+sRiTsYYfyANHBJ8sDAK+eNDDms1oorrxk704r8oeNuRaE4BNKhVO4wpRJHEo4/uztLB0jkvG5OUFea5E0jCk"
@@ -72,7 +79,7 @@ public class HubClientImplementationTest
     @Test
     public void testRemoveSshKey() throws Exception
     {
-        hubClient.removeSshKey( "f9095c75-7b13-4146-ba55-933e91eaee63",
+        hubClient.removeSshKey( "bc8b8e43-0416-4ad4-a002-a4b8ad61b1f2",
                 "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCjUo/8VklFC8cRyHE502tUXit15L8Qg2z/47c6PMpQThR0sjhURgoILms"
                         + "/IX180yGqgkpjdX08MIkmANhbXDmSFh6T4lUzqGGoC7lerePwkA2yJWlsP+7JKk9oDSaYJ3lkfvKZnz8ZG7JS1jg"
                         + "+sRiTsYYfyANHBJ8sDAK+eNDDms1oorrxk704r8oeNuRaE4BNKhVO4wpRJHEo4/uztLB0jkvG5OUFea5E0jCk"
