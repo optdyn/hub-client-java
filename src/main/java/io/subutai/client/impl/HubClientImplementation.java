@@ -1,6 +1,7 @@
 package io.subutai.client.impl;
 
 
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -92,10 +93,9 @@ public class HubClientImplementation implements HubClient
 
             HttpEntity entity = response.getEntity();
 
-            List<Environment> envList =
-                    gson.fromJson( EntityUtils.toString( entity ), new TypeToken<ArrayList<EnvironmentImpl>>()
-                    {
-                    }.getType() );
+            List<EnvironmentImpl> envList = parse( response, new TypeToken<List<EnvironmentImpl>>()
+            {
+            } );
 
             environments.addAll( envList );
         }
@@ -126,11 +126,9 @@ public class HubClientImplementation implements HubClient
 
             checkHttpStatus( response, HttpStatus.SC_OK, "obtain peers" );
 
-            HttpEntity entity = response.getEntity();
-
-            List<Peer> peerList = gson.fromJson( EntityUtils.toString( entity ), new TypeToken<ArrayList<PeerImpl>>()
+            List<PeerImpl> peerList = parse( response, new TypeToken<List<PeerImpl>>()
             {
-            }.getType() );
+            } );
 
             peers.addAll( peerList );
         }
@@ -235,7 +233,13 @@ public class HubClientImplementation implements HubClient
     }
 
 
-    private CloseableHttpResponse execute( HttpRequestBase httpRequest )
+    protected <T> T parse( CloseableHttpResponse response, TypeToken<T> typeToken ) throws IOException
+    {
+        return gson.fromJson( EntityUtils.toString( response.getEntity() ), typeToken.getType() );
+    }
+
+
+    protected CloseableHttpResponse execute( HttpRequestBase httpRequest )
     {
         try
         {
@@ -248,7 +252,7 @@ public class HubClientImplementation implements HubClient
     }
 
 
-    private void checkHttpStatus( CloseableHttpResponse response, int expectedStatus, String actionName )
+    protected void checkHttpStatus( CloseableHttpResponse response, int expectedStatus, String actionName )
     {
         if ( response.getStatusLine().getStatusCode() != expectedStatus )
         {

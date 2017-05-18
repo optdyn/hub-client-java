@@ -6,53 +6,92 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpRequestBase;
+
+import com.google.common.collect.Lists;
+import com.google.gson.reflect.TypeToken;
 
 import io.subutai.client.api.Environment;
 import io.subutai.client.api.HubClient;
 import io.subutai.client.api.Peer;
 
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+
 
 @RunWith( MockitoJUnitRunner.class )
+//TODO fix unit tests
 public class HubClientImplementationTest
 {
 
-    //TODO change before commit to Git
     private static final String username = "test.d@mail.com";
     private static final String password = "test";
 
-    HubClient hubClient;
+    private HubClientImplementation hubClient;
+
+    @Mock
+    CloseableHttpResponse response;
+    @Mock
+    PeerImpl peer;
+    @Mock EnvironmentImpl environment;
 
 
     @Before
     public void setUp() throws Exception
     {
-        hubClient = HubClients.getClient( HubClient.HubEnv.DEV );
+        hubClient = ( HubClientImplementation ) spy( HubClients.getClient( HubClient.HubEnv.DEV ) );
+        doReturn( response ).when( hubClient ).execute( any( HttpRequestBase.class ) );
+        returnHttpCode( HttpStatus.SC_OK );
+    }
+
+
+    private void returnHttpCode( int httpCode )
+    {
+        StatusLine statusLine = mock( StatusLine.class );
+        doReturn( httpCode ).when( statusLine ).getStatusCode();
+        doReturn( statusLine ).when( response ).getStatusLine();
+    }
+
+
+    @Test
+    public void testLogin() throws Exception
+    {
         hubClient.login( username, password );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
     }
 
 
     @Test
     public void testGetEnvironments() throws Exception
     {
+        doReturn( Lists.newArrayList( environment ) ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
         List<Environment> environments = hubClient.getEnvironments();
 
-        for ( Environment e : environments )
-        {
-            System.out.println( e );
-        }
+        assertTrue( environments.contains( environment ) );
     }
 
 
     @Test
     public void testGetPeers() throws Exception
     {
+        doReturn( Lists.newArrayList( peer ) ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
         List<Peer> peers = hubClient.getPeers();
 
-        for ( Peer p : peers )
-        {
-            System.out.println( p );
-        }
+        assertTrue( peers.contains( peer ) );
     }
 
 
