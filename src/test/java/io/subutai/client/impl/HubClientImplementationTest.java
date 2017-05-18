@@ -35,8 +35,17 @@ import static org.mockito.Mockito.verify;
 public class HubClientImplementationTest
 {
 
-    private static final String username = "test.d@mail.com";
-    private static final String password = "test";
+    private static final String USERNAME = "dummy-user";
+    private static final String PASSWORD = "dummy-pwd";
+    private static final String ENVIRONMENT_ID = "bc8b8e43-0416-4ad4-a002-a4b8ad61b1f2";
+    private static final String CONTAINER_ID = "33416CAEC7D07CABD7C73AB0FE1EF92DBA27FCB6";
+    private static final String SSH_KEY =
+            "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCjUo/8VklFC8cRyHE502tUXit15L8Qg2z/47c6PMpQThR0sjhURgoILms"
+                    + "/IX180yGqgkpjdX08MIkmANhbXDmSFh6T4lUzqGGoC7lerePwkA2yJWlsP+7JKk9oDSaYJ3lkfvKZnz8ZG7JS1jg"
+                    + "+sRiTsYYfyANHBJ8sDAK+eNDDms1oorrxk704r8oeNuRaE4BNKhVO4wpRJHEo4/uztLB0jkvG5OUFea5E0jCk"
+                    + "+tUK4R7kJBecYQGkJj4ILt/cAGrY0sg8Ol+WBOq4ex3zCF1zJrdJCxW4t2NUyNfCxW7kV2uUhbWNuj+n"
+                    +
+                    "/I5a8CDrMJsJLqdgC3EQ17uRy41GHbTwBQs0q2gwfBpefHFXokWwxu06hk0jfwFHWm9xRT79a56hr101Fy4uNjzzVtrWDS4end9VC7bt7Xf/kDxx7FB9DW1wfaYMcCp6YD5O8ENpl35gK35ZXtT5BP2GBoxHGlPdF4PObMCNi5ATtO/gLD8kW1LutO2ldsaY4sHm/JG55UNrpQCpIYe6QfkHsO+fX9/WmjP+iTDdHs1untgurvk5KdhtQxecTvTk3M/ewzHZbEbzYJYzFOsy5f6FQ8U/ckw8PejBzGDUiMGTJXl+GjV9VV3BmkKKeqD5uKu+gta5dynbdfU4r7heAV6oxan2x/rg9iHpOklIRtu2chJYJUq7lQ== dilshat.aliev@gmail.com";
 
     private HubClientImplementation hubClient;
 
@@ -44,7 +53,8 @@ public class HubClientImplementationTest
     CloseableHttpResponse response;
     @Mock
     PeerImpl peer;
-    @Mock EnvironmentImpl environment;
+    @Mock
+    EnvironmentImpl environment;
 
 
     @Before
@@ -67,7 +77,7 @@ public class HubClientImplementationTest
     @Test
     public void testLogin() throws Exception
     {
-        hubClient.login( username, password );
+        hubClient.login( USERNAME, PASSWORD );
 
         verify( hubClient ).execute( any( HttpRequestBase.class ) );
     }
@@ -98,39 +108,39 @@ public class HubClientImplementationTest
     @Test
     public void testStopContainer() throws Exception
     {
-        hubClient.stopContainer( "bc8b8e43-0416-4ad4-a002-a4b8ad61b1f2", "33416CAEC7D07CABD7C73AB0FE1EF92DBA27FCB6" );
+        hubClient.stopContainer( ENVIRONMENT_ID, CONTAINER_ID );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
     }
 
 
     @Test
     public void testStartContainer() throws Exception
     {
-        hubClient.startContainer( "BC8b8e43-0416-4ad4-a002-a4b8ad61b1f2", "33416CAEC7D07CABD7C73AB0FE1EF92DBA27FCB6" );
+        hubClient.startContainer( ENVIRONMENT_ID, CONTAINER_ID );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
     }
 
 
     @Test
     public void testAddSshKey() throws Exception
     {
-        hubClient.addSshKey( "bc8b8e43-0416-4ad4-a002-a4b8ad61b1f2",
-                "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCjUo/8VklFC8cRyHE502tUXit15L8Qg2z/47c6PMpQThR0sjhURgoILms"
-                        + "/IX180yGqgkpjdX08MIkmANhbXDmSFh6T4lUzqGGoC7lerePwkA2yJWlsP+7JKk9oDSaYJ3lkfvKZnz8ZG7JS1jg"
-                        + "+sRiTsYYfyANHBJ8sDAK+eNDDms1oorrxk704r8oeNuRaE4BNKhVO4wpRJHEo4/uztLB0jkvG5OUFea5E0jCk"
-                        + "+tUK4R7kJBecYQGkJj4ILt/cAGrY0sg8Ol+WBOq4ex3zCF1zJrdJCxW4t2NUyNfCxW7kV2uUhbWNuj+n"
-                        +
-                        "/I5a8CDrMJsJLqdgC3EQ17uRy41GHbTwBQs0q2gwfBpefHFXokWwxu06hk0jfwFHWm9xRT79a56hr101Fy4uNjzzVtrWDS4end9VC7bt7Xf/kDxx7FB9DW1wfaYMcCp6YD5O8ENpl35gK35ZXtT5BP2GBoxHGlPdF4PObMCNi5ATtO/gLD8kW1LutO2ldsaY4sHm/JG55UNrpQCpIYe6QfkHsO+fX9/WmjP+iTDdHs1untgurvk5KdhtQxecTvTk3M/ewzHZbEbzYJYzFOsy5f6FQ8U/ckw8PejBzGDUiMGTJXl+GjV9VV3BmkKKeqD5uKu+gta5dynbdfU4r7heAV6oxan2x/rg9iHpOklIRtu2chJYJUq7lQ== dilshat.aliev@gmail.com" );
+        returnHttpCode( HttpStatus.SC_CREATED );
+
+        hubClient.addSshKey( ENVIRONMENT_ID, SSH_KEY );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
     }
 
 
     @Test
     public void testRemoveSshKey() throws Exception
     {
-        hubClient.removeSshKey( "bc8b8e43-0416-4ad4-a002-a4b8ad61b1f2",
-                "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCjUo/8VklFC8cRyHE502tUXit15L8Qg2z/47c6PMpQThR0sjhURgoILms"
-                        + "/IX180yGqgkpjdX08MIkmANhbXDmSFh6T4lUzqGGoC7lerePwkA2yJWlsP+7JKk9oDSaYJ3lkfvKZnz8ZG7JS1jg"
-                        + "+sRiTsYYfyANHBJ8sDAK+eNDDms1oorrxk704r8oeNuRaE4BNKhVO4wpRJHEo4/uztLB0jkvG5OUFea5E0jCk"
-                        + "+tUK4R7kJBecYQGkJj4ILt/cAGrY0sg8Ol+WBOq4ex3zCF1zJrdJCxW4t2NUyNfCxW7kV2uUhbWNuj+n"
-                        +
-                        "/I5a8CDrMJsJLqdgC3EQ17uRy41GHbTwBQs0q2gwfBpefHFXokWwxu06hk0jfwFHWm9xRT79a56hr101Fy4uNjzzVtrWDS4end9VC7bt7Xf/kDxx7FB9DW1wfaYMcCp6YD5O8ENpl35gK35ZXtT5BP2GBoxHGlPdF4PObMCNi5ATtO/gLD8kW1LutO2ldsaY4sHm/JG55UNrpQCpIYe6QfkHsO+fX9/WmjP+iTDdHs1untgurvk5KdhtQxecTvTk3M/ewzHZbEbzYJYzFOsy5f6FQ8U/ckw8PejBzGDUiMGTJXl+GjV9VV3BmkKKeqD5uKu+gta5dynbdfU4r7heAV6oxan2x/rg9iHpOklIRtu2chJYJUq7lQ== dilshat.aliev@gmail.com" );
+        returnHttpCode( HttpStatus.SC_NO_CONTENT );
+
+        hubClient.removeSshKey( ENVIRONMENT_ID, SSH_KEY );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
     }
 }
