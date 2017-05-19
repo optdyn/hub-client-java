@@ -252,6 +252,25 @@ public class HubClientImplementation implements HubClient
     }
 
 
+    public void destroyEnvironment( final String envId )
+    {
+        HttpDelete httpDelete = new HttpDelete(
+                String.format( "https://%s.subut.ai/rest/v1/client/environments/%s", hubEnv.getUrlPrefix(), envId ) );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            response = execute( httpDelete );
+
+            checkHttpStatus( response, HttpStatus.SC_NO_CONTENT, "destroy environment" );
+        }
+        finally
+        {
+            close( response );
+        }
+    }
+
+
     <T> T parse( CloseableHttpResponse response, TypeToken<T> typeToken ) throws IOException
     {
         return gson.fromJson( EntityUtils.toString( response.getEntity() ), typeToken.getType() );

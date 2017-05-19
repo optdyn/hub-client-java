@@ -135,6 +135,17 @@ public class HubClientImplementationTest
 
 
     @Test
+    public void testDestroyEnvironment() throws Exception
+    {
+        returnHttpCode( HttpStatus.SC_NO_CONTENT );
+
+        hubClient.destroyEnvironment( ENVIRONMENT_ID );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
     public void testAddSshKey() throws Exception
     {
         returnHttpCode( HttpStatus.SC_CREATED );
