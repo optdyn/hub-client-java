@@ -50,11 +50,11 @@ public class HubClientImplementationTest
     private HubClientImplementation hubClient;
 
     @Mock
-    CloseableHttpResponse response;
+    private CloseableHttpResponse response;
     @Mock
-    PeerImpl peer;
+    private PeerImpl peer;
     @Mock
-    EnvironmentImpl environment;
+    private EnvironmentImpl environment;
 
 
     @Before
@@ -118,6 +118,17 @@ public class HubClientImplementationTest
     public void testStartContainer() throws Exception
     {
         hubClient.startContainer( ENVIRONMENT_ID, CONTAINER_ID );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testDestroyContainer() throws Exception
+    {
+        returnHttpCode( HttpStatus.SC_NO_CONTENT );
+
+        hubClient.destroyContainer( ENVIRONMENT_ID, CONTAINER_ID );
 
         verify( hubClient ).execute( any( HttpRequestBase.class ) );
     }

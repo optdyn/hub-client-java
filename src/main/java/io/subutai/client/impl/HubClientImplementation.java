@@ -6,11 +6,11 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -36,6 +36,7 @@ import io.subutai.client.api.Peer;
 
 public class HubClientImplementation implements HubClient
 {
+    private static final String PARSE_ERROR_MSG = "Failed to parse response";
     private CloseableHttpClient httpclient = HttpClients.createDefault();
     private HttpContext httpContext = new BasicHttpContext();
     private Gson gson = new Gson();
@@ -91,8 +92,6 @@ public class HubClientImplementation implements HubClient
 
             checkHttpStatus( response, HttpStatus.SC_OK, "obtain environments" );
 
-            HttpEntity entity = response.getEntity();
-
             List<EnvironmentImpl> envList = parse( response, new TypeToken<List<EnvironmentImpl>>()
             {
             } );
@@ -101,7 +100,7 @@ public class HubClientImplementation implements HubClient
         }
         catch ( Exception e )
         {
-            throw new OperationFailedException( "Failed to parse response", e );
+            throw new OperationFailedException( PARSE_ERROR_MSG, e );
         }
         finally
         {
@@ -134,7 +133,7 @@ public class HubClientImplementation implements HubClient
         }
         catch ( Exception e )
         {
-            throw new OperationFailedException( "Failed to parse response", e );
+            throw new OperationFailedException( PARSE_ERROR_MSG, e );
         }
         finally
         {
@@ -233,13 +232,33 @@ public class HubClientImplementation implements HubClient
     }
 
 
-    protected <T> T parse( CloseableHttpResponse response, TypeToken<T> typeToken ) throws IOException
+    public void destroyContainer( final String envId, final String contId )
+    {
+        HttpDelete httpDelete = new HttpDelete(
+                String.format( "https://%s.subut.ai/rest/v1/client/environments/%s/containers/%s",
+                        hubEnv.getUrlPrefix(), envId, contId ) );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            response = execute( httpDelete );
+
+            checkHttpStatus( response, HttpStatus.SC_NO_CONTENT, "destroy container" );
+        }
+        finally
+        {
+            close( response );
+        }
+    }
+
+
+    <T> T parse( CloseableHttpResponse response, TypeToken<T> typeToken ) throws IOException
     {
         return gson.fromJson( EntityUtils.toString( response.getEntity() ), typeToken.getType() );
     }
 
 
-    protected CloseableHttpResponse execute( HttpRequestBase httpRequest )
+    CloseableHttpResponse execute( HttpRequestBase httpRequest )
     {
         try
         {
@@ -252,7 +271,7 @@ public class HubClientImplementation implements HubClient
     }
 
 
-    protected void checkHttpStatus( CloseableHttpResponse response, int expectedStatus, String actionName )
+    private void checkHttpStatus( CloseableHttpResponse response, int expectedStatus, String actionName )
     {
         if ( response.getStatusLine().getStatusCode() != expectedStatus )
         {

@@ -35,7 +35,9 @@ public interface HubClient
 
     List<Peer> getPeers();
 
-    void startContainer( final String envId, final String contId );
+    void startContainer( String envId, String contId );
 
-    void stopContainer( final String envId, final String contId );
+    void stopContainer( String envId, String contId );
+
+    void destroyContainer( String envId, String contId );
 }
