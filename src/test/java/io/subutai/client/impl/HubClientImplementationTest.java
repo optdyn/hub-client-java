@@ -24,9 +24,12 @@ import io.subutai.client.api.EnvironmentTopology;
 import io.subutai.client.api.HubClient;
 import io.subutai.client.api.Node;
 import io.subutai.client.api.Peer;
+import io.subutai.client.api.Template;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyList;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -61,6 +64,8 @@ public class HubClientImplementationTest
     private EnvironmentImpl environment;
     @Mock
     private EnvironmentTopology environmentTopology;
+    @Mock
+    Template template;
 
 
     @Before
@@ -174,13 +179,26 @@ public class HubClientImplementationTest
 
 
     @Test
+    public void tesGetTemplates() throws Exception
+    {
+        doReturn( Lists.newArrayList( template ) ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
+        hubClient.getTemplates();
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
     public void testCreateEnvironment() throws Exception
     {
         returnHttpCode( HttpStatus.SC_CREATED );
-
+        doReturn( Lists.newArrayList( template ) ).when( hubClient ).getTemplates();
+        doReturn( "template" ).when( hubClient ).getTemplateNameById( anyList(), anyString() );
         Node node = mock( Node.class );
         doReturn( Lists.newArrayList( node ) ).when( environmentTopology ).getNodes();
         doReturn( "" ).when( hubClient ).toJson( environmentTopology );
+        doReturn( "template" ).when( node ).getTemplateName();
 
         hubClient.createEnvironment( environmentTopology );
 
@@ -189,7 +207,7 @@ public class HubClientImplementationTest
 
 
     @Test
-//    @Ignore
+    @Ignore
     public void realTest() throws Exception
     {
         reset( hubClient );

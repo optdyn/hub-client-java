@@ -295,7 +295,7 @@ public class HubClientImplementation implements HubClient
     }
 
 
-    private String getTemplateNameById( final List<Template> templates, final String templateId )
+    protected String getTemplateNameById( final List<Template> templates, final String templateId )
     {
         for ( Template template : templates )
         {
