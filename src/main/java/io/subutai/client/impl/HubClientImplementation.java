@@ -24,14 +24,18 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import io.subutai.client.api.Environment;
+import io.subutai.client.api.EnvironmentTopology;
 import io.subutai.client.api.HubClient;
+import io.subutai.client.api.Node;
 import io.subutai.client.api.OperationFailedException;
 import io.subutai.client.api.Peer;
+import io.subutai.client.api.Template;
 
 
 public class HubClientImplementation implements HubClient
@@ -90,7 +94,7 @@ public class HubClientImplementation implements HubClient
         {
             response = execute( httpGet );
 
-            checkHttpStatus( response, HttpStatus.SC_OK, "obtain environments" );
+            checkHttpStatus( response, HttpStatus.SC_OK, "list environments" );
 
             List<EnvironmentImpl> envList = parse( response, new TypeToken<List<EnvironmentImpl>>()
             {
@@ -123,7 +127,7 @@ public class HubClientImplementation implements HubClient
         {
             response = execute( httpGet );
 
-            checkHttpStatus( response, HttpStatus.SC_OK, "obtain peers" );
+            checkHttpStatus( response, HttpStatus.SC_OK, "list peers" );
 
             List<PeerImpl> peerList = parse( response, new TypeToken<List<PeerImpl>>()
             {
@@ -252,6 +256,59 @@ public class HubClientImplementation implements HubClient
     }
 
 
+    public void createEnvironment( final EnvironmentTopology environmentTopology )
+    {
+        Preconditions.checkNotNull( environmentTopology );
+        Preconditions.checkArgument( !environmentTopology.getNodes().isEmpty() );
+
+        //WORKAROUND!!!
+        List<Template> templates = getTemplates();
+        for ( Node node : environmentTopology.getNodes() )
+        {
+            node.setTemplateName( getTemplateNameById( templates, node.getTemplateId() ) );
+
+            if ( Strings.isNullOrEmpty( node.getTemplateName() ) )
+            {
+                throw new OperationFailedException( "Template not found by id " + node.getTemplateId(), null );
+            }
+        }
+        //WORKAROUND!!!
+
+        HttpPost httpPost = new HttpPost(
+                String.format( "https://%s.subut.ai/rest/v1/client/environments", hubEnv.getUrlPrefix() ) );
+
+        List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+        nvps.add( new BasicNameValuePair( "env-topology", toJson( environmentTopology ) ) );
+        httpPost.setEntity( new UrlEncodedFormEntity( nvps, Charset.forName( "UTF-8" ) ) );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            response = execute( httpPost );
+
+            checkHttpStatus( response, HttpStatus.SC_CREATED, "create environment" );
+        }
+        finally
+        {
+            close( response );
+        }
+    }
+
+
+    private String getTemplateNameById( final List<Template> templates, final String templateId )
+    {
+        for ( Template template : templates )
+        {
+            if ( template.getId().equalsIgnoreCase( templateId ) )
+            {
+                return template.getName();
+            }
+        }
+
+        return null;
+    }
+
+
     public void destroyEnvironment( final String envId )
     {
         HttpDelete httpDelete = new HttpDelete(
@@ -268,6 +325,45 @@ public class HubClientImplementation implements HubClient
         {
             close( response );
         }
+    }
+
+
+    public List<Template> getTemplates()
+    {
+        List<Template> templates = Lists.newArrayList();
+
+        HttpGet httpGet = new HttpGet( String.format( "https://%scdn.subut.ai:8338/kurjun/rest/template/info",
+                hubEnv == HubEnv.PROD ? "" : hubEnv.getUrlPrefix() ) );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            response = execute( httpGet );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "list templates" );
+
+            List<Template> peerList = parse( response, new TypeToken<List<Template>>()
+            {
+            } );
+
+            templates.addAll( peerList );
+        }
+        catch ( Exception e )
+        {
+            throw new OperationFailedException( PARSE_ERROR_MSG, e );
+        }
+        finally
+        {
+            close( response );
+        }
+
+        return templates;
+    }
+
+
+    String toJson( Object object )
+    {
+        return gson.toJson( object );
     }
 
 

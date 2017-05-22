@@ -4,6 +4,7 @@ package io.subutai.client.impl;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -17,8 +18,11 @@ import org.apache.http.client.methods.HttpRequestBase;
 import com.google.common.collect.Lists;
 import com.google.gson.reflect.TypeToken;
 
+import io.subutai.client.api.ContainerSize;
 import io.subutai.client.api.Environment;
+import io.subutai.client.api.EnvironmentTopology;
 import io.subutai.client.api.HubClient;
+import io.subutai.client.api.Node;
 import io.subutai.client.api.Peer;
 
 import static org.junit.Assert.assertTrue;
@@ -26,12 +30,12 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 
 @RunWith( MockitoJUnitRunner.class )
-//TODO fix unit tests
 public class HubClientImplementationTest
 {
 
@@ -55,6 +59,8 @@ public class HubClientImplementationTest
     private PeerImpl peer;
     @Mock
     private EnvironmentImpl environment;
+    @Mock
+    private EnvironmentTopology environmentTopology;
 
 
     @Before
@@ -164,5 +170,38 @@ public class HubClientImplementationTest
         hubClient.removeSshKey( ENVIRONMENT_ID, SSH_KEY );
 
         verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testCreateEnvironment() throws Exception
+    {
+        returnHttpCode( HttpStatus.SC_CREATED );
+
+        Node node = mock( Node.class );
+        doReturn( Lists.newArrayList( node ) ).when( environmentTopology ).getNodes();
+        doReturn( "" ).when( hubClient ).toJson( environmentTopology );
+
+        hubClient.createEnvironment( environmentTopology );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+//    @Ignore
+    public void realTest() throws Exception
+    {
+        reset( hubClient );
+        String templateId = "a697e70f3fc538b4f4763588a7868388";//master
+        String peerId = "F9062642A1629F967240FA31406A0B708674396A";
+        String rhId = "14885D6DB4C6F85E727EE54685B79BB1FF8A37F7";
+
+        hubClient.login( "test.d@mail.com", "test" );
+
+        EnvironmentTopology environmentTopology = new EnvironmentTopology( "test-env" );
+        environmentTopology.addNode( "test-container", templateId, ContainerSize.SMALL, peerId, rhId );
+
+        hubClient.createEnvironment( environmentTopology );
     }
 }

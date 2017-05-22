@@ -42,4 +42,8 @@ public interface HubClient
     void destroyContainer( String envId, String contId );
 
     void destroyEnvironment( String envId );
+
+    List<Template> getTemplates();
+
+    void createEnvironment( EnvironmentTopology environmentTopology );
 }
