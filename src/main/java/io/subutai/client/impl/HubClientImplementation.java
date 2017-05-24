@@ -13,6 +13,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.entity.ContentType;
@@ -37,7 +38,8 @@ import io.subutai.client.api.OperationFailedException;
 import io.subutai.client.api.Peer;
 import io.subutai.client.api.Template;
 import io.subutai.client.api.dto.CreateEnvironmentDto;
-import io.subutai.client.api.dto.NodeDto;
+import io.subutai.client.api.dto.CreateNodeDto;
+import io.subutai.client.api.dto.ModifyEnvironmentDto;
 
 
 public class HubClientImplementation implements HubClient
@@ -265,7 +267,7 @@ public class HubClientImplementation implements HubClient
 
         //WORKAROUND!!!
         List<Template> templates = getTemplates();
-        for ( NodeDto node : createEnvironmentDto.getNodes() )
+        for ( CreateNodeDto node : createEnvironmentDto.getNodes() )
         {
             node.setTemplateName( getTemplateNameById( templates, node.getTemplateId() ) );
 
@@ -287,6 +289,47 @@ public class HubClientImplementation implements HubClient
             response = execute( httpPost );
 
             checkHttpStatus( response, HttpStatus.SC_CREATED, "create environment" );
+        }
+        finally
+        {
+            close( response );
+        }
+    }
+
+
+    public void modifyEnvironment( final ModifyEnvironmentDto modifyEnvironmentDto )
+    {
+        Preconditions.checkNotNull( modifyEnvironmentDto );
+        Preconditions.checkArgument(
+                modifyEnvironmentDto.getNodesToAdd().size() > 0 || modifyEnvironmentDto.getNodesToRemove().size() > 0 );
+
+
+        //WORKAROUND!!!
+        List<Template> templates = getTemplates();
+        for ( CreateNodeDto node : modifyEnvironmentDto.getNodesToAdd() )
+        {
+            node.setTemplateName( getTemplateNameById( templates, node.getTemplateId() ) );
+
+            if ( Strings.isNullOrEmpty( node.getTemplateName() ) )
+            {
+                throw new OperationFailedException( "Template not found by id " + node.getTemplateId(), null );
+            }
+        }
+        //WORKAROUND!!!
+
+        HttpPut httpPut = new HttpPut(
+                String.format( "https://%s.subut.ai/rest/v1/client/environments", hubEnv.getUrlPrefix() ) );
+
+        httpPut.setEntity( new StringEntity( toJson( modifyEnvironmentDto ), ContentType.APPLICATION_JSON ) );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            response = execute( httpPut );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "modify environment" );
+
+            System.out.println( readContent( response ) );
         }
         finally
         {

@@ -14,7 +14,7 @@ public class CreateEnvironmentDto
 {
     private final String environmentName;
 
-    private final List<NodeDto> nodes;
+    private final List<CreateNodeDto> nodes;
 
     private Boolean exchangeSshKeys = true;
 
@@ -30,13 +30,7 @@ public class CreateEnvironmentDto
     }
 
 
-    public String getEnvironmentName()
-    {
-        return environmentName;
-    }
-
-
-    public List<NodeDto> getNodes()
+    public List<CreateNodeDto> getNodes()
     {
         return nodes;
     }
@@ -45,6 +39,6 @@ public class CreateEnvironmentDto
     public void addNode( String hostname, String templateId, ContainerSize containerSize, String peerId,
                          String resourceHostId )
     {
-        this.nodes.add( new NodeDto( hostname, templateId, containerSize, peerId, resourceHostId ) );
+        this.nodes.add( new CreateNodeDto( hostname, templateId, containerSize, peerId, resourceHostId ) );
     }
 }

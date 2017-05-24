@@ -7,7 +7,7 @@ import com.google.common.base.Strings;
 import io.subutai.client.api.ContainerSize;
 
 
-public class NodeDto
+public class CreateNodeDto
 {
     private final String hostname;
 
@@ -22,8 +22,8 @@ public class NodeDto
     private final String resourceHostId;
 
 
-    public NodeDto( final String hostname, final String templateId, final ContainerSize containerSize,
-                    final String peerId, final String resourceHostId )
+    public CreateNodeDto( final String hostname, final String templateId, final ContainerSize containerSize,
+                          final String peerId, final String resourceHostId )
     {
         Preconditions.checkArgument( !Strings.isNullOrEmpty( hostname ) );
         Preconditions.checkArgument( !Strings.isNullOrEmpty( templateId ) );

@@ -24,7 +24,9 @@ import io.subutai.client.api.HubClient;
 import io.subutai.client.api.Peer;
 import io.subutai.client.api.Template;
 import io.subutai.client.api.dto.CreateEnvironmentDto;
-import io.subutai.client.api.dto.NodeDto;
+import io.subutai.client.api.dto.CreateNodeDto;
+import io.subutai.client.api.dto.DestroyNodeDto;
+import io.subutai.client.api.dto.ModifyEnvironmentDto;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -66,6 +68,8 @@ public class HubClientImplementationTest
     private CreateEnvironmentDto createEnvironmentDto;
     @Mock
     private Template template;
+    @Mock
+    ModifyEnvironmentDto modifyEnvironmentDto;
 
 
     @Before
@@ -195,7 +199,7 @@ public class HubClientImplementationTest
         returnHttpCode( HttpStatus.SC_CREATED );
         doReturn( Lists.newArrayList( template ) ).when( hubClient ).getTemplates();
         doReturn( "template" ).when( hubClient ).getTemplateNameById( anyList(), anyString() );
-        NodeDto node = mock( NodeDto.class );
+        CreateNodeDto node = mock( CreateNodeDto.class );
         doReturn( Lists.newArrayList( node ) ).when( createEnvironmentDto ).getNodes();
         doReturn( "" ).when( hubClient ).toJson( createEnvironmentDto );
         doReturn( "template" ).when( node ).getTemplateName();
@@ -207,8 +211,26 @@ public class HubClientImplementationTest
 
 
     @Test
+    public void testModifyEnvironment() throws Exception
+    {
+        doReturn( Lists.newArrayList( template ) ).when( hubClient ).getTemplates();
+        doReturn( "template" ).when( hubClient ).getTemplateNameById( anyList(), anyString() );
+        CreateNodeDto createNodeDto = mock( CreateNodeDto.class );
+        doReturn( Lists.newArrayList( createNodeDto ) ).when( modifyEnvironmentDto ).getNodesToAdd();
+        doReturn( "" ).when( hubClient ).toJson( modifyEnvironmentDto );
+        doReturn( "template" ).when( createNodeDto ).getTemplateName();
+        DestroyNodeDto destroyNodeDto = new DestroyNodeDto( "ID" );
+        doReturn( Lists.newArrayList( destroyNodeDto ) ).when( modifyEnvironmentDto ).getNodesToRemove();
+
+        hubClient.modifyEnvironment( modifyEnvironmentDto );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
     @Ignore
-    public void realTest() throws Exception
+    public void testRealCreateEnvironment() throws Exception
     {
         reset( hubClient );
         String templateId = "a697e70f3fc538b4f4763588a7868388";//master
@@ -221,5 +243,26 @@ public class HubClientImplementationTest
         createEnvironmentDto.addNode( "test-container", templateId, ContainerSize.SMALL, peerId, rhId );
 
         hubClient.createEnvironment( createEnvironmentDto );
+    }
+
+
+    @Test
+//    @Ignore
+    public void testRealModifyEnvironment() throws Exception
+    {
+        reset( hubClient );
+        String templateId = "a697e70f3fc538b4f4763588a7868388";//master
+        String peerId = "F56B2CB82E5D4B8A52F1642EB229CB4027DEFA20";
+        String rhId = "0785A1DF7CB770F3C135481FEEB2B89BCBE2FEA9";
+        String envId = "dc183f2c-df1e-4056-a6b0-e750cfe1af63";
+        String contIt = "14FF171AB9DA787CDBBFBC69BCE3F6FBEFB3FBBE";
+
+        hubClient.login( "test.d@mail.com", "test" );
+
+        ModifyEnvironmentDto modifyEnvironmentDto = new ModifyEnvironmentDto( envId );
+        modifyEnvironmentDto.addNode( "test-container222", templateId, ContainerSize.SMALL, peerId, rhId );
+        modifyEnvironmentDto.removeNode( contIt );
+
+        hubClient.modifyEnvironment( modifyEnvironmentDto );
     }
 }
