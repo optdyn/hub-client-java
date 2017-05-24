@@ -20,11 +20,11 @@ import com.google.gson.reflect.TypeToken;
 
 import io.subutai.client.api.ContainerSize;
 import io.subutai.client.api.Environment;
-import io.subutai.client.api.EnvironmentTopology;
 import io.subutai.client.api.HubClient;
-import io.subutai.client.api.Node;
 import io.subutai.client.api.Peer;
 import io.subutai.client.api.Template;
+import io.subutai.client.api.dto.CreateEnvironmentDto;
+import io.subutai.client.api.dto.NodeDto;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -63,9 +63,9 @@ public class HubClientImplementationTest
     @Mock
     private EnvironmentImpl environment;
     @Mock
-    private EnvironmentTopology environmentTopology;
+    private CreateEnvironmentDto createEnvironmentDto;
     @Mock
-    Template template;
+    private Template template;
 
 
     @Before
@@ -195,12 +195,12 @@ public class HubClientImplementationTest
         returnHttpCode( HttpStatus.SC_CREATED );
         doReturn( Lists.newArrayList( template ) ).when( hubClient ).getTemplates();
         doReturn( "template" ).when( hubClient ).getTemplateNameById( anyList(), anyString() );
-        Node node = mock( Node.class );
-        doReturn( Lists.newArrayList( node ) ).when( environmentTopology ).getNodes();
-        doReturn( "" ).when( hubClient ).toJson( environmentTopology );
+        NodeDto node = mock( NodeDto.class );
+        doReturn( Lists.newArrayList( node ) ).when( createEnvironmentDto ).getNodes();
+        doReturn( "" ).when( hubClient ).toJson( createEnvironmentDto );
         doReturn( "template" ).when( node ).getTemplateName();
 
-        hubClient.createEnvironment( environmentTopology );
+        hubClient.createEnvironment( createEnvironmentDto );
 
         verify( hubClient ).execute( any( HttpRequestBase.class ) );
     }
@@ -212,14 +212,14 @@ public class HubClientImplementationTest
     {
         reset( hubClient );
         String templateId = "a697e70f3fc538b4f4763588a7868388";//master
-        String peerId = "F9062642A1629F967240FA31406A0B708674396A";
-        String rhId = "14885D6DB4C6F85E727EE54685B79BB1FF8A37F7";
+        String peerId = "F56B2CB82E5D4B8A52F1642EB229CB4027DEFA20";
+        String rhId = "0785A1DF7CB770F3C135481FEEB2B89BCBE2FEA9";
 
         hubClient.login( "test.d@mail.com", "test" );
 
-        EnvironmentTopology environmentTopology = new EnvironmentTopology( "test-env" );
-        environmentTopology.addNode( "test-container", templateId, ContainerSize.SMALL, peerId, rhId );
+        CreateEnvironmentDto createEnvironmentDto = new CreateEnvironmentDto( "test-env" );
+        createEnvironmentDto.addNode( "test-container", templateId, ContainerSize.SMALL, peerId, rhId );
 
-        hubClient.createEnvironment( environmentTopology );
+        hubClient.createEnvironment( createEnvironmentDto );
     }
 }

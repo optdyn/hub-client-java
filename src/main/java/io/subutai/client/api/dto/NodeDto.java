@@ -1,32 +1,39 @@
-package io.subutai.client.api;
+package io.subutai.client.api.dto;
 
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
+import io.subutai.client.api.ContainerSize;
 
-public class Node
+
+public class NodeDto
 {
-    private String hostname;
-    private String templateId;
-    //as a workaround template name is passed from client for now
-    private String templateName;
-    private ContainerSize containerSize;
-    private String peerId;
-    private String resourceHostId;
+    private final String hostname;
+
+    private final String templateId;
+
+    private String templateName;//workaround
+
+    private final ContainerQuotaDto quota;
+
+    private final String peerId;
+
+    private final String resourceHostId;
 
 
-    public Node( final String hostname, final String templateId, final ContainerSize containerSize, final String peerId,
-                 final String resourceHostId )
+    public NodeDto( final String hostname, final String templateId, final ContainerSize containerSize,
+                    final String peerId, final String resourceHostId )
     {
         Preconditions.checkArgument( !Strings.isNullOrEmpty( hostname ) );
         Preconditions.checkArgument( !Strings.isNullOrEmpty( templateId ) );
         Preconditions.checkArgument( !Strings.isNullOrEmpty( peerId ) );
         Preconditions.checkArgument( !Strings.isNullOrEmpty( resourceHostId ) );
         Preconditions.checkNotNull( containerSize );
+
         this.hostname = hostname;
         this.templateId = templateId;
-        this.containerSize = containerSize;
+        this.quota = new ContainerQuotaDto( containerSize );
         this.peerId = peerId;
         this.resourceHostId = resourceHostId;
     }

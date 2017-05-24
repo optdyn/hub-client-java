@@ -15,6 +15,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -30,12 +32,12 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import io.subutai.client.api.Environment;
-import io.subutai.client.api.EnvironmentTopology;
 import io.subutai.client.api.HubClient;
-import io.subutai.client.api.Node;
 import io.subutai.client.api.OperationFailedException;
 import io.subutai.client.api.Peer;
 import io.subutai.client.api.Template;
+import io.subutai.client.api.dto.CreateEnvironmentDto;
+import io.subutai.client.api.dto.NodeDto;
 
 
 public class HubClientImplementation implements HubClient
@@ -256,14 +258,14 @@ public class HubClientImplementation implements HubClient
     }
 
 
-    public void createEnvironment( final EnvironmentTopology environmentTopology )
+    public void createEnvironment( final CreateEnvironmentDto createEnvironmentDto )
     {
-        Preconditions.checkNotNull( environmentTopology );
-        Preconditions.checkArgument( !environmentTopology.getNodes().isEmpty() );
+        Preconditions.checkNotNull( createEnvironmentDto );
+        Preconditions.checkArgument( !createEnvironmentDto.getNodes().isEmpty() );
 
         //WORKAROUND!!!
         List<Template> templates = getTemplates();
-        for ( Node node : environmentTopology.getNodes() )
+        for ( NodeDto node : createEnvironmentDto.getNodes() )
         {
             node.setTemplateName( getTemplateNameById( templates, node.getTemplateId() ) );
 
@@ -277,9 +279,7 @@ public class HubClientImplementation implements HubClient
         HttpPost httpPost = new HttpPost(
                 String.format( "https://%s.subut.ai/rest/v1/client/environments", hubEnv.getUrlPrefix() ) );
 
-        List<NameValuePair> nvps = new ArrayList<NameValuePair>();
-        nvps.add( new BasicNameValuePair( "env-topology", toJson( environmentTopology ) ) );
-        httpPost.setEntity( new UrlEncodedFormEntity( nvps, Charset.forName( "UTF-8" ) ) );
+        httpPost.setEntity( new StringEntity( toJson( createEnvironmentDto ), ContentType.APPLICATION_JSON ) );
 
         CloseableHttpResponse response = null;
         try
@@ -295,7 +295,7 @@ public class HubClientImplementation implements HubClient
     }
 
 
-    protected String getTemplateNameById( final List<Template> templates, final String templateId )
+    String getTemplateNameById( final List<Template> templates, final String templateId )
     {
         for ( Template template : templates )
         {

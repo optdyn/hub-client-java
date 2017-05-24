@@ -3,6 +3,8 @@ package io.subutai.client.api;
 
 import java.util.List;
 
+import io.subutai.client.api.dto.CreateEnvironmentDto;
+
 
 public interface HubClient
 {
@@ -45,5 +47,6 @@ public interface HubClient
 
     List<Template> getTemplates();
 
-    void createEnvironment( EnvironmentTopology environmentTopology );
+    //TODO use DTO from Hub instead of: EnvironmentTopology, Node, use CreateEnvironmentDto
+    void createEnvironment( CreateEnvironmentDto createEnvironmentDto );
 }
