@@ -247,7 +247,7 @@ public class HubClientImplementationTest
 
 
     @Test
-//    @Ignore
+    @Ignore
     public void testRealModifyEnvironment() throws Exception
     {
         reset( hubClient );
