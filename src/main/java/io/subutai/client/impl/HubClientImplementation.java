@@ -32,14 +32,13 @@ import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import io.subutai.client.api.CreateEnvironmentRequest;
 import io.subutai.client.api.Environment;
 import io.subutai.client.api.HubClient;
+import io.subutai.client.api.ModifyEnvironmentRequest;
 import io.subutai.client.api.OperationFailedException;
 import io.subutai.client.api.Peer;
 import io.subutai.client.api.Template;
-import io.subutai.client.api.dto.CreateEnvironmentDto;
-import io.subutai.client.api.dto.CreateNodeDto;
-import io.subutai.client.api.dto.ModifyEnvironmentDto;
 
 
 public class HubClientImplementation implements HubClient
@@ -260,14 +259,22 @@ public class HubClientImplementation implements HubClient
     }
 
 
-    public void createEnvironment( final CreateEnvironmentDto createEnvironmentDto )
+    public CreateEnvironmentRequest createRequest( final String environmentName )
     {
-        Preconditions.checkNotNull( createEnvironmentDto );
-        Preconditions.checkArgument( !createEnvironmentDto.getNodes().isEmpty() );
+        return new CreateEnvironmentRequestImpl( environmentName );
+    }
+
+
+    public void createEnvironment( final CreateEnvironmentRequest createEnvironmentRequest )
+    {
+        Preconditions.checkNotNull( createEnvironmentRequest );
+        Preconditions.checkArgument( createEnvironmentRequest instanceof CreateEnvironmentRequestImpl );
+        CreateEnvironmentRequestImpl createEnvironmentReq = ( CreateEnvironmentRequestImpl ) createEnvironmentRequest;
+        Preconditions.checkArgument( !createEnvironmentReq.getNodes().isEmpty() );
 
         //WORKAROUND!!!
         List<Template> templates = getTemplates();
-        for ( CreateNodeDto node : createEnvironmentDto.getNodes() )
+        for ( CreateEnvironmentRequestImpl.Node node : createEnvironmentReq.getNodes() )
         {
             node.setTemplateName( getTemplateNameById( templates, node.getTemplateId() ) );
 
@@ -281,7 +288,7 @@ public class HubClientImplementation implements HubClient
         HttpPost httpPost = new HttpPost(
                 String.format( "https://%s.subut.ai/rest/v1/client/environments", hubEnv.getUrlPrefix() ) );
 
-        httpPost.setEntity( new StringEntity( toJson( createEnvironmentDto ), ContentType.APPLICATION_JSON ) );
+        httpPost.setEntity( new StringEntity( toJson( createEnvironmentReq ), ContentType.APPLICATION_JSON ) );
 
         CloseableHttpResponse response = null;
         try
@@ -297,16 +304,24 @@ public class HubClientImplementation implements HubClient
     }
 
 
-    public void modifyEnvironment( final ModifyEnvironmentDto modifyEnvironmentDto )
+    public ModifyEnvironmentRequest modifyRequest( final String environmentId )
     {
-        Preconditions.checkNotNull( modifyEnvironmentDto );
+        return new ModifyEnvironmentRequestImpl( environmentId );
+    }
+
+
+    public void modifyEnvironment( final ModifyEnvironmentRequest modifyEnvironmentRequest )
+    {
+        Preconditions.checkNotNull( modifyEnvironmentRequest );
+        Preconditions.checkArgument( modifyEnvironmentRequest instanceof ModifyEnvironmentRequestImpl );
+        ModifyEnvironmentRequestImpl modifyEnvironmentReq = ( ModifyEnvironmentRequestImpl ) modifyEnvironmentRequest;
         Preconditions.checkArgument(
-                modifyEnvironmentDto.getNodesToAdd().size() > 0 || modifyEnvironmentDto.getNodesToRemove().size() > 0 );
+                modifyEnvironmentReq.getNodesToAdd().size() > 0 || modifyEnvironmentReq.getNodesToRemove().size() > 0 );
 
 
         //WORKAROUND!!!
         List<Template> templates = getTemplates();
-        for ( CreateNodeDto node : modifyEnvironmentDto.getNodesToAdd() )
+        for ( CreateEnvironmentRequestImpl.Node node : modifyEnvironmentReq.getNodesToAdd() )
         {
             node.setTemplateName( getTemplateNameById( templates, node.getTemplateId() ) );
 
@@ -320,7 +335,7 @@ public class HubClientImplementation implements HubClient
         HttpPut httpPut = new HttpPut(
                 String.format( "https://%s.subut.ai/rest/v1/client/environments", hubEnv.getUrlPrefix() ) );
 
-        httpPut.setEntity( new StringEntity( toJson( modifyEnvironmentDto ), ContentType.APPLICATION_JSON ) );
+        httpPut.setEntity( new StringEntity( toJson( modifyEnvironmentReq ), ContentType.APPLICATION_JSON ) );
 
         CloseableHttpResponse response = null;
         try

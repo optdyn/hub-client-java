@@ -19,14 +19,12 @@ import com.google.common.collect.Lists;
 import com.google.gson.reflect.TypeToken;
 
 import io.subutai.client.api.ContainerSize;
+import io.subutai.client.api.CreateEnvironmentRequest;
 import io.subutai.client.api.Environment;
 import io.subutai.client.api.HubClient;
+import io.subutai.client.api.ModifyEnvironmentRequest;
 import io.subutai.client.api.Peer;
 import io.subutai.client.api.Template;
-import io.subutai.client.api.dto.CreateEnvironmentDto;
-import io.subutai.client.api.dto.CreateNodeDto;
-import io.subutai.client.api.dto.DestroyNodeDto;
-import io.subutai.client.api.dto.ModifyEnvironmentDto;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -65,11 +63,11 @@ public class HubClientImplementationTest
     @Mock
     private EnvironmentImpl environment;
     @Mock
-    private CreateEnvironmentDto createEnvironmentDto;
+    private CreateEnvironmentRequestImpl createEnvironmentRequest;
     @Mock
     private Template template;
     @Mock
-    ModifyEnvironmentDto modifyEnvironmentDto;
+    ModifyEnvironmentRequestImpl modifyEnvironmentRequest;
 
 
     @Before
@@ -199,12 +197,12 @@ public class HubClientImplementationTest
         returnHttpCode( HttpStatus.SC_CREATED );
         doReturn( Lists.newArrayList( template ) ).when( hubClient ).getTemplates();
         doReturn( "template" ).when( hubClient ).getTemplateNameById( anyList(), anyString() );
-        CreateNodeDto node = mock( CreateNodeDto.class );
-        doReturn( Lists.newArrayList( node ) ).when( createEnvironmentDto ).getNodes();
-        doReturn( "" ).when( hubClient ).toJson( createEnvironmentDto );
+        CreateEnvironmentRequestImpl.Node node = mock( CreateEnvironmentRequestImpl.Node.class );
+        doReturn( Lists.newArrayList( node ) ).when( createEnvironmentRequest ).getNodes();
+        doReturn( "" ).when( hubClient ).toJson( createEnvironmentRequest );
         doReturn( "template" ).when( node ).getTemplateName();
 
-        hubClient.createEnvironment( createEnvironmentDto );
+        hubClient.createEnvironment( createEnvironmentRequest );
 
         verify( hubClient ).execute( any( HttpRequestBase.class ) );
     }
@@ -215,14 +213,14 @@ public class HubClientImplementationTest
     {
         doReturn( Lists.newArrayList( template ) ).when( hubClient ).getTemplates();
         doReturn( "template" ).when( hubClient ).getTemplateNameById( anyList(), anyString() );
-        CreateNodeDto createNodeDto = mock( CreateNodeDto.class );
-        doReturn( Lists.newArrayList( createNodeDto ) ).when( modifyEnvironmentDto ).getNodesToAdd();
-        doReturn( "" ).when( hubClient ).toJson( modifyEnvironmentDto );
-        doReturn( "template" ).when( createNodeDto ).getTemplateName();
-        DestroyNodeDto destroyNodeDto = new DestroyNodeDto( "ID" );
-        doReturn( Lists.newArrayList( destroyNodeDto ) ).when( modifyEnvironmentDto ).getNodesToRemove();
+        CreateEnvironmentRequestImpl.Node createNode = mock( CreateEnvironmentRequestImpl.Node.class );
+        doReturn( Lists.newArrayList( createNode ) ).when( modifyEnvironmentRequest ).getNodesToAdd();
+        doReturn( "" ).when( hubClient ).toJson( modifyEnvironmentRequest );
+        doReturn( "template" ).when( createNode ).getTemplateName();
+        ModifyEnvironmentRequestImpl.Node destroyNodeDto = mock( ModifyEnvironmentRequestImpl.Node.class );
+        doReturn( Lists.newArrayList( destroyNodeDto ) ).when( modifyEnvironmentRequest ).getNodesToRemove();
 
-        hubClient.modifyEnvironment( modifyEnvironmentDto );
+        hubClient.modifyEnvironment( modifyEnvironmentRequest );
 
         verify( hubClient ).execute( any( HttpRequestBase.class ) );
     }
@@ -234,15 +232,15 @@ public class HubClientImplementationTest
     {
         reset( hubClient );
         String templateId = "a697e70f3fc538b4f4763588a7868388";//master
-        String peerId = "F56B2CB82E5D4B8A52F1642EB229CB4027DEFA20";
-        String rhId = "0785A1DF7CB770F3C135481FEEB2B89BCBE2FEA9";
+        String peerId = "8BC9E203393B29DECF485BF8934A1421E3ECB58A";
+        String rhId = "B2E4DBC6200D6592298F7CE2D89CD0E8E61E6326";
 
         hubClient.login( "test.d@mail.com", "test" );
 
-        CreateEnvironmentDto createEnvironmentDto = new CreateEnvironmentDto( "test-env" );
-        createEnvironmentDto.addNode( "test-container", templateId, ContainerSize.SMALL, peerId, rhId );
+        CreateEnvironmentRequest createEnvironmentRequest = hubClient.createRequest( "test-env" );
+        createEnvironmentRequest.addNode( "test-container", templateId, ContainerSize.SMALL, peerId, rhId );
 
-        hubClient.createEnvironment( createEnvironmentDto );
+        hubClient.createEnvironment( createEnvironmentRequest );
     }
 
 
@@ -252,17 +250,17 @@ public class HubClientImplementationTest
     {
         reset( hubClient );
         String templateId = "a697e70f3fc538b4f4763588a7868388";//master
-        String peerId = "F56B2CB82E5D4B8A52F1642EB229CB4027DEFA20";
-        String rhId = "0785A1DF7CB770F3C135481FEEB2B89BCBE2FEA9";
-        String envId = "dc183f2c-df1e-4056-a6b0-e750cfe1af63";
-        String contIt = "14FF171AB9DA787CDBBFBC69BCE3F6FBEFB3FBBE";
+        String peerId = "8BC9E203393B29DECF485BF8934A1421E3ECB58A";
+        String rhId = "B2E4DBC6200D6592298F7CE2D89CD0E8E61E6326";
+        String envId = "f0740e29-1519-4dcb-91d1-99c91bd0326b";
+        String contIt = "06C6BE754504777A29F3F77EA2450082B7614323";
 
         hubClient.login( "test.d@mail.com", "test" );
 
-        ModifyEnvironmentDto modifyEnvironmentDto = new ModifyEnvironmentDto( envId );
-        modifyEnvironmentDto.addNode( "test-container222", templateId, ContainerSize.SMALL, peerId, rhId );
-        modifyEnvironmentDto.removeNode( contIt );
+        ModifyEnvironmentRequest modifyEnvironmentRequest = hubClient.modifyRequest( envId );
+        modifyEnvironmentRequest.addNode( "test-container222", templateId, ContainerSize.SMALL, peerId, rhId );
+        modifyEnvironmentRequest.removeNode( contIt );
 
-        hubClient.modifyEnvironment( modifyEnvironmentDto );
+        hubClient.modifyEnvironment( modifyEnvironmentRequest );
     }
 }

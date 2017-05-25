@@ -3,9 +3,6 @@ package io.subutai.client.api;
 
 import java.util.List;
 
-import io.subutai.client.api.dto.CreateEnvironmentDto;
-import io.subutai.client.api.dto.ModifyEnvironmentDto;
-
 
 public interface HubClient
 {
@@ -48,7 +45,11 @@ public interface HubClient
 
     List<Template> getTemplates();
 
-    void createEnvironment( CreateEnvironmentDto createEnvironmentDto );
+    CreateEnvironmentRequest createRequest( String environmentName );
 
-    void modifyEnvironment( ModifyEnvironmentDto modifyEnvironmentDto );
+    ModifyEnvironmentRequest modifyRequest( String environmentId );
+
+    void createEnvironment( CreateEnvironmentRequest createEnvironmentRequest );
+
+    void modifyEnvironment( ModifyEnvironmentRequest modifyEnvironmentRequest );
 }
