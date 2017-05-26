@@ -110,16 +110,6 @@ public class Signer
     }
 
 
-    private static void processLine( PGPSignature sig, byte[] line ) throws SignatureException, IOException
-    {
-        int length = getLengthWithoutWhiteSpace( line );
-        if ( length > 0 )
-        {
-            sig.update( line, 0, length );
-        }
-    }
-
-
     public static byte[] clearSign( byte[] message, PGPSecretKey pgpSecKey, char[] pass, String digestName )
             throws IOException, PGPException, SignatureException
     {
@@ -207,39 +197,12 @@ public class Signer
     }
 
 
-    public static byte[] extractContentFromClearSign( byte[] signedMessage ) throws PGPException
+    private static void processLine( PGPSignature sig, byte[] line ) throws SignatureException, IOException
     {
-        try
+        int length = getLengthWithoutWhiteSpace( line );
+        if ( length > 0 )
         {
-            ArmoredInputStream aIn = new ArmoredInputStream( new ByteArrayInputStream( signedMessage ) );
-            ByteArrayOutputStream bout = new ByteArrayOutputStream();
-
-
-            //
-            // write out signed section using the local line separator.
-            // note: trailing white space needs to be removed from the end of
-            // each line RFC 4880 Section 7.1
-            //
-            ByteArrayOutputStream lineOut = new ByteArrayOutputStream();
-
-            boolean isFirstLineText = aIn.isClearText();
-            int lookAhead = readInputLine( lineOut, aIn );
-
-            if ( lookAhead != -1 && isFirstLineText )
-            {
-                bout.write( lineOut.toByteArray() );
-                while ( lookAhead != -1 && aIn.isClearText() )
-                {
-                    lookAhead = readInputLine( lineOut, lookAhead, aIn );
-                    bout.write( lineOut.toByteArray() );
-                }
-            }
-
-            return bout.toByteArray();
-        }
-        catch ( Exception ex )
-        {
-            throw new PGPException( "", ex );
+            sig.update( line, 0, length );
         }
     }
 
