@@ -67,7 +67,9 @@ public class HubClientImplementationTest
     @Mock
     private Template template;
     @Mock
-    ModifyEnvironmentRequestImpl modifyEnvironmentRequest;
+    private ModifyEnvironmentRequestImpl modifyEnvironmentRequest;
+    @Mock
+    private KurjunClient kurjunClient;
 
 
     @Before
@@ -76,6 +78,7 @@ public class HubClientImplementationTest
         hubClient = ( HubClientImplementation ) spy( HubClients.getClient( HubClient.HubEnv.DEV ) );
         doReturn( response ).when( hubClient ).execute( any( HttpRequestBase.class ) );
         returnHttpCode( HttpStatus.SC_OK );
+        hubClient.kurjunClient = kurjunClient;
     }
 
 
@@ -183,11 +186,9 @@ public class HubClientImplementationTest
     @Test
     public void tesGetTemplates() throws Exception
     {
-        doReturn( Lists.newArrayList( template ) ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
-
         hubClient.getTemplates();
 
-        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+        verify( kurjunClient ).getTemplates( "" );
     }
 
 
@@ -223,6 +224,19 @@ public class HubClientImplementationTest
         hubClient.modifyEnvironment( modifyEnvironmentRequest );
 
         verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealGetTemplates() throws Exception
+    {
+        hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV );
+        List<Template> templates = hubClient.getTemplates();
+        for ( Template template : templates )
+        {
+            System.out.println( template );
+        }
     }
 
 

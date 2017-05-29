@@ -25,16 +25,16 @@ public class SignerTest
     private static final String UTF8 = "UTF-8";
 
 
-    public static InputStream getFileStream( final String file )
+    private static InputStream getKeyFileAsStream()
     {
-        return SignerTest.class.getClassLoader().getResourceAsStream( file );
+        return SignerTest.class.getClassLoader().getResourceAsStream( "test-keys" );
     }
 
 
     @Test
     public void testSignNVerify() throws Exception
     {
-        String theKeys = IOUtils.toString( getFileStream( "test-keys" ), UTF8 );
+        String theKeys = IOUtils.toString( getKeyFileAsStream(), UTF8 );
 
         InputStream secretKeyStream = new ByteArrayInputStream( getKeyBlock( theKeys, true ).getBytes( UTF8 ) );
 
@@ -49,7 +49,7 @@ public class SignerTest
 
 
         byte[] signedMessageArmor =
-                //new line after message is crucial since without if signing fails
+                //new line after message is crucial since without it signing fails
                 Signer.clearSign( "test\n".getBytes( UTF8 ), secondSecretKey, "".toCharArray(), "" );
 
         String signedMessage = new String( signedMessageArmor, UTF8 );

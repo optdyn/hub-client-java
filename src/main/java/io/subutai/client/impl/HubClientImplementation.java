@@ -1,11 +1,11 @@
 package io.subutai.client.impl;
 
 
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -43,11 +43,14 @@ import io.subutai.client.api.Template;
 
 public class HubClientImplementation implements HubClient
 {
-    private static final String PARSE_ERROR_MSG = "Failed to parse response";
+    private static final String KURJUN_TOKEN_HEADER = "kurjun-token";
     private CloseableHttpClient httpclient = HttpClients.createDefault();
     private HttpContext httpContext = new BasicHttpContext();
     private Gson gson = new Gson();
     private final HubEnv hubEnv;
+    protected KurjunClient kurjunClient;
+    private String pgpKeyFilePath;
+    private String pgpKeyPassword;
 
 
     HubClientImplementation( HubEnv hubEnv )
@@ -55,7 +58,18 @@ public class HubClientImplementation implements HubClient
         Preconditions.checkNotNull( hubEnv );
 
         this.hubEnv = hubEnv;
+        this.kurjunClient = new KurjunClient( hubEnv );
         this.httpContext.setAttribute( HttpClientContext.COOKIE_STORE, new BasicCookieStore() );
+    }
+
+
+    HubClientImplementation( HubEnv hubEnv, String pgpKeyFilePath, String pgpKeyPassword )
+    {
+        this( hubEnv );
+        Preconditions.checkArgument( !Strings.isNullOrEmpty( pgpKeyFilePath ) );
+
+        this.pgpKeyFilePath = pgpKeyFilePath;
+        this.pgpKeyPassword = pgpKeyPassword;
     }
 
 
@@ -105,10 +119,6 @@ public class HubClientImplementation implements HubClient
 
             environments.addAll( envList );
         }
-        catch ( Exception e )
-        {
-            throw new OperationFailedException( PARSE_ERROR_MSG, e );
-        }
         finally
         {
             close( response );
@@ -137,10 +147,6 @@ public class HubClientImplementation implements HubClient
             } );
 
             peers.addAll( peerList );
-        }
-        catch ( Exception e )
-        {
-            throw new OperationFailedException( PARSE_ERROR_MSG, e );
         }
         finally
         {
@@ -289,6 +295,7 @@ public class HubClientImplementation implements HubClient
                 String.format( "https://%s.subut.ai/rest/v1/client/environments", hubEnv.getUrlPrefix() ) );
 
         httpPost.setEntity( new StringEntity( toJson( createEnvironmentReq ), ContentType.APPLICATION_JSON ) );
+        httpPost.addHeader( KURJUN_TOKEN_HEADER, getKurjunToken() );
 
         CloseableHttpResponse response = null;
         try
@@ -336,6 +343,7 @@ public class HubClientImplementation implements HubClient
                 String.format( "https://%s.subut.ai/rest/v1/client/environments", hubEnv.getUrlPrefix() ) );
 
         httpPut.setEntity( new StringEntity( toJson( modifyEnvironmentReq ), ContentType.APPLICATION_JSON ) );
+        httpPut.addHeader( KURJUN_TOKEN_HEADER, getKurjunToken() );
 
         CloseableHttpResponse response = null;
         try
@@ -388,34 +396,19 @@ public class HubClientImplementation implements HubClient
 
     public List<Template> getTemplates()
     {
-        List<Template> templates = Lists.newArrayList();
+        return kurjunClient.getTemplates( getKurjunToken() );
+    }
 
-        HttpGet httpGet = new HttpGet( String.format( "https://%scdn.subut.ai:8338/kurjun/rest/template/info",
-                hubEnv == HubEnv.PROD ? "" : hubEnv.getUrlPrefix() ) );
 
-        CloseableHttpResponse response = null;
-        try
-        {
-            response = execute( httpGet );
-
-            checkHttpStatus( response, HttpStatus.SC_OK, "list templates" );
-
-            List<Template> peerList = parse( response, new TypeToken<List<Template>>()
-            {
-            } );
-
-            templates.addAll( peerList );
-        }
-        catch ( Exception e )
-        {
-            throw new OperationFailedException( PARSE_ERROR_MSG, e );
-        }
-        finally
-        {
-            close( response );
-        }
-
-        return templates;
+    private String getKurjunToken()
+    {
+        //TODO if pgpKey is set then return token otherwise return empty string
+        //0) if token exists and not expired then return it, otherwise:
+        //1) obtain auth id (use fingerprint as username)
+        //2) sign with pgp key
+        //3) obtain token
+        //use mutual instance locking for methods createEnvironment, modifyEnvironment and getTemplates
+        return "";
     }
 
 
@@ -425,9 +418,16 @@ public class HubClientImplementation implements HubClient
     }
 
 
-    <T> T parse( CloseableHttpResponse response, TypeToken<T> typeToken ) throws IOException
+    <T> T parse( CloseableHttpResponse response, TypeToken<T> typeToken )
     {
-        return gson.fromJson( EntityUtils.toString( response.getEntity() ), typeToken.getType() );
+        try
+        {
+            return gson.fromJson( EntityUtils.toString( response.getEntity() ), typeToken.getType() );
+        }
+        catch ( Exception e )
+        {
+            throw new OperationFailedException( "Failed to parse response", e );
+        }
     }
 
 
@@ -459,7 +459,7 @@ public class HubClientImplementation implements HubClient
     {
         EntityUtils.consumeQuietly( response.getEntity() );
 
-        closeQuietly( response );
+        IOUtils.closeQuietly( response );
     }
 
 
@@ -472,19 +472,6 @@ public class HubClientImplementation implements HubClient
         catch ( Exception e )
         {
             return null;
-        }
-    }
-
-
-    private void closeQuietly( CloseableHttpResponse response )
-    {
-        try
-        {
-            response.close();
-        }
-        catch ( Exception e )
-        {
-            //ignore
         }
     }
 }
