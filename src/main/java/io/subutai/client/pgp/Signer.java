@@ -30,7 +30,7 @@ import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentVerifierBuilderProv
 import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyDecryptorBuilder;
 
 
-public class Signer
+class Signer
 {
     private static final BouncyCastleProvider provider = new BouncyCastleProvider();
 
@@ -45,7 +45,7 @@ public class Signer
     }
 
 
-    public static boolean verifyClearSign( byte[] message, PGPPublicKeyRing pgpRings )
+    static boolean verifyClearSign( byte[] message, PGPPublicKeyRing pgpRings )
             throws IOException, PGPException, SignatureException
     {
         ArmoredInputStream aIn = new ArmoredInputStream( new ByteArrayInputStream( message ) );
@@ -110,7 +110,7 @@ public class Signer
     }
 
 
-    public static byte[] clearSign( byte[] message, PGPSecretKey pgpSecKey, char[] pass, String digestName )
+    static byte[] clearSign( byte[] message, PGPSecretKey pgpSecKey, char[] pass, String digestName )
             throws IOException, PGPException, SignatureException
     {
         ByteArrayOutputStream out = new ByteArrayOutputStream();

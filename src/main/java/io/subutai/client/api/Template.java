@@ -84,17 +84,8 @@ public class Template
     @Override
     public String toString()
     {
-        final StringBuffer sb = new StringBuffer( "Template{" );
-        sb.append( "id='" ).append( id ).append( '\'' );
-        sb.append( ", name='" ).append( name ).append( '\'' );
-        sb.append( ", size=" ).append( size );
-        sb.append( ", owners=" ).append( owners );
-        sb.append( ", tags=" ).append( tags );
-        sb.append( ", parent='" ).append( parent ).append( '\'' );
-        sb.append( ", version='" ).append( version ).append( '\'' );
-        sb.append( ", filename='" ).append( filename ).append( '\'' );
-        sb.append( ", architecture=" ).append( architecture );
-        sb.append( '}' );
-        return sb.toString();
+        return "Template{" + "id='" + id + '\'' + ", name='" + name + '\'' + ", size=" + size + ", owners=" + owners
+                + ", tags=" + tags + ", parent='" + parent + '\'' + ", version='" + version + '\'' + ", filename='"
+                + filename + '\'' + ", architecture=" + architecture + '}';
     }
 }

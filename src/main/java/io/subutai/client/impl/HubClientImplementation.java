@@ -95,7 +95,7 @@ public class HubClientImplementation implements HubClient
         HttpPost httpPost =
                 new HttpPost( String.format( "https://%s.subut.ai/rest/v1/client/login", hubEnv.getUrlPrefix() ) );
 
-        List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+        List<NameValuePair> nvps = new ArrayList<>();
         nvps.add( new BasicNameValuePair( "email", username ) );
         nvps.add( new BasicNameValuePair( "password", password ) );
         httpPost.setEntity( new UrlEncodedFormEntity( nvps, Charset.forName( "UTF-8" ) ) );
@@ -180,7 +180,7 @@ public class HubClientImplementation implements HubClient
                 String.format( "https://%s.subut.ai/rest/v1/client/environments/%s/ssh-key/add", hubEnv.getUrlPrefix(),
                         envId ) );
 
-        List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+        List<NameValuePair> nvps = new ArrayList<>();
         nvps.add( new BasicNameValuePair( "ssh-key", sshKey ) );
         httpPost.setEntity( new UrlEncodedFormEntity( nvps, Charset.forName( "UTF-8" ) ) );
 
@@ -204,7 +204,7 @@ public class HubClientImplementation implements HubClient
                 String.format( "https://%s.subut.ai/rest/v1/client/environments/%s/ssh-key/remove",
                         hubEnv.getUrlPrefix(), envId ) );
 
-        List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+        List<NameValuePair> nvps = new ArrayList<>();
         nvps.add( new BasicNameValuePair( "ssh-key", sshKey ) );
         httpPost.setEntity( new UrlEncodedFormEntity( nvps, Charset.forName( "UTF-8" ) ) );
 
