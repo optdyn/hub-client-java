@@ -25,7 +25,7 @@ public class SignerTest
     private static final String UTF8 = "UTF-8";
 
 
-    private static InputStream getKeyFileAsStream()
+    public static InputStream getKeyFileAsStream()
     {
         return SignerTest.class.getClassLoader().getResourceAsStream( "test-keys" );
     }

@@ -1,9 +1,21 @@
 package io.subutai.client.impl;
 
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
+
+import org.bouncycastle.openpgp.PGPException;
+import org.bouncycastle.openpgp.PGPSecretKey;
+import org.bouncycastle.openpgp.PGPSecretKeyRing;
+import org.bouncycastle.openpgp.PGPSecretKeyRingCollection;
+import org.bouncycastle.openpgp.PGPUtil;
+import org.bouncycastle.openpgp.operator.jcajce.JcaKeyFingerprintCalculator;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
@@ -29,6 +41,7 @@ import org.apache.http.util.EntityUtils;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -44,13 +57,14 @@ import io.subutai.client.api.Template;
 public class HubClientImplementation implements HubClient
 {
     private static final String KURJUN_TOKEN_HEADER = "kurjun-token";
+    private static final String UTF8 = "UTF-8";
     private CloseableHttpClient httpclient = HttpClients.createDefault();
     private HttpContext httpContext = new BasicHttpContext();
     private Gson gson = new Gson();
     private final HubEnv hubEnv;
-    protected KurjunClient kurjunClient;
-    private String pgpKeyFilePath;
+    KurjunClient kurjunClient;
     private String pgpKeyPassword;
+    private PGPSecretKey secretKey;
 
 
     HubClientImplementation( HubEnv hubEnv )
@@ -64,12 +78,15 @@ public class HubClientImplementation implements HubClient
 
 
     HubClientImplementation( HubEnv hubEnv, String pgpKeyFilePath, String pgpKeyPassword )
+            throws PGPException, IOException
     {
         this( hubEnv );
+
         Preconditions.checkArgument( !Strings.isNullOrEmpty( pgpKeyFilePath ) );
 
-        this.pgpKeyFilePath = pgpKeyFilePath;
         this.pgpKeyPassword = pgpKeyPassword;
+
+        loadSecretKey( pgpKeyFilePath );
     }
 
 
@@ -397,6 +414,57 @@ public class HubClientImplementation implements HubClient
     public List<Template> getTemplates()
     {
         return kurjunClient.getTemplates( getKurjunToken() );
+    }
+
+
+    //**************
+
+
+    private void loadSecretKey( String pgpKeyFilePath ) throws PGPException, IOException
+    {
+        String theKeys = Files.toString( new File( pgpKeyFilePath ), Charset.forName( UTF8 ) );
+
+        InputStream secretKeyStream = new ByteArrayInputStream( getPrivateKeyBlock( theKeys ).getBytes( UTF8 ) );
+
+        PGPSecretKeyRingCollection secretKeyRingCollection =
+                new PGPSecretKeyRingCollection( PGPUtil.getDecoderStream( secretKeyStream ),
+                        new JcaKeyFingerprintCalculator() );
+
+        PGPSecretKeyRing secretKeyRing = secretKeyRingCollection
+                .getSecretKeyRing( secretKeyRingCollection.iterator().next().getPublicKey().getKeyID() );
+
+        secretKey = secretKeyRing.getSecretKey();
+    }
+
+
+    private String getPrivateKeyBlock( String keys )
+    {
+        StringTokenizer lineSplitter = new StringTokenizer( keys, "\n" );
+
+        StringBuilder keyBuffer = new StringBuilder();
+        boolean append = false;
+
+        while ( lineSplitter.hasMoreTokens() )
+        {
+            String nextLine = lineSplitter.nextToken();
+
+            if ( nextLine.contains( String.format( "-----BEGIN PGP %s KEY BLOCK-----", "PRIVATE" ) ) )
+            {
+                append = true;
+            }
+
+            if ( append )
+            {
+                keyBuffer.append( nextLine );
+            }
+
+            if ( nextLine.contains( String.format( "-----END PGP %s KEY BLOCK-----", "PRIVATE" ) ) )
+            {
+                break;
+            }
+        }
+
+        return keyBuffer.toString();
     }
 
 

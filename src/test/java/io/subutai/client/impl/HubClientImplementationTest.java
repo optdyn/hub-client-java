@@ -1,6 +1,9 @@
 package io.subutai.client.impl;
 
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 import org.junit.Before;
@@ -25,6 +28,7 @@ import io.subutai.client.api.HubClient;
 import io.subutai.client.api.ModifyEnvironmentRequest;
 import io.subutai.client.api.Peer;
 import io.subutai.client.api.Template;
+import io.subutai.client.pgp.SignerTest;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -276,5 +280,15 @@ public class HubClientImplementationTest
         modifyEnvironmentRequest.removeNode( contIt );
 
         hubClient.modifyEnvironment( modifyEnvironmentRequest );
+    }
+
+
+    @Test
+    public void testRealCreateHubClientWithKey() throws Exception
+    {
+        File keyFile = File.createTempFile( "test-keys", ".tmp" );
+        Files.copy( SignerTest.getKeyFileAsStream(), keyFile.toPath(), StandardCopyOption.REPLACE_EXISTING );
+
+        HubClients.getClient( HubClient.HubEnv.DEV, keyFile.getPath(), "" );
     }
 }
