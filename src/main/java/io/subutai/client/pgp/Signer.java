@@ -29,8 +29,10 @@ import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentSignerBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentVerifierBuilderProvider;
 import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyDecryptorBuilder;
 
+import org.apache.commons.codec.binary.Hex;
 
-class Signer
+
+public class Signer
 {
     private static final BouncyCastleProvider provider = new BouncyCastleProvider();
 
@@ -42,6 +44,15 @@ class Signer
     private Signer()
     {
         throw new IllegalAccessError( "Utility class" );
+    }
+
+
+    public static String getFingerprint( PGPSecretKey secretKey )
+    {
+
+        char[] hex = Hex.encodeHex( secretKey.getPublicKey().getFingerprint(), false );
+
+        return new String( hex );
     }
 
 
@@ -110,7 +121,7 @@ class Signer
     }
 
 
-    static byte[] clearSign( byte[] message, PGPSecretKey pgpSecKey, char[] pass, String digestName )
+    public static byte[] clearSign( byte[] message, PGPSecretKey pgpSecKey, char[] pass, String digestName )
             throws IOException, PGPException, SignatureException
     {
         ByteArrayOutputStream out = new ByteArrayOutputStream();

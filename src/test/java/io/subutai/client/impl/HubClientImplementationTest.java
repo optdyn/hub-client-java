@@ -235,7 +235,8 @@ public class HubClientImplementationTest
     @Ignore
     public void testRealGetTemplates() throws Exception
     {
-        hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV );
+        hubClient = ( HubClientImplementation ) HubClients
+                .getClient( HubClient.HubEnv.DEV, "C:\\Users\\Dilshat\\Desktop\\dilshat.aliev_all.asc", "" );
         List<Template> templates = hubClient.getTemplates();
         for ( Template template : templates )
         {

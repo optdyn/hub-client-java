@@ -9,6 +9,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.concurrent.TimeUnit;
 
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPSecretKey;
@@ -16,6 +17,8 @@ import org.bouncycastle.openpgp.PGPSecretKeyRing;
 import org.bouncycastle.openpgp.PGPSecretKeyRingCollection;
 import org.bouncycastle.openpgp.PGPUtil;
 import org.bouncycastle.openpgp.operator.jcajce.JcaKeyFingerprintCalculator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
@@ -52,10 +55,13 @@ import io.subutai.client.api.ModifyEnvironmentRequest;
 import io.subutai.client.api.OperationFailedException;
 import io.subutai.client.api.Peer;
 import io.subutai.client.api.Template;
+import io.subutai.client.pgp.Signer;
 
 
 public class HubClientImplementation implements HubClient
 {
+    private static final Logger LOG = LoggerFactory.getLogger( HubClientImplementation.class );
+
     private static final String KURJUN_TOKEN_HEADER = "kurjun-token";
     private static final String UTF8 = "UTF-8";
     private CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -65,6 +71,8 @@ public class HubClientImplementation implements HubClient
     KurjunClient kurjunClient;
     private String pgpKeyPassword;
     private PGPSecretKey secretKey;
+    private long kurjunTokenSetTime;
+    private String kurjunToken = "";
 
 
     HubClientImplementation( HubEnv hubEnv )
@@ -84,7 +92,7 @@ public class HubClientImplementation implements HubClient
 
         Preconditions.checkArgument( !Strings.isNullOrEmpty( pgpKeyFilePath ) );
 
-        this.pgpKeyPassword = pgpKeyPassword;
+        this.pgpKeyPassword = Strings.isNullOrEmpty( pgpKeyPassword ) ? "" : pgpKeyPassword;
 
         loadSecretKey( pgpKeyFilePath );
     }
@@ -468,15 +476,39 @@ public class HubClientImplementation implements HubClient
     }
 
 
-    private String getKurjunToken()
+    private synchronized String getKurjunToken()
     {
-        //TODO if pgpKey is set then return token otherwise return empty string
-        //0) if token exists and not expired then return it, otherwise:
-        //1) obtain auth id (use fingerprint as username)
-        //2) sign with pgp key
-        //3) obtain token
-        //use mutual instance locking for methods createEnvironment, modifyEnvironment and getTemplates
-        return "";
+        if ( secretKey == null )
+        {
+            return "";
+        }
+        else
+        {
+            try
+            {
+                if ( System.currentTimeMillis() - kurjunTokenSetTime > TimeUnit.MINUTES.toMillis( 30 ) )
+                {
+                    String username = Signer.getFingerprint( secretKey );
+
+                    String authId = kurjunClient.getAuthId( username );
+
+                    byte[] signedAuthId = Signer.clearSign( ( authId.trim() + "\n" ).getBytes(), secretKey,
+                            pgpKeyPassword.toCharArray(), "" );
+
+                    String token = kurjunClient.getToken( username, new String( signedAuthId, UTF8 ) );
+
+                    kurjunToken = Strings.isNullOrEmpty( token ) ? "" : token;
+
+                    kurjunTokenSetTime = System.currentTimeMillis();
+                }
+            }
+            catch ( Exception e )
+            {
+                LOG.error( "Error obtaining Kurjun token", e );
+            }
+
+            return kurjunToken;
+        }
     }
 
 
