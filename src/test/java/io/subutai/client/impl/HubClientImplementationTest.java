@@ -1,6 +1,9 @@
 package io.subutai.client.impl;
 
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 import org.junit.Before;
@@ -25,6 +28,7 @@ import io.subutai.client.api.HubClient;
 import io.subutai.client.api.ModifyEnvironmentRequest;
 import io.subutai.client.api.Peer;
 import io.subutai.client.api.Template;
+import io.subutai.client.pgp.SignerTest;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -67,7 +71,9 @@ public class HubClientImplementationTest
     @Mock
     private Template template;
     @Mock
-    ModifyEnvironmentRequestImpl modifyEnvironmentRequest;
+    private ModifyEnvironmentRequestImpl modifyEnvironmentRequest;
+    @Mock
+    private KurjunClient kurjunClient;
 
 
     @Before
@@ -76,6 +82,7 @@ public class HubClientImplementationTest
         hubClient = ( HubClientImplementation ) spy( HubClients.getClient( HubClient.HubEnv.DEV ) );
         doReturn( response ).when( hubClient ).execute( any( HttpRequestBase.class ) );
         returnHttpCode( HttpStatus.SC_OK );
+        hubClient.kurjunClient = kurjunClient;
     }
 
 
@@ -183,11 +190,9 @@ public class HubClientImplementationTest
     @Test
     public void tesGetTemplates() throws Exception
     {
-        doReturn( Lists.newArrayList( template ) ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
-
         hubClient.getTemplates();
 
-        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+        verify( kurjunClient ).getTemplates( "" );
     }
 
 
@@ -228,6 +233,20 @@ public class HubClientImplementationTest
 
     @Test
     @Ignore
+    public void testRealGetTemplates() throws Exception
+    {
+        hubClient = ( HubClientImplementation ) HubClients
+                .getClient( HubClient.HubEnv.DEV, "C:\\Users\\Dilshat\\Desktop\\dilshat.aliev_all.asc", "" );
+        List<Template> templates = hubClient.getTemplates();
+        for ( Template template : templates )
+        {
+            System.out.println( template );
+        }
+    }
+
+
+    @Test
+    @Ignore
     public void testRealCreateEnvironment() throws Exception
     {
         reset( hubClient );
@@ -262,5 +281,15 @@ public class HubClientImplementationTest
         modifyEnvironmentRequest.removeNode( contIt );
 
         hubClient.modifyEnvironment( modifyEnvironmentRequest );
+    }
+
+
+    @Test
+    public void testRealCreateHubClientWithKey() throws Exception
+    {
+        File keyFile = File.createTempFile( "test-keys", ".tmp" );
+        Files.copy( SignerTest.getKeyFileAsStream(), keyFile.toPath(), StandardCopyOption.REPLACE_EXISTING );
+
+        HubClients.getClient( HubClient.HubEnv.DEV, keyFile.getPath(), "" );
     }
 }
