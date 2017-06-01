@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
@@ -46,6 +47,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import io.subutai.client.api.CreateEnvironmentRequest;
@@ -66,7 +68,8 @@ public class HubClientImplementation implements HubClient
     private static final String UTF8 = "UTF-8";
     private CloseableHttpClient httpclient = HttpClients.createDefault();
     private HttpContext httpContext = new BasicHttpContext();
-    private Gson gson = new Gson();
+    private Gson gson = new GsonBuilder().registerTypeAdapter( Date.class, new DateDeserializer() ).create();
+
     private final HubEnv hubEnv;
     KurjunClient kurjunClient;
     private String pgpKeyPassword;
@@ -522,7 +525,9 @@ public class HubClientImplementation implements HubClient
     {
         try
         {
-            return gson.fromJson( EntityUtils.toString( response.getEntity() ), typeToken.getType() );
+            String responseContent = EntityUtils.toString( response.getEntity() );
+            LOG.info( "Response: {} {}", response.getEntity().getContentType(), responseContent );
+            return gson.fromJson( responseContent, typeToken.getType() );
         }
         catch ( Exception e )
         {

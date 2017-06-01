@@ -37,7 +37,6 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
@@ -232,6 +231,74 @@ public class HubClientImplementationTest
 
 
     @Test
+    public void testCreateHubClientWithKey() throws Exception
+    {
+        File keyFile = File.createTempFile( "test-keys", ".tmp" );
+        Files.copy( SignerTest.getKeyFileAsStream(), keyFile.toPath(), StandardCopyOption.REPLACE_EXISTING );
+
+        HubClients.getClient( HubClient.HubEnv.DEV, keyFile.getPath(), "" );
+    }
+
+
+    /******* Real tests *******/
+
+
+    @Test
+    @Ignore
+    public void testRealAddSshKey() throws Exception
+    {
+        hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV );
+        hubClient.login( "test.d@mail.com", "test" );
+        String envId = "ded67cba-7070-4969-9bb3-284bc80c93be";
+
+        hubClient.addSshKey( envId, SSH_KEY );
+    }
+
+
+    @Test
+    public void testRealRemoveSshKey() throws Exception
+    {
+        hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV );
+        hubClient.login( "test.d@mail.com", "test" );
+        String envId = "ded67cba-7070-4969-9bb3-284bc80c93be";
+
+        hubClient.removeSshKey( envId, SSH_KEY );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealGetPeers() throws Exception
+    {
+        hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV );
+        hubClient.login( "test.d@mail.com", "test" );
+
+        List<Peer> peers = hubClient.getPeers();
+
+        for ( Peer peer : peers )
+        {
+            System.out.println( peer );
+        }
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealGetEnvironments() throws Exception
+    {
+        hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV );
+        hubClient.login( "test.d@mail.com", "test" );
+
+        List<Environment> environments = hubClient.getEnvironments();
+
+        for ( Environment environment : environments )
+        {
+            System.out.println( environment );
+        }
+    }
+
+
+    @Test
     @Ignore
     public void testRealGetTemplates() throws Exception
     {
@@ -249,10 +316,10 @@ public class HubClientImplementationTest
     @Ignore
     public void testRealCreateEnvironment() throws Exception
     {
-        reset( hubClient );
+        hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV );
         String templateId = "a697e70f3fc538b4f4763588a7868388";//master
-        String peerId = "8BC9E203393B29DECF485BF8934A1421E3ECB58A";
-        String rhId = "B2E4DBC6200D6592298F7CE2D89CD0E8E61E6326";
+        String peerId = "0829ACEE81502276653BAB39925762E44D53A0DB";
+        String rhId = "AD8BA214C91CC05074DFEC8CC424232C7662659D";
 
         hubClient.login( "test.d@mail.com", "test" );
 
@@ -267,12 +334,12 @@ public class HubClientImplementationTest
     @Ignore
     public void testRealModifyEnvironment() throws Exception
     {
-        reset( hubClient );
+        hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV );
         String templateId = "a697e70f3fc538b4f4763588a7868388";//master
-        String peerId = "8BC9E203393B29DECF485BF8934A1421E3ECB58A";
-        String rhId = "B2E4DBC6200D6592298F7CE2D89CD0E8E61E6326";
-        String envId = "f0740e29-1519-4dcb-91d1-99c91bd0326b";
-        String contIt = "06C6BE754504777A29F3F77EA2450082B7614323";
+        String peerId = "0829ACEE81502276653BAB39925762E44D53A0DB";
+        String rhId = "AD8BA214C91CC05074DFEC8CC424232C7662659D";
+        String envId = "ded67cba-7070-4969-9bb3-284bc80c93be";
+        String contIt = "E23EA32EA9FC165E1824B139D88A12791E64DA58";
 
         hubClient.login( "test.d@mail.com", "test" );
 
@@ -281,15 +348,5 @@ public class HubClientImplementationTest
         modifyEnvironmentRequest.removeNode( contIt );
 
         hubClient.modifyEnvironment( modifyEnvironmentRequest );
-    }
-
-
-    @Test
-    public void testRealCreateHubClientWithKey() throws Exception
-    {
-        File keyFile = File.createTempFile( "test-keys", ".tmp" );
-        Files.copy( SignerTest.getKeyFileAsStream(), keyFile.toPath(), StandardCopyOption.REPLACE_EXISTING );
-
-        HubClients.getClient( HubClient.HubEnv.DEV, keyFile.getPath(), "" );
     }
 }
