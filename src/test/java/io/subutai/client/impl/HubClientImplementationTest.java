@@ -45,10 +45,13 @@ import static org.mockito.Mockito.verify;
 public class HubClientImplementationTest
 {
 
-    private static final String USERNAME = "dummy-user";
-    private static final String PASSWORD = "dummy-pwd";
-    private static final String ENVIRONMENT_ID = "bc8b8e43-0416-4ad4-a002-a4b8ad61b1f2";
-    private static final String CONTAINER_ID = "33416CAEC7D07CABD7C73AB0FE1EF92DBA27FCB6";
+    private static final String USERNAME = "test.d@mail.com";
+    private static final String PASSWORD = "test";
+    private static final String TEMPLATE_ID = "a697e70f3fc538b4f4763588a7868388";
+    private static final String PEER_ID = "0829ACEE81502276653BAB39925762E44D53A0DB";
+    private static final String RH_ID = "AD8BA214C91CC05074DFEC8CC424232C7662659D";
+    private static final String ENVIRONMENT_ID = "19391dea-87d8-42da-a360-42cbe3994a1b";
+    private static final String CONTAINER_ID = "48FD1CC3FB343E24298331A01BBB5E8FD9D22BC9";
     private static final String SSH_KEY =
             "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCjUo/8VklFC8cRyHE502tUXit15L8Qg2z/47c6PMpQThR0sjhURgoILms"
                     + "/IX180yGqgkpjdX08MIkmANhbXDmSFh6T4lUzqGGoC7lerePwkA2yJWlsP+7JKk9oDSaYJ3lkfvKZnz8ZG7JS1jg"
@@ -242,27 +245,69 @@ public class HubClientImplementationTest
 
     /******* Real tests *******/
 
+    private void prepare()
+    {
+        hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV );
+        hubClient.login( USERNAME, PASSWORD );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealStartContainer() throws Exception
+    {
+        prepare();
+
+        hubClient.startContainer( ENVIRONMENT_ID, CONTAINER_ID );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealStopContainer() throws Exception
+    {
+        prepare();
+
+        hubClient.stopContainer( ENVIRONMENT_ID, CONTAINER_ID );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealDestroyContainer() throws Exception
+    {
+        prepare();
+
+        hubClient.destroyContainer( ENVIRONMENT_ID, CONTAINER_ID );
+    }
+
+
+    @Test
+    public void testRealDestroyEnvironment() throws Exception
+    {
+        prepare();
+
+        hubClient.destroyEnvironment( ENVIRONMENT_ID );
+    }
+
 
     @Test
     @Ignore
     public void testRealAddSshKey() throws Exception
     {
-        hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV );
-        hubClient.login( "test.d@mail.com", "test" );
-        String envId = "ded67cba-7070-4969-9bb3-284bc80c93be";
+        prepare();
 
-        hubClient.addSshKey( envId, SSH_KEY );
+        hubClient.addSshKey( ENVIRONMENT_ID, SSH_KEY );
     }
 
 
     @Test
+    @Ignore
     public void testRealRemoveSshKey() throws Exception
     {
-        hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV );
-        hubClient.login( "test.d@mail.com", "test" );
-        String envId = "ded67cba-7070-4969-9bb3-284bc80c93be";
+        prepare();
 
-        hubClient.removeSshKey( envId, SSH_KEY );
+        hubClient.removeSshKey( ENVIRONMENT_ID, SSH_KEY );
     }
 
 
@@ -270,8 +315,7 @@ public class HubClientImplementationTest
     @Ignore
     public void testRealGetPeers() throws Exception
     {
-        hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV );
-        hubClient.login( "test.d@mail.com", "test" );
+        prepare();
 
         List<Peer> peers = hubClient.getPeers();
 
@@ -286,8 +330,7 @@ public class HubClientImplementationTest
     @Ignore
     public void testRealGetEnvironments() throws Exception
     {
-        hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV );
-        hubClient.login( "test.d@mail.com", "test" );
+        prepare();
 
         List<Environment> environments = hubClient.getEnvironments();
 
@@ -304,7 +347,9 @@ public class HubClientImplementationTest
     {
         hubClient = ( HubClientImplementation ) HubClients
                 .getClient( HubClient.HubEnv.DEV, "C:\\Users\\Dilshat\\Desktop\\dilshat.aliev_all.asc", "" );
+
         List<Template> templates = hubClient.getTemplates();
+
         for ( Template template : templates )
         {
             System.out.println( template );
@@ -316,15 +361,10 @@ public class HubClientImplementationTest
     @Ignore
     public void testRealCreateEnvironment() throws Exception
     {
-        hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV );
-        String templateId = "a697e70f3fc538b4f4763588a7868388";//master
-        String peerId = "0829ACEE81502276653BAB39925762E44D53A0DB";
-        String rhId = "AD8BA214C91CC05074DFEC8CC424232C7662659D";
-
-        hubClient.login( "test.d@mail.com", "test" );
-
+        prepare();
         CreateEnvironmentRequest createEnvironmentRequest = hubClient.createRequest( "test-env" );
-        createEnvironmentRequest.addNode( "test-container", templateId, ContainerSize.SMALL, peerId, rhId );
+        createEnvironmentRequest.addNode( "test-container1", TEMPLATE_ID, ContainerSize.SMALL, PEER_ID, RH_ID );
+        createEnvironmentRequest.addNode( "test-container2", TEMPLATE_ID, ContainerSize.SMALL, PEER_ID, RH_ID );
 
         hubClient.createEnvironment( createEnvironmentRequest );
     }
@@ -334,18 +374,10 @@ public class HubClientImplementationTest
     @Ignore
     public void testRealModifyEnvironment() throws Exception
     {
-        hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV );
-        String templateId = "a697e70f3fc538b4f4763588a7868388";//master
-        String peerId = "0829ACEE81502276653BAB39925762E44D53A0DB";
-        String rhId = "AD8BA214C91CC05074DFEC8CC424232C7662659D";
-        String envId = "ded67cba-7070-4969-9bb3-284bc80c93be";
-        String contIt = "E23EA32EA9FC165E1824B139D88A12791E64DA58";
-
-        hubClient.login( "test.d@mail.com", "test" );
-
-        ModifyEnvironmentRequest modifyEnvironmentRequest = hubClient.modifyRequest( envId );
-        modifyEnvironmentRequest.addNode( "test-container222", templateId, ContainerSize.SMALL, peerId, rhId );
-        modifyEnvironmentRequest.removeNode( contIt );
+        prepare();
+        ModifyEnvironmentRequest modifyEnvironmentRequest = hubClient.modifyRequest( ENVIRONMENT_ID );
+        modifyEnvironmentRequest.addNode( "test-container3", TEMPLATE_ID, ContainerSize.SMALL, PEER_ID, RH_ID );
+        modifyEnvironmentRequest.removeNode( CONTAINER_ID );
 
         hubClient.modifyEnvironment( modifyEnvironmentRequest );
     }
