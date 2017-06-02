@@ -57,6 +57,26 @@ public interface HubClient
     List<Peer> getPeers();
 
     /**
+     * Returns list of own peers
+     */
+    List<Peer> getOwnPeers();
+
+    /**
+     * Returns list of peers shared with the current user
+     */
+    List<Peer> getSharedPeers();
+
+    /**
+     * Returns list of favorite peers
+     */
+    List<Peer> getFavoritePeers();
+
+    /**
+     * Returns list of all public peers
+     */
+    List<Peer> getPublicPeers();
+
+    /**
      * Stops container
      *
      * @param envId environment id

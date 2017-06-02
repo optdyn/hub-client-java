@@ -283,6 +283,7 @@ public class HubClientImplementationTest
 
 
     @Test
+    @Ignore
     public void testRealDestroyEnvironment() throws Exception
     {
         prepare();
@@ -317,7 +318,7 @@ public class HubClientImplementationTest
     {
         prepare();
 
-        List<Peer> peers = hubClient.getPeers();
+        List<Peer> peers = hubClient.getPublicPeers();
 
         for ( Peer peer : peers )
         {

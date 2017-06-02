@@ -161,7 +161,7 @@ public class HubClientImplementation implements HubClient
         List<Peer> peers = Lists.newArrayList();
 
         HttpGet httpGet =
-                new HttpGet( String.format( "https://%s.subut.ai/rest/v1/client/peers", hubEnv.getUrlPrefix() ) );
+                new HttpGet( String.format( "https://%s.subut.ai/rest/v1/client/peers/all", hubEnv.getUrlPrefix() ) );
 
         CloseableHttpResponse response = null;
         try
@@ -184,6 +184,124 @@ public class HubClientImplementation implements HubClient
         return peers;
     }
 
+
+    @Override
+    public List<Peer> getOwnPeers()
+    {
+        List<Peer> peers = Lists.newArrayList();
+
+        HttpGet httpGet =
+                new HttpGet( String.format( "https://%s.subut.ai/rest/v1/client/peers/own", hubEnv.getUrlPrefix() ) );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            response = execute( httpGet );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "list peers" );
+
+            List<PeerImpl> peerList = parse( response, new TypeToken<List<PeerImpl>>()
+            {
+            } );
+
+            peers.addAll( peerList );
+        }
+        finally
+        {
+            close( response );
+        }
+
+        return peers;
+    }
+
+
+    @Override
+    public List<Peer> getSharedPeers()
+    {
+        List<Peer> peers = Lists.newArrayList();
+
+        HttpGet httpGet = new HttpGet(
+                String.format( "https://%s.subut.ai/rest/v1/client/peers/shared", hubEnv.getUrlPrefix() ) );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            response = execute( httpGet );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "list peers" );
+
+            List<PeerImpl> peerList = parse( response, new TypeToken<List<PeerImpl>>()
+            {
+            } );
+
+            peers.addAll( peerList );
+        }
+        finally
+        {
+            close( response );
+        }
+
+        return peers;
+    }
+
+
+    @Override
+    public List<Peer> getFavoritePeers()
+    {
+        List<Peer> peers = Lists.newArrayList();
+
+        HttpGet httpGet = new HttpGet(
+                String.format( "https://%s.subut.ai/rest/v1/client/peers/favorite", hubEnv.getUrlPrefix() ) );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            response = execute( httpGet );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "list peers" );
+
+            List<PeerImpl> peerList = parse( response, new TypeToken<List<PeerImpl>>()
+            {
+            } );
+
+            peers.addAll( peerList );
+        }
+        finally
+        {
+            close( response );
+        }
+
+        return peers;
+    }
+
+    @Override
+    public List<Peer> getPublicPeers()
+    {
+        List<Peer> peers = Lists.newArrayList();
+
+        HttpGet httpGet = new HttpGet(
+                String.format( "https://%s.subut.ai/rest/v1/client/peers/public", hubEnv.getUrlPrefix() ) );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            response = execute( httpGet );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "list peers" );
+
+            List<PeerImpl> peerList = parse( response, new TypeToken<List<PeerImpl>>()
+            {
+            } );
+
+            peers.addAll( peerList );
+        }
+        finally
+        {
+            close( response );
+        }
+
+        return peers;
+    }
 
     public void addSshKey( final String envId, final String sshKey )
     {
