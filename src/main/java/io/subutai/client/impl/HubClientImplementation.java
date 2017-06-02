@@ -66,6 +66,7 @@ public class HubClientImplementation implements HubClient
 
     private static final String KURJUN_TOKEN_HEADER = "kurjun-token";
     private static final String UTF8 = "UTF-8";
+    public static final String LIST_PEERS = "list peers";
     private CloseableHttpClient httpclient = HttpClients.createDefault();
     private HttpContext httpContext = new BasicHttpContext();
     private Gson gson = new GsonBuilder().registerTypeAdapter( Date.class, new DateDeserializer() ).create();
@@ -168,7 +169,7 @@ public class HubClientImplementation implements HubClient
         {
             response = execute( httpGet );
 
-            checkHttpStatus( response, HttpStatus.SC_OK, "list peers" );
+            checkHttpStatus( response, HttpStatus.SC_OK, LIST_PEERS );
 
             List<PeerImpl> peerList = parse( response, new TypeToken<List<PeerImpl>>()
             {
@@ -198,7 +199,7 @@ public class HubClientImplementation implements HubClient
         {
             response = execute( httpGet );
 
-            checkHttpStatus( response, HttpStatus.SC_OK, "list peers" );
+            checkHttpStatus( response, HttpStatus.SC_OK, LIST_PEERS );
 
             List<PeerImpl> peerList = parse( response, new TypeToken<List<PeerImpl>>()
             {
@@ -228,7 +229,7 @@ public class HubClientImplementation implements HubClient
         {
             response = execute( httpGet );
 
-            checkHttpStatus( response, HttpStatus.SC_OK, "list peers" );
+            checkHttpStatus( response, HttpStatus.SC_OK, LIST_PEERS );
 
             List<PeerImpl> peerList = parse( response, new TypeToken<List<PeerImpl>>()
             {
@@ -258,7 +259,7 @@ public class HubClientImplementation implements HubClient
         {
             response = execute( httpGet );
 
-            checkHttpStatus( response, HttpStatus.SC_OK, "list peers" );
+            checkHttpStatus( response, HttpStatus.SC_OK, LIST_PEERS );
 
             List<PeerImpl> peerList = parse( response, new TypeToken<List<PeerImpl>>()
             {
@@ -273,6 +274,7 @@ public class HubClientImplementation implements HubClient
 
         return peers;
     }
+
 
     @Override
     public List<Peer> getPublicPeers()
@@ -287,7 +289,7 @@ public class HubClientImplementation implements HubClient
         {
             response = execute( httpGet );
 
-            checkHttpStatus( response, HttpStatus.SC_OK, "list peers" );
+            checkHttpStatus( response, HttpStatus.SC_OK, LIST_PEERS );
 
             List<PeerImpl> peerList = parse( response, new TypeToken<List<PeerImpl>>()
             {
@@ -302,6 +304,7 @@ public class HubClientImplementation implements HubClient
 
         return peers;
     }
+
 
     public void addSshKey( final String envId, final String sshKey )
     {
