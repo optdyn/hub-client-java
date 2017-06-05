@@ -447,7 +447,7 @@ public class HubClientImplementation implements HubClient
         {
             response = execute( httpPost );
 
-            checkHttpStatus( response, HttpStatus.SC_CREATED, "add ssh key" );
+            checkHttpStatus( response, HttpStatus.SC_ACCEPTED, "add ssh key" );
         }
         finally
         {
@@ -471,7 +471,7 @@ public class HubClientImplementation implements HubClient
         {
             response = execute( httpPost );
 
-            checkHttpStatus( response, HttpStatus.SC_NO_CONTENT, "remove ssh key" );
+            checkHttpStatus( response, HttpStatus.SC_ACCEPTED, "remove ssh key" );
         }
         finally
         {
@@ -491,7 +491,7 @@ public class HubClientImplementation implements HubClient
         {
             response = execute( httpPost );
 
-            checkHttpStatus( response, HttpStatus.SC_OK, "start container" );
+            checkHttpStatus( response, HttpStatus.SC_ACCEPTED, "start container" );
         }
         finally
         {
@@ -511,7 +511,7 @@ public class HubClientImplementation implements HubClient
         {
             response = execute( httpPost );
 
-            checkHttpStatus( response, HttpStatus.SC_OK, "stop container" );
+            checkHttpStatus( response, HttpStatus.SC_ACCEPTED, "stop container" );
         }
         finally
         {
@@ -531,7 +531,7 @@ public class HubClientImplementation implements HubClient
         {
             response = execute( httpDelete );
 
-            checkHttpStatus( response, HttpStatus.SC_NO_CONTENT, "destroy container" );
+            checkHttpStatus( response, HttpStatus.SC_ACCEPTED, "destroy container" );
         }
         finally
         {
@@ -577,7 +577,7 @@ public class HubClientImplementation implements HubClient
         {
             response = execute( httpPost );
 
-            checkHttpStatus( response, HttpStatus.SC_CREATED, "create environment" );
+            checkHttpStatus( response, HttpStatus.SC_ACCEPTED, "create environment" );
         }
         finally
         {
@@ -625,7 +625,7 @@ public class HubClientImplementation implements HubClient
         {
             response = execute( httpPut );
 
-            checkHttpStatus( response, HttpStatus.SC_OK, "modify environment" );
+            checkHttpStatus( response, HttpStatus.SC_ACCEPTED, "modify environment" );
 
             System.out.println( readContent( response ) );
         }
@@ -660,7 +660,7 @@ public class HubClientImplementation implements HubClient
         {
             response = execute( httpDelete );
 
-            checkHttpStatus( response, HttpStatus.SC_NO_CONTENT, "destroy environment" );
+            checkHttpStatus( response, HttpStatus.SC_ACCEPTED, "destroy environment" );
         }
         finally
         {

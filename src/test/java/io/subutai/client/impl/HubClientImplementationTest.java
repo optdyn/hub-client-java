@@ -49,9 +49,9 @@ public class HubClientImplementationTest
     private static final String PASSWORD = "test";
     private static final String TEMPLATE_ID = "a697e70f3fc538b4f4763588a7868388";
     private static final String PEER_ID = "ACB7B15EDF77CA3D71CEC940D27A413549546B54";
-    private static final String RH_ID = "AD8BA214C91CC05074DFEC8CC424232C7662659D";
-    private static final String ENVIRONMENT_ID = "b39606d4-1355-42a6-85bf-6135c61ff41b";
-    private static final String CONTAINER_ID = "7AF3CFD230831B6C282D859B2114924AA389702C";
+    private static final String RH_ID = "2E81C1E1CDFC626E82A3B6FEAB0C06B8F070AB5B";
+    private static final String ENVIRONMENT_ID = "8f000873-e62c-4dfc-a9d6-bd3f6e4d87bf";
+    private static final String CONTAINER_ID = "38AAC445FF022A83FB40974F3A8C0230E60EC6A5";
     private static final String SSH_KEY =
             "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCjUo/8VklFC8cRyHE502tUXit15L8Qg2z/47c6PMpQThR0sjhURgoILms"
                     + "/IX180yGqgkpjdX08MIkmANhbXDmSFh6T4lUzqGGoC7lerePwkA2yJWlsP+7JKk9oDSaYJ3lkfvKZnz8ZG7JS1jg"
@@ -372,7 +372,7 @@ public class HubClientImplementationTest
     {
         prepare();
 
-        hubClient.updatePeerScope( PEER_ID, Peer.Scope.PUBLIC );
+        hubClient.updatePeerScope( PEER_ID, Peer.Scope.SHARED );
     }
 
 
