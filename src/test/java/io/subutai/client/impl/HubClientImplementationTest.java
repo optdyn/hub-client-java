@@ -188,6 +188,8 @@ public class HubClientImplementationTest
     @Test
     public void testStopContainer() throws Exception
     {
+        returnHttpCode( HttpStatus.SC_ACCEPTED );
+
         hubClient.stopContainer( ENVIRONMENT_ID, CONTAINER_ID );
 
         verify( hubClient ).execute( any( HttpRequestBase.class ) );
@@ -197,6 +199,8 @@ public class HubClientImplementationTest
     @Test
     public void testStartContainer() throws Exception
     {
+        returnHttpCode( HttpStatus.SC_ACCEPTED );
+
         hubClient.startContainer( ENVIRONMENT_ID, CONTAINER_ID );
 
         verify( hubClient ).execute( any( HttpRequestBase.class ) );
@@ -206,7 +210,7 @@ public class HubClientImplementationTest
     @Test
     public void testDestroyContainer() throws Exception
     {
-        returnHttpCode( HttpStatus.SC_NO_CONTENT );
+        returnHttpCode( HttpStatus.SC_ACCEPTED );
 
         hubClient.destroyContainer( ENVIRONMENT_ID, CONTAINER_ID );
 
@@ -217,7 +221,7 @@ public class HubClientImplementationTest
     @Test
     public void testDestroyEnvironment() throws Exception
     {
-        returnHttpCode( HttpStatus.SC_NO_CONTENT );
+        returnHttpCode( HttpStatus.SC_ACCEPTED );
 
         hubClient.destroyEnvironment( ENVIRONMENT_ID );
 
@@ -228,7 +232,7 @@ public class HubClientImplementationTest
     @Test
     public void testAddSshKey() throws Exception
     {
-        returnHttpCode( HttpStatus.SC_CREATED );
+        returnHttpCode( HttpStatus.SC_ACCEPTED );
 
         hubClient.addSshKey( ENVIRONMENT_ID, SSH_KEY );
 
@@ -239,7 +243,7 @@ public class HubClientImplementationTest
     @Test
     public void testRemoveSshKey() throws Exception
     {
-        returnHttpCode( HttpStatus.SC_NO_CONTENT );
+        returnHttpCode( HttpStatus.SC_ACCEPTED );
 
         hubClient.removeSshKey( ENVIRONMENT_ID, SSH_KEY );
 
@@ -259,7 +263,7 @@ public class HubClientImplementationTest
     @Test
     public void testCreateEnvironment() throws Exception
     {
-        returnHttpCode( HttpStatus.SC_CREATED );
+        returnHttpCode( HttpStatus.SC_ACCEPTED );
         doReturn( Lists.newArrayList( template ) ).when( hubClient ).getTemplates();
         doReturn( "template" ).when( hubClient ).getTemplateNameById( anyList(), anyString() );
         CreateEnvironmentRequestImpl.Node node = mock( CreateEnvironmentRequestImpl.Node.class );
@@ -276,6 +280,7 @@ public class HubClientImplementationTest
     @Test
     public void testModifyEnvironment() throws Exception
     {
+        returnHttpCode( HttpStatus.SC_ACCEPTED );
         doReturn( Lists.newArrayList( template ) ).when( hubClient ).getTemplates();
         doReturn( "template" ).when( hubClient ).getTemplateNameById( anyList(), anyString() );
         CreateEnvironmentRequestImpl.Node createNode = mock( CreateEnvironmentRequestImpl.Node.class );
