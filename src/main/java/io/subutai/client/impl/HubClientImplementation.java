@@ -471,7 +471,7 @@ public class HubClientImplementation implements HubClient
     public void addSshKey( final String envId, final String sshKey )
     {
         HttpPost request = new HttpPost(
-                String.format( "https://%s.subut.ai/rest/v1/client/environments/%s/ssh-key/add", hubEnv.getUrlPrefix(),
+                String.format( "https://%s.subut.ai/rest/v1/client/environments/%s/ssh-keys/add", hubEnv.getUrlPrefix(),
                         envId ) );
 
         List<NameValuePair> nvps = new ArrayList<>();
@@ -495,7 +495,7 @@ public class HubClientImplementation implements HubClient
     public void removeSshKey( final String envId, final String sshKey )
     {
         HttpPost request = new HttpPost(
-                String.format( "https://%s.subut.ai/rest/v1/client/environments/%s/ssh-key/remove",
+                String.format( "https://%s.subut.ai/rest/v1/client/environments/%s/ssh-keys/remove",
                         hubEnv.getUrlPrefix(), envId ) );
 
         List<NameValuePair> nvps = new ArrayList<>();
