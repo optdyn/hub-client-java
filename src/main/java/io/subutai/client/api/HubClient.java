@@ -35,6 +35,15 @@ public interface HubClient
      */
     List<Environment> getEnvironments();
 
+
+    /**
+     * Returns all ssh keys assigned to environment
+     *
+     * @param envId environment id
+     */
+    List<SshKey> getSshKeys( String envId );
+
+
     /**
      * Adds SSH key to specified environment
      *

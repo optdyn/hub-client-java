@@ -27,6 +27,7 @@ import io.subutai.client.api.Environment;
 import io.subutai.client.api.HubClient;
 import io.subutai.client.api.ModifyEnvironmentRequest;
 import io.subutai.client.api.Peer;
+import io.subutai.client.api.SshKey;
 import io.subutai.client.api.Template;
 import io.subutai.client.pgp.SignerTest;
 
@@ -224,6 +225,17 @@ public class HubClientImplementationTest
         returnHttpCode( HttpStatus.SC_ACCEPTED );
 
         hubClient.destroyEnvironment( ENVIRONMENT_ID );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void tesGetSshKeys() throws Exception
+    {
+        doReturn( Lists.newArrayList( SSH_KEY ) ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
+        hubClient.getSshKeys( ENVIRONMENT_ID );
 
         verify( hubClient ).execute( any( HttpRequestBase.class ) );
     }
@@ -481,6 +493,21 @@ public class HubClientImplementationTest
 
     @Test
     @Ignore
+    public void testRealGetSshKeys() throws Exception
+    {
+        prepare();
+
+        List<SshKey> sshKeys = hubClient.getSshKeys( ENVIRONMENT_ID );
+
+        for ( SshKey sshKey : sshKeys )
+        {
+            System.out.println( sshKey );
+        }
+    }
+
+
+    @Test
+    @Ignore
     public void testRealAddSshKey() throws Exception
     {
         prepare();
@@ -505,7 +532,7 @@ public class HubClientImplementationTest
     {
         prepare();
 
-        List<Peer> peers = hubClient.getPublicPeers();
+        List<Peer> peers = hubClient.getOwnPeers();
 
         for ( Peer peer : peers )
         {

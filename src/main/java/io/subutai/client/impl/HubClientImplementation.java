@@ -58,6 +58,7 @@ import io.subutai.client.api.HubClient;
 import io.subutai.client.api.ModifyEnvironmentRequest;
 import io.subutai.client.api.OperationFailedException;
 import io.subutai.client.api.Peer;
+import io.subutai.client.api.SshKey;
 import io.subutai.client.api.Template;
 import io.subutai.client.pgp.Signer;
 
@@ -465,6 +466,35 @@ public class HubClientImplementation implements HubClient
         {
             close( response );
         }
+    }
+
+
+    @Override
+    public List<SshKey> getSshKeys( final String envId )
+    {
+        List<SshKey> sshKeys = Lists.newArrayList();
+
+        HttpGet request = new HttpGet(
+                String.format( "https://%s.subut.ai/rest/v1/client/environments/%s/ssh-keys", hubEnv.getUrlPrefix(),
+                        envId ) );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            response = execute( request );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "Get ssh keys" );
+
+            sshKeys.addAll( parse( response, new TypeToken<List<SshKeyImpl>>()
+            {
+            } ) );
+        }
+        finally
+        {
+            close( response );
+        }
+
+        return sshKeys;
     }
 
 
