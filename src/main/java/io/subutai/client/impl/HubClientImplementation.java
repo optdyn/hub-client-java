@@ -518,7 +518,7 @@ public class HubClientImplementation implements HubClient
 
     public void startContainer( final String envId, final String contId )
     {
-        HttpPost request = new HttpPost(
+        HttpPut request = new HttpPut(
                 String.format( "https://%s.subut.ai/rest/v1/client/environments/%s/containers/%s/start",
                         hubEnv.getUrlPrefix(), envId, contId ) );
 
@@ -538,7 +538,7 @@ public class HubClientImplementation implements HubClient
 
     public void stopContainer( final String envId, final String contId )
     {
-        HttpPost request = new HttpPost(
+        HttpPut request = new HttpPut(
                 String.format( "https://%s.subut.ai/rest/v1/client/environments/%s/containers/%s/stop",
                         hubEnv.getUrlPrefix(), envId, contId ) );
 
