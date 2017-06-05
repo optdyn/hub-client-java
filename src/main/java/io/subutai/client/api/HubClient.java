@@ -144,4 +144,28 @@ public interface HubClient
      * Returns user balance
      */
     Double getBalance();
+
+    /**
+     * Shares peer with user
+     *
+     * @param peerId peer id to share
+     * @param userId user id to share with
+     */
+    void sharePeer( String peerId, String userId );
+
+    /**
+     * Unshares shared peer with user
+     *
+     * @param peerId peer id to unshare
+     * @param userId user id to unshare with
+     */
+    void unsharePeer( String peerId, String userId );
+
+    /**
+     * Update peer scope
+     *
+     * @param peerId peer id
+     * @param scope new scope
+     */
+    void updatePeerScope( String peerId, Peer.Scope scope );
 }

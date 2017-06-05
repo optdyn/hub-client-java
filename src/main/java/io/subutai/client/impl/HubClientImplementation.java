@@ -60,6 +60,7 @@ import io.subutai.client.api.Template;
 import io.subutai.client.pgp.Signer;
 
 
+//TODO add precondition checks
 public class HubClientImplementation implements HubClient
 {
     private static final Logger LOG = LoggerFactory.getLogger( HubClientImplementation.class );
@@ -329,6 +330,75 @@ public class HubClientImplementation implements HubClient
         }
 
         return peers;
+    }
+
+
+    @Override
+    public void sharePeer( final String peerId, final String userId )
+    {
+        HttpPost httpPost = new HttpPost(
+                String.format( "https://%s.subut.ai/rest/v1/client/peers/%s/share", hubEnv.getUrlPrefix(), peerId ) );
+
+        List<NameValuePair> nvps = new ArrayList<>();
+        nvps.add( new BasicNameValuePair( "user-id", userId ) );
+        httpPost.setEntity( new UrlEncodedFormEntity( nvps, Charset.forName( "UTF-8" ) ) );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            response = execute( httpPost );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "share peer" );
+        }
+        finally
+        {
+            close( response );
+        }
+    }
+
+
+    @Override
+    public void unsharePeer( final String peerId, final String userId )
+    {
+        HttpPost httpPost = new HttpPost(
+                String.format( "https://%s.subut.ai/rest/v1/client/peers/%s/unshare", hubEnv.getUrlPrefix(), peerId ) );
+
+        List<NameValuePair> nvps = new ArrayList<>();
+        nvps.add( new BasicNameValuePair( "user-id", userId ) );
+        httpPost.setEntity( new UrlEncodedFormEntity( nvps, Charset.forName( "UTF-8" ) ) );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            response = execute( httpPost );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "unshare peer" );
+        }
+        finally
+        {
+            close( response );
+        }
+    }
+
+
+    @Override
+    public void updatePeerScope( final String peerId, final Peer.Scope scope )
+    {
+        HttpPut httpPut = new HttpPut(
+                String.format( "https://%s.subut.ai/rest/v1/client/peers/%s/scope/%s", hubEnv.getUrlPrefix(), peerId,
+                        scope.name() ) );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            response = execute( httpPut );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "update peer scope" );
+        }
+        finally
+        {
+            close( response );
+        }
     }
 
 

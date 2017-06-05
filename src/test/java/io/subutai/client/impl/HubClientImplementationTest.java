@@ -48,7 +48,7 @@ public class HubClientImplementationTest
     private static final String USERNAME = "test.d@mail.com";
     private static final String PASSWORD = "test";
     private static final String TEMPLATE_ID = "a697e70f3fc538b4f4763588a7868388";
-    private static final String PEER_ID = "0829ACEE81502276653BAB39925762E44D53A0DB";
+    private static final String PEER_ID = "ACB7B15EDF77CA3D71CEC940D27A413549546B54";
     private static final String RH_ID = "AD8BA214C91CC05074DFEC8CC424232C7662659D";
     private static final String ENVIRONMENT_ID = "b39606d4-1355-42a6-85bf-6135c61ff41b";
     private static final String CONTAINER_ID = "7AF3CFD230831B6C282D859B2114924AA389702C";
@@ -59,6 +59,7 @@ public class HubClientImplementationTest
                     + "+tUK4R7kJBecYQGkJj4ILt/cAGrY0sg8Ol+WBOq4ex3zCF1zJrdJCxW4t2NUyNfCxW7kV2uUhbWNuj+n"
                     +
                     "/I5a8CDrMJsJLqdgC3EQ17uRy41GHbTwBQs0q2gwfBpefHFXokWwxu06hk0jfwFHWm9xRT79a56hr101Fy4uNjzzVtrWDS4end9VC7bt7Xf/kDxx7FB9DW1wfaYMcCp6YD5O8ENpl35gK35ZXtT5BP2GBoxHGlPdF4PObMCNi5ATtO/gLD8kW1LutO2ldsaY4sHm/JG55UNrpQCpIYe6QfkHsO+fX9/WmjP+iTDdHs1untgurvk5KdhtQxecTvTk3M/ewzHZbEbzYJYzFOsy5f6FQ8U/ckw8PejBzGDUiMGTJXl+GjV9VV3BmkKKeqD5uKu+gta5dynbdfU4r7heAV6oxan2x/rg9iHpOklIRtu2chJYJUq7lQ== dilshat.aliev@gmail.com";
+    private static final String USER_ID = "164";
 
     private HubClientImplementation hubClient;
 
@@ -117,11 +118,67 @@ public class HubClientImplementationTest
 
 
     @Test
+    public void testGetBalance() throws Exception
+    {
+        ResultDto resultDto = mock( ResultDto.class );
+        doReturn( resultDto ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
+        Double balance = hubClient.getBalance();
+
+        verify( resultDto ).getValue();
+    }
+
+
+    @Test
     public void testGetPeers() throws Exception
     {
         doReturn( Lists.newArrayList( peer ) ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
 
         List<Peer> peers = hubClient.getPeers();
+
+        assertTrue( peers.contains( peer ) );
+    }
+
+
+    @Test
+    public void testGetSharedPeers() throws Exception
+    {
+        doReturn( Lists.newArrayList( peer ) ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
+        List<Peer> peers = hubClient.getSharedPeers();
+
+        assertTrue( peers.contains( peer ) );
+    }
+
+
+    @Test
+    public void testGetOwnPeers() throws Exception
+    {
+        doReturn( Lists.newArrayList( peer ) ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
+        List<Peer> peers = hubClient.getOwnPeers();
+
+        assertTrue( peers.contains( peer ) );
+    }
+
+
+    @Test
+    public void testGetFavoritePeers() throws Exception
+    {
+        doReturn( Lists.newArrayList( peer ) ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
+        List<Peer> peers = hubClient.getFavoritePeers();
+
+        assertTrue( peers.contains( peer ) );
+    }
+
+
+    @Test
+    public void testGetPublicPeers() throws Exception
+    {
+        doReturn( Lists.newArrayList( peer ) ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
+        List<Peer> peers = hubClient.getPublicPeers();
 
         assertTrue( peers.contains( peer ) );
     }
@@ -243,12 +300,69 @@ public class HubClientImplementationTest
     }
 
 
+    @Test
+    public void testUpdatePeerScope() throws Exception
+    {
+        hubClient.updatePeerScope( PEER_ID, Peer.Scope.PRIVATE );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testSharePeer() throws Exception
+    {
+        hubClient.sharePeer( PEER_ID, USER_ID );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testUnsharePeer() throws Exception
+    {
+        hubClient.unsharePeer( PEER_ID, USER_ID );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
     /******* Real tests *******/
 
     private void prepare()
     {
         hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV );
         hubClient.login( USERNAME, PASSWORD );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealSharePeer() throws Exception
+    {
+        prepare();
+
+        hubClient.sharePeer( PEER_ID, USER_ID );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealUnsharePeer() throws Exception
+    {
+        prepare();
+
+        hubClient.unsharePeer( PEER_ID, USER_ID );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealUpdatePeerScope() throws Exception
+    {
+        prepare();
+
+        hubClient.updatePeerScope( PEER_ID, Peer.Scope.PUBLIC );
     }
 
 
