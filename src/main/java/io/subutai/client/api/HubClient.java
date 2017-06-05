@@ -139,4 +139,9 @@ public interface HubClient
      * @param modifyEnvironmentRequest modify environment request object returned by call to HubClient#modifyRequest
      */
     void modifyEnvironment( ModifyEnvironmentRequest modifyEnvironmentRequest );
+
+    /**
+     * Returns user balance
+     */
+    Double getBalance();
 }

@@ -50,8 +50,8 @@ public class HubClientImplementationTest
     private static final String TEMPLATE_ID = "a697e70f3fc538b4f4763588a7868388";
     private static final String PEER_ID = "0829ACEE81502276653BAB39925762E44D53A0DB";
     private static final String RH_ID = "AD8BA214C91CC05074DFEC8CC424232C7662659D";
-    private static final String ENVIRONMENT_ID = "19391dea-87d8-42da-a360-42cbe3994a1b";
-    private static final String CONTAINER_ID = "48FD1CC3FB343E24298331A01BBB5E8FD9D22BC9";
+    private static final String ENVIRONMENT_ID = "b39606d4-1355-42a6-85bf-6135c61ff41b";
+    private static final String CONTAINER_ID = "7AF3CFD230831B6C282D859B2114924AA389702C";
     private static final String SSH_KEY =
             "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCjUo/8VklFC8cRyHE502tUXit15L8Qg2z/47c6PMpQThR0sjhURgoILms"
                     + "/IX180yGqgkpjdX08MIkmANhbXDmSFh6T4lUzqGGoC7lerePwkA2yJWlsP+7JKk9oDSaYJ3lkfvKZnz8ZG7JS1jg"
@@ -249,6 +249,16 @@ public class HubClientImplementationTest
     {
         hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV );
         hubClient.login( USERNAME, PASSWORD );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealGetBalance() throws Exception
+    {
+        prepare();
+
+        System.out.println( hubClient.getBalance() );
     }
 
 

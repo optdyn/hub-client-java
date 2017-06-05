@@ -66,7 +66,7 @@ public class HubClientImplementation implements HubClient
 
     private static final String KURJUN_TOKEN_HEADER = "kurjun-token";
     private static final String UTF8 = "UTF-8";
-    public static final String LIST_PEERS = "list peers";
+    private static final String LIST_PEERS = "list peers";
     private CloseableHttpClient httpclient = HttpClients.createDefault();
     private HttpContext httpContext = new BasicHttpContext();
     private Gson gson = new GsonBuilder().registerTypeAdapter( Date.class, new DateDeserializer() ).create();
@@ -124,6 +124,32 @@ public class HubClientImplementation implements HubClient
 
             close( response );
         }
+    }
+
+
+    public Double getBalance()
+    {
+        HttpGet httpGet =
+                new HttpGet( String.format( "https://%s.subut.ai/rest/v1/client/balance", hubEnv.getUrlPrefix() ) );
+
+        ResultDto result;
+        CloseableHttpResponse response = null;
+        try
+        {
+            response = execute( httpGet );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "get balance" );
+
+            result = parse( response, new TypeToken<ResultDto>()
+            {
+            } );
+        }
+        finally
+        {
+            close( response );
+        }
+
+        return ( Double ) result.getValue();
     }
 
 
