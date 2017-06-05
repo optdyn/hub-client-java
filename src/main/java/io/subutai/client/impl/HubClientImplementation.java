@@ -338,12 +338,9 @@ public class HubClientImplementation implements HubClient
     @Override
     public void sharePeer( final String peerId, final String userId )
     {
-        HttpPost request = new HttpPost(
-                String.format( "https://%s.subut.ai/rest/v1/client/peers/%s/share", hubEnv.getUrlPrefix(), peerId ) );
-
-        List<NameValuePair> nvps = new ArrayList<>();
-        nvps.add( new BasicNameValuePair( "user-id", userId ) );
-        request.setEntity( new UrlEncodedFormEntity( nvps, Charset.forName( "UTF-8" ) ) );
+        HttpPut request = new HttpPut(
+                String.format( "https://%s.subut.ai/rest/v1/client/peers/%s/share/%s", hubEnv.getUrlPrefix(), peerId,
+                        userId ) );
 
         CloseableHttpResponse response = null;
         try
@@ -362,12 +359,9 @@ public class HubClientImplementation implements HubClient
     @Override
     public void unsharePeer( final String peerId, final String userId )
     {
-        HttpPost request = new HttpPost(
-                String.format( "https://%s.subut.ai/rest/v1/client/peers/%s/unshare", hubEnv.getUrlPrefix(), peerId ) );
-
-        List<NameValuePair> nvps = new ArrayList<>();
-        nvps.add( new BasicNameValuePair( "user-id", userId ) );
-        request.setEntity( new UrlEncodedFormEntity( nvps, Charset.forName( "UTF-8" ) ) );
+        HttpDelete request = new HttpDelete(
+                String.format( "https://%s.subut.ai/rest/v1/client/peers/%s/share/%s", hubEnv.getUrlPrefix(), peerId,
+                        userId ) );
 
         CloseableHttpResponse response = null;
         try
