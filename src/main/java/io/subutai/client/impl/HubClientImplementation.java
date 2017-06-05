@@ -107,18 +107,18 @@ public class HubClientImplementation implements HubClient
 
     public void login( final String username, final String password )
     {
-        HttpPost httpPost =
+        HttpPost request =
                 new HttpPost( String.format( "https://%s.subut.ai/rest/v1/client/login", hubEnv.getUrlPrefix() ) );
 
         List<NameValuePair> nvps = new ArrayList<>();
         nvps.add( new BasicNameValuePair( "email", username ) );
         nvps.add( new BasicNameValuePair( "password", password ) );
-        httpPost.setEntity( new UrlEncodedFormEntity( nvps, Charset.forName( "UTF-8" ) ) );
+        request.setEntity( new UrlEncodedFormEntity( nvps, Charset.forName( "UTF-8" ) ) );
 
         CloseableHttpResponse response = null;
         try
         {
-            response = execute( httpPost );
+            response = execute( request );
 
             checkHttpStatus( response, HttpStatus.SC_OK, "login" );
         }
@@ -132,14 +132,14 @@ public class HubClientImplementation implements HubClient
 
     public Double getBalance()
     {
-        HttpGet httpGet =
+        HttpGet request =
                 new HttpGet( String.format( "https://%s.subut.ai/rest/v1/client/balance", hubEnv.getUrlPrefix() ) );
 
         ResultDto result;
         CloseableHttpResponse response = null;
         try
         {
-            response = execute( httpGet );
+            response = execute( request );
 
             checkHttpStatus( response, HttpStatus.SC_OK, "get balance" );
 
@@ -160,14 +160,14 @@ public class HubClientImplementation implements HubClient
     {
         List<Environment> environments = Lists.newArrayList();
 
-        HttpGet httpGet = new HttpGet(
+        HttpGet request = new HttpGet(
                 String.format( "https://%s.subut.ai/rest/v1/client/environments", hubEnv.getUrlPrefix() ) );
 
 
         CloseableHttpResponse response = null;
         try
         {
-            response = execute( httpGet );
+            response = execute( request );
 
             checkHttpStatus( response, HttpStatus.SC_OK, "list environments" );
 
@@ -190,13 +190,13 @@ public class HubClientImplementation implements HubClient
     {
         List<Peer> peers = Lists.newArrayList();
 
-        HttpGet httpGet =
+        HttpGet request =
                 new HttpGet( String.format( "https://%s.subut.ai/rest/v1/client/peers/all", hubEnv.getUrlPrefix() ) );
 
         CloseableHttpResponse response = null;
         try
         {
-            response = execute( httpGet );
+            response = execute( request );
 
             checkHttpStatus( response, HttpStatus.SC_OK, LIST_PEERS );
 
@@ -220,13 +220,13 @@ public class HubClientImplementation implements HubClient
     {
         List<Peer> peers = Lists.newArrayList();
 
-        HttpGet httpGet =
+        HttpGet request =
                 new HttpGet( String.format( "https://%s.subut.ai/rest/v1/client/peers/own", hubEnv.getUrlPrefix() ) );
 
         CloseableHttpResponse response = null;
         try
         {
-            response = execute( httpGet );
+            response = execute( request );
 
             checkHttpStatus( response, HttpStatus.SC_OK, LIST_PEERS );
 
@@ -250,13 +250,13 @@ public class HubClientImplementation implements HubClient
     {
         List<Peer> peers = Lists.newArrayList();
 
-        HttpGet httpGet = new HttpGet(
+        HttpGet request = new HttpGet(
                 String.format( "https://%s.subut.ai/rest/v1/client/peers/shared", hubEnv.getUrlPrefix() ) );
 
         CloseableHttpResponse response = null;
         try
         {
-            response = execute( httpGet );
+            response = execute( request );
 
             checkHttpStatus( response, HttpStatus.SC_OK, LIST_PEERS );
 
@@ -280,13 +280,13 @@ public class HubClientImplementation implements HubClient
     {
         List<Peer> peers = Lists.newArrayList();
 
-        HttpGet httpGet = new HttpGet(
+        HttpGet request = new HttpGet(
                 String.format( "https://%s.subut.ai/rest/v1/client/peers/favorite", hubEnv.getUrlPrefix() ) );
 
         CloseableHttpResponse response = null;
         try
         {
-            response = execute( httpGet );
+            response = execute( request );
 
             checkHttpStatus( response, HttpStatus.SC_OK, LIST_PEERS );
 
@@ -310,13 +310,13 @@ public class HubClientImplementation implements HubClient
     {
         List<Peer> peers = Lists.newArrayList();
 
-        HttpGet httpGet = new HttpGet(
+        HttpGet request = new HttpGet(
                 String.format( "https://%s.subut.ai/rest/v1/client/peers/public", hubEnv.getUrlPrefix() ) );
 
         CloseableHttpResponse response = null;
         try
         {
-            response = execute( httpGet );
+            response = execute( request );
 
             checkHttpStatus( response, HttpStatus.SC_OK, LIST_PEERS );
 
@@ -338,17 +338,17 @@ public class HubClientImplementation implements HubClient
     @Override
     public void sharePeer( final String peerId, final String userId )
     {
-        HttpPost httpPost = new HttpPost(
+        HttpPost request = new HttpPost(
                 String.format( "https://%s.subut.ai/rest/v1/client/peers/%s/share", hubEnv.getUrlPrefix(), peerId ) );
 
         List<NameValuePair> nvps = new ArrayList<>();
         nvps.add( new BasicNameValuePair( "user-id", userId ) );
-        httpPost.setEntity( new UrlEncodedFormEntity( nvps, Charset.forName( "UTF-8" ) ) );
+        request.setEntity( new UrlEncodedFormEntity( nvps, Charset.forName( "UTF-8" ) ) );
 
         CloseableHttpResponse response = null;
         try
         {
-            response = execute( httpPost );
+            response = execute( request );
 
             checkHttpStatus( response, HttpStatus.SC_OK, "share peer" );
         }
@@ -362,17 +362,17 @@ public class HubClientImplementation implements HubClient
     @Override
     public void unsharePeer( final String peerId, final String userId )
     {
-        HttpPost httpPost = new HttpPost(
+        HttpPost request = new HttpPost(
                 String.format( "https://%s.subut.ai/rest/v1/client/peers/%s/unshare", hubEnv.getUrlPrefix(), peerId ) );
 
         List<NameValuePair> nvps = new ArrayList<>();
         nvps.add( new BasicNameValuePair( "user-id", userId ) );
-        httpPost.setEntity( new UrlEncodedFormEntity( nvps, Charset.forName( "UTF-8" ) ) );
+        request.setEntity( new UrlEncodedFormEntity( nvps, Charset.forName( "UTF-8" ) ) );
 
         CloseableHttpResponse response = null;
         try
         {
-            response = execute( httpPost );
+            response = execute( request );
 
             checkHttpStatus( response, HttpStatus.SC_OK, "unshare peer" );
         }
@@ -384,16 +384,58 @@ public class HubClientImplementation implements HubClient
 
 
     @Override
+    public void addPeerToFavorites( final String peerId )
+    {
+        HttpPut request = new HttpPut(
+                String.format( "https://%s.subut.ai/rest/v1/client/peers/favorite/%s", hubEnv.getUrlPrefix(),
+                        peerId ) );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            response = execute( request );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "add peer to favorites" );
+        }
+        finally
+        {
+            close( response );
+        }
+    }
+
+
+    @Override
+    public void removePeerFromFavorites( final String peerId )
+    {
+        HttpDelete request = new HttpDelete(
+                String.format( "https://%s.subut.ai/rest/v1/client/peers/favorite/%s", hubEnv.getUrlPrefix(),
+                        peerId ) );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            response = execute( request );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "remove peer from favorites" );
+        }
+        finally
+        {
+            close( response );
+        }
+    }
+
+
+    @Override
     public void updatePeerScope( final String peerId, final Peer.Scope scope )
     {
-        HttpPut httpPut = new HttpPut(
+        HttpPut request = new HttpPut(
                 String.format( "https://%s.subut.ai/rest/v1/client/peers/%s/scope/%s", hubEnv.getUrlPrefix(), peerId,
                         scope.name() ) );
 
         CloseableHttpResponse response = null;
         try
         {
-            response = execute( httpPut );
+            response = execute( request );
 
             checkHttpStatus( response, HttpStatus.SC_OK, "update peer scope" );
         }
@@ -410,11 +452,11 @@ public class HubClientImplementation implements HubClient
         CloseableHttpResponse response = null;
         try
         {
-            HttpPut httpPut = new HttpPut(
+            HttpPut request = new HttpPut(
                     String.format( "https://%s.subut.ai/rest/v1/client/peers/%s/name/%s", hubEnv.getUrlPrefix(), peerId,
                             URLEncoder.encode( name, UTF8 ) ) );
 
-            response = execute( httpPut );
+            response = execute( request );
 
             checkHttpStatus( response, HttpStatus.SC_OK, "update peer name" );
         }
@@ -434,18 +476,18 @@ public class HubClientImplementation implements HubClient
 
     public void addSshKey( final String envId, final String sshKey )
     {
-        HttpPost httpPost = new HttpPost(
+        HttpPost request = new HttpPost(
                 String.format( "https://%s.subut.ai/rest/v1/client/environments/%s/ssh-key/add", hubEnv.getUrlPrefix(),
                         envId ) );
 
         List<NameValuePair> nvps = new ArrayList<>();
         nvps.add( new BasicNameValuePair( "ssh-key", sshKey ) );
-        httpPost.setEntity( new UrlEncodedFormEntity( nvps, Charset.forName( "UTF-8" ) ) );
+        request.setEntity( new UrlEncodedFormEntity( nvps, Charset.forName( "UTF-8" ) ) );
 
         CloseableHttpResponse response = null;
         try
         {
-            response = execute( httpPost );
+            response = execute( request );
 
             checkHttpStatus( response, HttpStatus.SC_ACCEPTED, "add ssh key" );
         }
@@ -458,18 +500,18 @@ public class HubClientImplementation implements HubClient
 
     public void removeSshKey( final String envId, final String sshKey )
     {
-        HttpPost httpPost = new HttpPost(
+        HttpPost request = new HttpPost(
                 String.format( "https://%s.subut.ai/rest/v1/client/environments/%s/ssh-key/remove",
                         hubEnv.getUrlPrefix(), envId ) );
 
         List<NameValuePair> nvps = new ArrayList<>();
         nvps.add( new BasicNameValuePair( "ssh-key", sshKey ) );
-        httpPost.setEntity( new UrlEncodedFormEntity( nvps, Charset.forName( "UTF-8" ) ) );
+        request.setEntity( new UrlEncodedFormEntity( nvps, Charset.forName( "UTF-8" ) ) );
 
         CloseableHttpResponse response = null;
         try
         {
-            response = execute( httpPost );
+            response = execute( request );
 
             checkHttpStatus( response, HttpStatus.SC_ACCEPTED, "remove ssh key" );
         }
@@ -482,14 +524,14 @@ public class HubClientImplementation implements HubClient
 
     public void startContainer( final String envId, final String contId )
     {
-        HttpPost httpPost = new HttpPost(
+        HttpPost request = new HttpPost(
                 String.format( "https://%s.subut.ai/rest/v1/client/environments/%s/containers/%s/start",
                         hubEnv.getUrlPrefix(), envId, contId ) );
 
         CloseableHttpResponse response = null;
         try
         {
-            response = execute( httpPost );
+            response = execute( request );
 
             checkHttpStatus( response, HttpStatus.SC_ACCEPTED, "start container" );
         }
@@ -502,14 +544,14 @@ public class HubClientImplementation implements HubClient
 
     public void stopContainer( final String envId, final String contId )
     {
-        HttpPost httpPost = new HttpPost(
+        HttpPost request = new HttpPost(
                 String.format( "https://%s.subut.ai/rest/v1/client/environments/%s/containers/%s/stop",
                         hubEnv.getUrlPrefix(), envId, contId ) );
 
         CloseableHttpResponse response = null;
         try
         {
-            response = execute( httpPost );
+            response = execute( request );
 
             checkHttpStatus( response, HttpStatus.SC_ACCEPTED, "stop container" );
         }
@@ -522,14 +564,14 @@ public class HubClientImplementation implements HubClient
 
     public void destroyContainer( final String envId, final String contId )
     {
-        HttpDelete httpDelete = new HttpDelete(
+        HttpDelete request = new HttpDelete(
                 String.format( "https://%s.subut.ai/rest/v1/client/environments/%s/containers/%s",
                         hubEnv.getUrlPrefix(), envId, contId ) );
 
         CloseableHttpResponse response = null;
         try
         {
-            response = execute( httpDelete );
+            response = execute( request );
 
             checkHttpStatus( response, HttpStatus.SC_ACCEPTED, "destroy container" );
         }
@@ -566,16 +608,16 @@ public class HubClientImplementation implements HubClient
         }
         //WORKAROUND!!!
 
-        HttpPost httpPost = new HttpPost(
+        HttpPost request = new HttpPost(
                 String.format( "https://%s.subut.ai/rest/v1/client/environments", hubEnv.getUrlPrefix() ) );
 
-        httpPost.setEntity( new StringEntity( toJson( createEnvironmentReq ), ContentType.APPLICATION_JSON ) );
-        httpPost.addHeader( KURJUN_TOKEN_HEADER, getKurjunToken() );
+        request.setEntity( new StringEntity( toJson( createEnvironmentReq ), ContentType.APPLICATION_JSON ) );
+        request.addHeader( KURJUN_TOKEN_HEADER, getKurjunToken() );
 
         CloseableHttpResponse response = null;
         try
         {
-            response = execute( httpPost );
+            response = execute( request );
 
             checkHttpStatus( response, HttpStatus.SC_ACCEPTED, "create environment" );
         }
@@ -614,16 +656,16 @@ public class HubClientImplementation implements HubClient
         }
         //WORKAROUND!!!
 
-        HttpPut httpPut = new HttpPut(
+        HttpPut request = new HttpPut(
                 String.format( "https://%s.subut.ai/rest/v1/client/environments", hubEnv.getUrlPrefix() ) );
 
-        httpPut.setEntity( new StringEntity( toJson( modifyEnvironmentReq ), ContentType.APPLICATION_JSON ) );
-        httpPut.addHeader( KURJUN_TOKEN_HEADER, getKurjunToken() );
+        request.setEntity( new StringEntity( toJson( modifyEnvironmentReq ), ContentType.APPLICATION_JSON ) );
+        request.addHeader( KURJUN_TOKEN_HEADER, getKurjunToken() );
 
         CloseableHttpResponse response = null;
         try
         {
-            response = execute( httpPut );
+            response = execute( request );
 
             checkHttpStatus( response, HttpStatus.SC_ACCEPTED, "modify environment" );
 
@@ -652,13 +694,13 @@ public class HubClientImplementation implements HubClient
 
     public void destroyEnvironment( final String envId )
     {
-        HttpDelete httpDelete = new HttpDelete(
+        HttpDelete request = new HttpDelete(
                 String.format( "https://%s.subut.ai/rest/v1/client/environments/%s", hubEnv.getUrlPrefix(), envId ) );
 
         CloseableHttpResponse response = null;
         try
         {
-            response = execute( httpDelete );
+            response = execute( request );
 
             checkHttpStatus( response, HttpStatus.SC_ACCEPTED, "destroy environment" );
         }

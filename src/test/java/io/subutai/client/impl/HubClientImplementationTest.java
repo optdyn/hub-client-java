@@ -45,8 +45,8 @@ import static org.mockito.Mockito.verify;
 public class HubClientImplementationTest
 {
 
-    private static final String USERNAME = "test.d@mail.com";
-    private static final String PASSWORD = "test";
+    private static final String USERNAME = "dilshat.aliev@gmail.com";
+    private static final String PASSWORD = "sadilya";
     private static final String TEMPLATE_ID = "a697e70f3fc538b4f4763588a7868388";
     private static final String PEER_ID = "ACB7B15EDF77CA3D71CEC940D27A413549546B54";
     private static final String RH_ID = "2E81C1E1CDFC626E82A3B6FEAB0C06B8F070AB5B";
@@ -342,6 +342,24 @@ public class HubClientImplementationTest
     }
 
 
+    @Test
+    public void testAddPeerToFavorites() throws Exception
+    {
+        hubClient.addPeerToFavorites( PEER_ID );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testRemovePeerFromFavorites() throws Exception
+    {
+        hubClient.removePeerFromFavorites( PEER_ID );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
     /******* Real tests *******/
 
     private void prepare()
@@ -358,6 +376,26 @@ public class HubClientImplementationTest
         prepare();
 
         hubClient.sharePeer( PEER_ID, USER_ID );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealAddPeerToFavorites() throws Exception
+    {
+        prepare();
+
+        hubClient.addPeerToFavorites( PEER_ID );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealRemovePeerFromFavorites() throws Exception
+    {
+        prepare();
+
+        hubClient.removePeerFromFavorites( PEER_ID );
     }
 
 

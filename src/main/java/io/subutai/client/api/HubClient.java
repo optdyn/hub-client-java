@@ -176,4 +176,18 @@ public interface HubClient
      * @param name new name
      */
     void updatePeerName( String peerId, String name );
+
+    /**
+     * Adds peer to favorites
+     *
+     * @param peerId peer id
+     */
+    void addPeerToFavorites( String peerId );
+
+    /**
+     * Removes peer from favorites
+     *
+     * @param peerId peer id
+     */
+    void removePeerFromFavorites( String peerId );
 }
