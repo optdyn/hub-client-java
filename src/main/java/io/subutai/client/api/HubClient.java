@@ -168,4 +168,12 @@ public interface HubClient
      * @param scope new scope
      */
     void updatePeerScope( String peerId, Peer.Scope scope );
+
+    /**
+     * Update peer name
+     *
+     * @param peerId peer id
+     * @param name new name
+     */
+    void updatePeerName( String peerId, String name );
 }

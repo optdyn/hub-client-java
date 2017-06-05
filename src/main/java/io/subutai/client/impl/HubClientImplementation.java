@@ -5,6 +5,8 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
@@ -402,6 +404,34 @@ public class HubClientImplementation implements HubClient
     }
 
 
+    @Override
+    public void updatePeerName( final String peerId, final String name )
+    {
+        CloseableHttpResponse response = null;
+        try
+        {
+            HttpPut httpPut = new HttpPut(
+                    String.format( "https://%s.subut.ai/rest/v1/client/peers/%s/name/%s", hubEnv.getUrlPrefix(), peerId,
+                            URLEncoder.encode( name, UTF8 ) ) );
+
+            response = execute( httpPut );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "update peer name" );
+        }
+
+        catch ( UnsupportedEncodingException e )
+        {
+            LOG.error( "Error encoding name", e );
+
+            throw new OperationFailedException( "Error encoding name", e );
+        }
+        finally
+        {
+            close( response );
+        }
+    }
+
+
     public void addSshKey( final String envId, final String sshKey )
     {
         HttpPost httpPost = new HttpPost(
@@ -743,11 +773,15 @@ public class HubClientImplementation implements HubClient
         try
         {
             String responseContent = EntityUtils.toString( response.getEntity() );
+
             LOG.info( "Response: {} {}", response.getEntity().getContentType(), responseContent );
+
             return gson.fromJson( responseContent, typeToken.getType() );
         }
         catch ( Exception e )
         {
+            LOG.error( "Error parsing response", e );
+
             throw new OperationFailedException( "Failed to parse response", e );
         }
     }
@@ -761,6 +795,8 @@ public class HubClientImplementation implements HubClient
         }
         catch ( Exception e )
         {
+            LOG.error( "Error executing http request", e );
+
             throw new OperationFailedException( "Failed to execute http request", e );
         }
     }
@@ -768,8 +804,12 @@ public class HubClientImplementation implements HubClient
 
     private void checkHttpStatus( CloseableHttpResponse response, int expectedStatus, String actionName )
     {
-        if ( response.getStatusLine().getStatusCode() != expectedStatus )
+        int actualStatus = response.getStatusLine().getStatusCode();
+
+        if ( actualStatus != expectedStatus )
         {
+            LOG.warn( "Http status code expectation failed: expected {},  actual {}", expectedStatus, actualStatus );
+
             throw new OperationFailedException(
                     String.format( "Failed to %s: %s, %s", actionName, response.getStatusLine(),
                             readContent( response ) ), null );
@@ -793,6 +833,8 @@ public class HubClientImplementation implements HubClient
         }
         catch ( Exception e )
         {
+            LOG.error( "Error reading entity content", e );
+
             return null;
         }
     }
