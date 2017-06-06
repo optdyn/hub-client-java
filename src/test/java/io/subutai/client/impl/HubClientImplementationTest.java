@@ -385,6 +385,30 @@ public class HubClientImplementationTest
     }
 
 
+    @Test
+    public void testFindUserInfoByName() throws Exception
+    {
+        UserInfoImpl userInfo = mock( UserInfoImpl.class );
+        doReturn( userInfo ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
+        hubClient.findUserByName( USERNAME );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testFindUserInfoByEmail() throws Exception
+    {
+        UserInfoImpl userInfo = mock( UserInfoImpl.class );
+        doReturn( userInfo ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
+        hubClient.findUserByName( USERNAME );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
     /******* Real tests *******/
 
     private void prepare()

@@ -201,7 +201,24 @@ public interface HubClient
     void removePeerFromFavorites( String peerId );
 
 
+    /**
+     * Returns user info
+     *
+     * @param userId user id
+     */
     UserInfo getUserInfo( long userId );
 
-    //todo add UserInfo searchUserByEmail(email)
+    /**
+     * Searches user info by name
+     *
+     * @param name user name
+     */
+    UserInfo findUserByName( String name );
+
+    /**
+     * Searches user info by email
+     *
+     * @param email user email
+     */
+    UserInfo findUserByEmail( String email );
 }
