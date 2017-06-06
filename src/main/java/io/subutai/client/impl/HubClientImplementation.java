@@ -60,6 +60,7 @@ import io.subutai.client.api.OperationFailedException;
 import io.subutai.client.api.Peer;
 import io.subutai.client.api.SshKey;
 import io.subutai.client.api.Template;
+import io.subutai.client.api.UserInfo;
 import io.subutai.client.pgp.Signer;
 
 
@@ -128,32 +129,6 @@ public class HubClientImplementation implements HubClient
 
             close( response );
         }
-    }
-
-
-    public Double getBalance()
-    {
-        HttpGet request =
-                new HttpGet( String.format( "https://%s.subut.ai/rest/v1/client/balance", hubEnv.getUrlPrefix() ) );
-
-        ResultDto result;
-        CloseableHttpResponse response = null;
-        try
-        {
-            response = execute( request );
-
-            checkHttpStatus( response, HttpStatus.SC_OK, "get balance" );
-
-            result = parse( response, new TypeToken<ResultDto>()
-            {
-            } );
-        }
-        finally
-        {
-            close( response );
-        }
-
-        return ( Double ) result.getValue();
     }
 
 
@@ -738,6 +713,59 @@ public class HubClientImplementation implements HubClient
     public List<Template> getTemplates()
     {
         return kurjunClient.getTemplates( getKurjunToken() );
+    }
+
+
+    public Double getBalance()
+    {
+        HttpGet request =
+                new HttpGet( String.format( "https://%s.subut.ai/rest/v1/client/balance", hubEnv.getUrlPrefix() ) );
+
+        ResultDto result;
+        CloseableHttpResponse response = null;
+        try
+        {
+            response = execute( request );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "get balance" );
+
+            result = parse( response, new TypeToken<ResultDto>()
+            {
+            } );
+        }
+        finally
+        {
+            close( response );
+        }
+
+        return ( Double ) result.getValue();
+    }
+
+
+    @Override
+    public UserInfo getUserInfo( final long userId )
+    {
+        HttpGet request = new HttpGet(
+                String.format( "https://%s.subut.ai/rest/v1/client/users/%s", hubEnv.getUrlPrefix(), userId ) );
+
+        UserInfoImpl user;
+        CloseableHttpResponse response = null;
+        try
+        {
+            response = execute( request );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "get user info" );
+
+            user = parse( response, new TypeToken<UserInfoImpl>()
+            {
+            } );
+        }
+        finally
+        {
+            close( response );
+        }
+
+        return user;
     }
 
 

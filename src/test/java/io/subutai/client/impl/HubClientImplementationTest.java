@@ -29,6 +29,7 @@ import io.subutai.client.api.ModifyEnvironmentRequest;
 import io.subutai.client.api.Peer;
 import io.subutai.client.api.SshKey;
 import io.subutai.client.api.Template;
+import io.subutai.client.api.UserInfo;
 import io.subutai.client.pgp.SignerTest;
 
 import static org.junit.Assert.assertTrue;
@@ -372,12 +373,37 @@ public class HubClientImplementationTest
     }
 
 
+    @Test
+    public void testGetUserInfo() throws Exception
+    {
+        UserInfoImpl userInfo = mock( UserInfoImpl.class );
+        doReturn( userInfo ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
+        hubClient.getUserInfo( Long.parseLong(USER_ID) );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+
+    }
+
+
     /******* Real tests *******/
 
     private void prepare()
     {
         hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV );
         hubClient.login( USERNAME, PASSWORD );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealGetUserInfo() throws Exception
+    {
+        prepare();
+
+        UserInfo userInfo = hubClient.getUserInfo( Long.parseLong( USER_ID ) );
+
+        System.out.println( userInfo );
     }
 
 
