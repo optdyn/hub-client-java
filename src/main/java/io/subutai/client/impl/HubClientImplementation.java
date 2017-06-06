@@ -312,7 +312,7 @@ public class HubClientImplementation implements HubClient
 
 
     @Override
-    public void sharePeer( final String peerId, final String userId )
+    public void sharePeer( final String peerId, final long userId )
     {
         HttpPut request = new HttpPut(
                 String.format( "https://%s.subut.ai/rest/v1/client/peers/%s/share/%s", hubEnv.getUrlPrefix(), peerId,
@@ -333,7 +333,7 @@ public class HubClientImplementation implements HubClient
 
 
     @Override
-    public void unsharePeer( final String peerId, final String userId )
+    public void unsharePeer( final String peerId, final long userId )
     {
         HttpDelete request = new HttpDelete(
                 String.format( "https://%s.subut.ai/rest/v1/client/peers/%s/share/%s", hubEnv.getUrlPrefix(), peerId,
