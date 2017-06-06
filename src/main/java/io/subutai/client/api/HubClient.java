@@ -202,23 +202,23 @@ public interface HubClient
 
 
     /**
-     * Returns user info
+     * Returns user
      *
      * @param userId user id
      */
-    UserInfo getUserInfo( long userId );
+    User getUser( long userId );
 
     /**
-     * Searches user info by name
+     * Searches user by name
      *
      * @param name user name
      */
-    UserInfo findUserByName( String name );
+    User findUserByName( String name );
 
     /**
-     * Searches user info by email
+     * Searches info by email
      *
      * @param email user email
      */
-    UserInfo findUserByEmail( String email );
+    User findUserByEmail( String email );
 }

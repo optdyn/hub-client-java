@@ -29,7 +29,7 @@ import io.subutai.client.api.ModifyEnvironmentRequest;
 import io.subutai.client.api.Peer;
 import io.subutai.client.api.SshKey;
 import io.subutai.client.api.Template;
-import io.subutai.client.api.UserInfo;
+import io.subutai.client.api.User;
 import io.subutai.client.pgp.SignerTest;
 
 import static org.junit.Assert.assertTrue;
@@ -376,10 +376,10 @@ public class HubClientImplementationTest
     @Test
     public void testGetUserInfo() throws Exception
     {
-        UserInfoImpl userInfo = mock( UserInfoImpl.class );
+        UserImpl userInfo = mock( UserImpl.class );
         doReturn( userInfo ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
 
-        hubClient.getUserInfo( USER_ID );
+        hubClient.getUser( USER_ID );
 
         verify( hubClient ).execute( any( HttpRequestBase.class ) );
     }
@@ -388,7 +388,7 @@ public class HubClientImplementationTest
     @Test
     public void testFindUserInfoByName() throws Exception
     {
-        UserInfoImpl userInfo = mock( UserInfoImpl.class );
+        UserImpl userInfo = mock( UserImpl.class );
         doReturn( userInfo ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
 
         hubClient.findUserByName( USERNAME );
@@ -400,7 +400,7 @@ public class HubClientImplementationTest
     @Test
     public void testFindUserInfoByEmail() throws Exception
     {
-        UserInfoImpl userInfo = mock( UserInfoImpl.class );
+        UserImpl userInfo = mock( UserImpl.class );
         doReturn( userInfo ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
 
         hubClient.findUserByName( USERNAME );
@@ -424,9 +424,9 @@ public class HubClientImplementationTest
     {
         prepare();
 
-        UserInfo userInfo = hubClient.getUserInfo( USER_ID );
+        User user = hubClient.getUser( USER_ID );
 
-        System.out.println( userInfo );
+        System.out.println( user );
     }
 
 

@@ -3,10 +3,10 @@ package io.subutai.client.impl;
 
 import com.google.gson.GsonBuilder;
 
-import io.subutai.client.api.UserInfo;
+import io.subutai.client.api.User;
 
 
-public class UserInfoImpl implements UserInfo
+public class UserImpl implements User
 {
     private long id;
     private String fingerprint;

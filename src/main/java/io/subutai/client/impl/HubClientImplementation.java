@@ -60,7 +60,7 @@ import io.subutai.client.api.OperationFailedException;
 import io.subutai.client.api.Peer;
 import io.subutai.client.api.SshKey;
 import io.subutai.client.api.Template;
-import io.subutai.client.api.UserInfo;
+import io.subutai.client.api.User;
 import io.subutai.client.pgp.Signer;
 
 
@@ -72,7 +72,7 @@ public class HubClientImplementation implements HubClient
     private static final String KURJUN_TOKEN_HEADER = "kurjun-token";
     private static final String UTF8 = "UTF-8";
     private static final String LIST_PEERS = "list peers";
-    private static final String SEARCH_USER_INFO = "search user info";
+    private static final String SEARCH_USER_INFO = "search user";
     private CloseableHttpClient httpclient = HttpClients.createDefault();
     private HttpContext httpContext = new BasicHttpContext();
     private Gson gson = new GsonBuilder().registerTypeAdapter( Date.class, new DateDeserializer() ).create();
@@ -743,20 +743,20 @@ public class HubClientImplementation implements HubClient
 
 
     @Override
-    public UserInfo getUserInfo( final long userId )
+    public User getUser( final long userId )
     {
         HttpGet request = new HttpGet(
                 String.format( "https://%s.subut.ai/rest/v1/client/users/%s", hubEnv.getUrlPrefix(), userId ) );
 
-        UserInfoImpl user;
+        UserImpl user;
         CloseableHttpResponse response = null;
         try
         {
             response = execute( request );
 
-            checkHttpStatus( response, HttpStatus.SC_OK, "get user info" );
+            checkHttpStatus( response, HttpStatus.SC_OK, "get user" );
 
-            user = parse( response, new TypeToken<UserInfoImpl>()
+            user = parse( response, new TypeToken<UserImpl>()
             {
             } );
         }
@@ -770,9 +770,9 @@ public class HubClientImplementation implements HubClient
 
 
     @Override
-    public UserInfo findUserByName( final String name )
+    public User findUserByName( final String name )
     {
-        UserInfoImpl user;
+        UserImpl user;
         CloseableHttpResponse response = null;
         try
         {
@@ -784,7 +784,7 @@ public class HubClientImplementation implements HubClient
 
             checkHttpStatus( response, HttpStatus.SC_OK, SEARCH_USER_INFO );
 
-            user = parse( response, new TypeToken<UserInfoImpl>()
+            user = parse( response, new TypeToken<UserImpl>()
             {
             } );
         }
@@ -804,9 +804,9 @@ public class HubClientImplementation implements HubClient
 
 
     @Override
-    public UserInfo findUserByEmail( final String email )
+    public User findUserByEmail( final String email )
     {
-        UserInfoImpl user;
+        UserImpl user;
         CloseableHttpResponse response = null;
         try
         {
@@ -818,7 +818,7 @@ public class HubClientImplementation implements HubClient
 
             checkHttpStatus( response, HttpStatus.SC_OK, SEARCH_USER_INFO );
 
-            user = parse( response, new TypeToken<UserInfoImpl>()
+            user = parse( response, new TypeToken<UserImpl>()
             {
             } );
         }

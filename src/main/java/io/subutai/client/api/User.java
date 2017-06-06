@@ -1,7 +1,7 @@
 package io.subutai.client.api;
 
 
-public interface UserInfo
+public interface User
 {
     long getId();
 
