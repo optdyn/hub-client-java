@@ -160,7 +160,7 @@ public interface HubClient
      * @param peerId peer id to share
      * @param userId user id to share with
      */
-    void sharePeer( String peerId, String userId );
+    void sharePeer( String peerId, long userId );
 
     /**
      * Unshares shared peer with user
@@ -168,7 +168,7 @@ public interface HubClient
      * @param peerId peer id to unshare
      * @param userId user id to unshare with
      */
-    void unsharePeer( String peerId, String userId );
+    void unsharePeer( String peerId, long userId );
 
     /**
      * Update peer scope
@@ -199,4 +199,26 @@ public interface HubClient
      * @param peerId peer id
      */
     void removePeerFromFavorites( String peerId );
+
+
+    /**
+     * Returns user
+     *
+     * @param userId user id
+     */
+    User getUser( long userId );
+
+    /**
+     * Searches user by name
+     *
+     * @param name user name
+     */
+    User findUserByName( String name );
+
+    /**
+     * Searches info by email
+     *
+     * @param email user email
+     */
+    User findUserByEmail( String email );
 }

@@ -60,6 +60,7 @@ import io.subutai.client.api.OperationFailedException;
 import io.subutai.client.api.Peer;
 import io.subutai.client.api.SshKey;
 import io.subutai.client.api.Template;
+import io.subutai.client.api.User;
 import io.subutai.client.pgp.Signer;
 
 
@@ -71,6 +72,7 @@ public class HubClientImplementation implements HubClient
     private static final String KURJUN_TOKEN_HEADER = "kurjun-token";
     private static final String UTF8 = "UTF-8";
     private static final String LIST_PEERS = "list peers";
+    private static final String SEARCH_USER_INFO = "search user";
     private CloseableHttpClient httpclient = HttpClients.createDefault();
     private HttpContext httpContext = new BasicHttpContext();
     private Gson gson = new GsonBuilder().registerTypeAdapter( Date.class, new DateDeserializer() ).create();
@@ -128,32 +130,6 @@ public class HubClientImplementation implements HubClient
 
             close( response );
         }
-    }
-
-
-    public Double getBalance()
-    {
-        HttpGet request =
-                new HttpGet( String.format( "https://%s.subut.ai/rest/v1/client/balance", hubEnv.getUrlPrefix() ) );
-
-        ResultDto result;
-        CloseableHttpResponse response = null;
-        try
-        {
-            response = execute( request );
-
-            checkHttpStatus( response, HttpStatus.SC_OK, "get balance" );
-
-            result = parse( response, new TypeToken<ResultDto>()
-            {
-            } );
-        }
-        finally
-        {
-            close( response );
-        }
-
-        return ( Double ) result.getValue();
     }
 
 
@@ -337,7 +313,7 @@ public class HubClientImplementation implements HubClient
 
 
     @Override
-    public void sharePeer( final String peerId, final String userId )
+    public void sharePeer( final String peerId, final long userId )
     {
         HttpPut request = new HttpPut(
                 String.format( "https://%s.subut.ai/rest/v1/client/peers/%s/share/%s", hubEnv.getUrlPrefix(), peerId,
@@ -358,7 +334,7 @@ public class HubClientImplementation implements HubClient
 
 
     @Override
-    public void unsharePeer( final String peerId, final String userId )
+    public void unsharePeer( final String peerId, final long userId )
     {
         HttpDelete request = new HttpDelete(
                 String.format( "https://%s.subut.ai/rest/v1/client/peers/%s/share/%s", hubEnv.getUrlPrefix(), peerId,
@@ -455,7 +431,6 @@ public class HubClientImplementation implements HubClient
 
             checkHttpStatus( response, HttpStatus.SC_OK, "update peer name" );
         }
-
         catch ( UnsupportedEncodingException e )
         {
             LOG.error( "Error encoding name", e );
@@ -740,6 +715,126 @@ public class HubClientImplementation implements HubClient
         return kurjunClient.getTemplates( getKurjunToken() );
     }
 
+
+    public Double getBalance()
+    {
+        HttpGet request =
+                new HttpGet( String.format( "https://%s.subut.ai/rest/v1/client/balance", hubEnv.getUrlPrefix() ) );
+
+        ResultDto result;
+        CloseableHttpResponse response = null;
+        try
+        {
+            response = execute( request );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "get balance" );
+
+            result = parse( response, new TypeToken<ResultDto>()
+            {
+            } );
+        }
+        finally
+        {
+            close( response );
+        }
+
+        return ( Double ) result.getValue();
+    }
+
+
+    @Override
+    public User getUser( final long userId )
+    {
+        HttpGet request = new HttpGet(
+                String.format( "https://%s.subut.ai/rest/v1/client/users/%s", hubEnv.getUrlPrefix(), userId ) );
+
+        UserImpl user;
+        CloseableHttpResponse response = null;
+        try
+        {
+            response = execute( request );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "get user" );
+
+            user = parse( response, new TypeToken<UserImpl>()
+            {
+            } );
+        }
+        finally
+        {
+            close( response );
+        }
+
+        return user;
+    }
+
+
+    @Override
+    public User findUserByName( final String name )
+    {
+        UserImpl user;
+        CloseableHttpResponse response = null;
+        try
+        {
+            HttpGet request = new HttpGet(
+                    String.format( "https://%s.subut.ai/rest/v1/client/users/search?name=%s", hubEnv.getUrlPrefix(),
+                            URLEncoder.encode( name, UTF8 ) ) );
+
+            response = execute( request );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, SEARCH_USER_INFO );
+
+            user = parse( response, new TypeToken<UserImpl>()
+            {
+            } );
+        }
+        catch ( UnsupportedEncodingException e )
+        {
+            LOG.error( "Error encoding name", e );
+
+            throw new OperationFailedException( "Error encoding name", e );
+        }
+        finally
+        {
+            close( response );
+        }
+
+        return user;
+    }
+
+
+    @Override
+    public User findUserByEmail( final String email )
+    {
+        UserImpl user;
+        CloseableHttpResponse response = null;
+        try
+        {
+            HttpGet request = new HttpGet(
+                    String.format( "https://%s.subut.ai/rest/v1/client/users/search?email=%s", hubEnv.getUrlPrefix(),
+                            URLEncoder.encode( email, UTF8 ) ) );
+
+            response = execute( request );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, SEARCH_USER_INFO );
+
+            user = parse( response, new TypeToken<UserImpl>()
+            {
+            } );
+        }
+        catch ( UnsupportedEncodingException e )
+        {
+            LOG.error( "Error encoding email", e );
+
+            throw new OperationFailedException( "Error encoding email", e );
+        }
+        finally
+        {
+            close( response );
+        }
+
+        return user;
+    }
 
     //**************
 
