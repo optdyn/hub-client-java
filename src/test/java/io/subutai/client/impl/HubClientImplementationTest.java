@@ -374,10 +374,10 @@ public class HubClientImplementationTest
 
 
     @Test
-    public void testGetUserInfo() throws Exception
+    public void testGetUser() throws Exception
     {
-        UserImpl userInfo = mock( UserImpl.class );
-        doReturn( userInfo ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+        UserImpl user = mock( UserImpl.class );
+        doReturn( user ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
 
         hubClient.getUser( USER_ID );
 
@@ -386,10 +386,10 @@ public class HubClientImplementationTest
 
 
     @Test
-    public void testFindUserInfoByName() throws Exception
+    public void testFindUserByName() throws Exception
     {
-        UserImpl userInfo = mock( UserImpl.class );
-        doReturn( userInfo ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+        UserImpl user = mock( UserImpl.class );
+        doReturn( user ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
 
         hubClient.findUserByName( USERNAME );
 
@@ -398,10 +398,10 @@ public class HubClientImplementationTest
 
 
     @Test
-    public void testFindUserInfoByEmail() throws Exception
+    public void testFindUserByEmail() throws Exception
     {
-        UserImpl userInfo = mock( UserImpl.class );
-        doReturn( userInfo ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+        UserImpl user = mock( UserImpl.class );
+        doReturn( user ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
 
         hubClient.findUserByName( USERNAME );
 
