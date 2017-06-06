@@ -27,6 +27,7 @@ import io.subutai.client.api.Environment;
 import io.subutai.client.api.HubClient;
 import io.subutai.client.api.ModifyEnvironmentRequest;
 import io.subutai.client.api.Peer;
+import io.subutai.client.api.SshKey;
 import io.subutai.client.api.Template;
 import io.subutai.client.pgp.SignerTest;
 
@@ -37,7 +38,6 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
@@ -46,10 +46,13 @@ import static org.mockito.Mockito.verify;
 public class HubClientImplementationTest
 {
 
-    private static final String USERNAME = "dummy-user";
-    private static final String PASSWORD = "dummy-pwd";
-    private static final String ENVIRONMENT_ID = "bc8b8e43-0416-4ad4-a002-a4b8ad61b1f2";
-    private static final String CONTAINER_ID = "33416CAEC7D07CABD7C73AB0FE1EF92DBA27FCB6";
+    private static final String USERNAME = "test.d@mail.com";
+    private static final String PASSWORD = "test";
+    private static final String TEMPLATE_ID = "a697e70f3fc538b4f4763588a7868388";
+    private static final String PEER_ID = "ACB7B15EDF77CA3D71CEC940D27A413549546B54";
+    private static final String RH_ID = "2E81C1E1CDFC626E82A3B6FEAB0C06B8F070AB5B";
+    private static final String ENVIRONMENT_ID = "5dea49fc-d5bf-49f9-a321-2dc1dc9ea148";
+    private static final String CONTAINER_ID = "34664840888A070BC40E04A50C7D156051ECD046";
     private static final String SSH_KEY =
             "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCjUo/8VklFC8cRyHE502tUXit15L8Qg2z/47c6PMpQThR0sjhURgoILms"
                     + "/IX180yGqgkpjdX08MIkmANhbXDmSFh6T4lUzqGGoC7lerePwkA2yJWlsP+7JKk9oDSaYJ3lkfvKZnz8ZG7JS1jg"
@@ -57,6 +60,8 @@ public class HubClientImplementationTest
                     + "+tUK4R7kJBecYQGkJj4ILt/cAGrY0sg8Ol+WBOq4ex3zCF1zJrdJCxW4t2NUyNfCxW7kV2uUhbWNuj+n"
                     +
                     "/I5a8CDrMJsJLqdgC3EQ17uRy41GHbTwBQs0q2gwfBpefHFXokWwxu06hk0jfwFHWm9xRT79a56hr101Fy4uNjzzVtrWDS4end9VC7bt7Xf/kDxx7FB9DW1wfaYMcCp6YD5O8ENpl35gK35ZXtT5BP2GBoxHGlPdF4PObMCNi5ATtO/gLD8kW1LutO2ldsaY4sHm/JG55UNrpQCpIYe6QfkHsO+fX9/WmjP+iTDdHs1untgurvk5KdhtQxecTvTk3M/ewzHZbEbzYJYzFOsy5f6FQ8U/ckw8PejBzGDUiMGTJXl+GjV9VV3BmkKKeqD5uKu+gta5dynbdfU4r7heAV6oxan2x/rg9iHpOklIRtu2chJYJUq7lQ== dilshat.aliev@gmail.com";
+    private static final String USER_ID = "164";
+    private static final String NEW_PEER_NAME = "New Peer-Name";
 
     private HubClientImplementation hubClient;
 
@@ -115,6 +120,18 @@ public class HubClientImplementationTest
 
 
     @Test
+    public void testGetBalance() throws Exception
+    {
+        ResultDto resultDto = mock( ResultDto.class );
+        doReturn( resultDto ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
+        Double balance = hubClient.getBalance();
+
+        verify( resultDto ).getValue();
+    }
+
+
+    @Test
     public void testGetPeers() throws Exception
     {
         doReturn( Lists.newArrayList( peer ) ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
@@ -126,8 +143,54 @@ public class HubClientImplementationTest
 
 
     @Test
+    public void testGetSharedPeers() throws Exception
+    {
+        doReturn( Lists.newArrayList( peer ) ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
+        List<Peer> peers = hubClient.getSharedPeers();
+
+        assertTrue( peers.contains( peer ) );
+    }
+
+
+    @Test
+    public void testGetOwnPeers() throws Exception
+    {
+        doReturn( Lists.newArrayList( peer ) ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
+        List<Peer> peers = hubClient.getOwnPeers();
+
+        assertTrue( peers.contains( peer ) );
+    }
+
+
+    @Test
+    public void testGetFavoritePeers() throws Exception
+    {
+        doReturn( Lists.newArrayList( peer ) ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
+        List<Peer> peers = hubClient.getFavoritePeers();
+
+        assertTrue( peers.contains( peer ) );
+    }
+
+
+    @Test
+    public void testGetPublicPeers() throws Exception
+    {
+        doReturn( Lists.newArrayList( peer ) ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
+        List<Peer> peers = hubClient.getPublicPeers();
+
+        assertTrue( peers.contains( peer ) );
+    }
+
+
+    @Test
     public void testStopContainer() throws Exception
     {
+        returnHttpCode( HttpStatus.SC_ACCEPTED );
+
         hubClient.stopContainer( ENVIRONMENT_ID, CONTAINER_ID );
 
         verify( hubClient ).execute( any( HttpRequestBase.class ) );
@@ -137,6 +200,8 @@ public class HubClientImplementationTest
     @Test
     public void testStartContainer() throws Exception
     {
+        returnHttpCode( HttpStatus.SC_ACCEPTED );
+
         hubClient.startContainer( ENVIRONMENT_ID, CONTAINER_ID );
 
         verify( hubClient ).execute( any( HttpRequestBase.class ) );
@@ -146,7 +211,7 @@ public class HubClientImplementationTest
     @Test
     public void testDestroyContainer() throws Exception
     {
-        returnHttpCode( HttpStatus.SC_NO_CONTENT );
+        returnHttpCode( HttpStatus.SC_ACCEPTED );
 
         hubClient.destroyContainer( ENVIRONMENT_ID, CONTAINER_ID );
 
@@ -157,7 +222,7 @@ public class HubClientImplementationTest
     @Test
     public void testDestroyEnvironment() throws Exception
     {
-        returnHttpCode( HttpStatus.SC_NO_CONTENT );
+        returnHttpCode( HttpStatus.SC_ACCEPTED );
 
         hubClient.destroyEnvironment( ENVIRONMENT_ID );
 
@@ -166,9 +231,20 @@ public class HubClientImplementationTest
 
 
     @Test
+    public void tesGetSshKeys() throws Exception
+    {
+        doReturn( Lists.newArrayList( SSH_KEY ) ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
+        hubClient.getSshKeys( ENVIRONMENT_ID );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
     public void testAddSshKey() throws Exception
     {
-        returnHttpCode( HttpStatus.SC_CREATED );
+        returnHttpCode( HttpStatus.SC_ACCEPTED );
 
         hubClient.addSshKey( ENVIRONMENT_ID, SSH_KEY );
 
@@ -179,7 +255,7 @@ public class HubClientImplementationTest
     @Test
     public void testRemoveSshKey() throws Exception
     {
-        returnHttpCode( HttpStatus.SC_NO_CONTENT );
+        returnHttpCode( HttpStatus.SC_ACCEPTED );
 
         hubClient.removeSshKey( ENVIRONMENT_ID, SSH_KEY );
 
@@ -199,7 +275,7 @@ public class HubClientImplementationTest
     @Test
     public void testCreateEnvironment() throws Exception
     {
-        returnHttpCode( HttpStatus.SC_CREATED );
+        returnHttpCode( HttpStatus.SC_ACCEPTED );
         doReturn( Lists.newArrayList( template ) ).when( hubClient ).getTemplates();
         doReturn( "template" ).when( hubClient ).getTemplateNameById( anyList(), anyString() );
         CreateEnvironmentRequestImpl.Node node = mock( CreateEnvironmentRequestImpl.Node.class );
@@ -216,6 +292,7 @@ public class HubClientImplementationTest
     @Test
     public void testModifyEnvironment() throws Exception
     {
+        returnHttpCode( HttpStatus.SC_ACCEPTED );
         doReturn( Lists.newArrayList( template ) ).when( hubClient ).getTemplates();
         doReturn( "template" ).when( hubClient ).getTemplateNameById( anyList(), anyString() );
         CreateEnvironmentRequestImpl.Node createNode = mock( CreateEnvironmentRequestImpl.Node.class );
@@ -232,12 +309,262 @@ public class HubClientImplementationTest
 
 
     @Test
+    public void testCreateHubClientWithKey() throws Exception
+    {
+        File keyFile = File.createTempFile( "test-keys", ".tmp" );
+        Files.copy( SignerTest.getKeyFileAsStream(), keyFile.toPath(), StandardCopyOption.REPLACE_EXISTING );
+
+        HubClients.getClient( HubClient.HubEnv.DEV, keyFile.getPath(), "" );
+    }
+
+
+    @Test
+    public void testUpdatePeerScope() throws Exception
+    {
+        hubClient.updatePeerScope( PEER_ID, Peer.Scope.PRIVATE );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testUpdatePeerName() throws Exception
+    {
+        hubClient.updatePeerName( PEER_ID, NEW_PEER_NAME );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testSharePeer() throws Exception
+    {
+        hubClient.sharePeer( PEER_ID, USER_ID );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testUnsharePeer() throws Exception
+    {
+        hubClient.unsharePeer( PEER_ID, USER_ID );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testAddPeerToFavorites() throws Exception
+    {
+        hubClient.addPeerToFavorites( PEER_ID );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testRemovePeerFromFavorites() throws Exception
+    {
+        hubClient.removePeerFromFavorites( PEER_ID );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    /******* Real tests *******/
+
+    private void prepare()
+    {
+        hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV );
+        hubClient.login( USERNAME, PASSWORD );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealAddPeerToFavorites() throws Exception
+    {
+        prepare();
+
+        hubClient.addPeerToFavorites( PEER_ID );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealRemovePeerFromFavorites() throws Exception
+    {
+        prepare();
+
+        hubClient.removePeerFromFavorites( PEER_ID );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealSharePeer() throws Exception
+    {
+        prepare();
+
+        hubClient.sharePeer( PEER_ID, USER_ID );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealUnsharePeer() throws Exception
+    {
+        prepare();
+
+        hubClient.unsharePeer( PEER_ID, USER_ID );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealUpdatePeerScope() throws Exception
+    {
+        prepare();
+
+        hubClient.updatePeerScope( PEER_ID, Peer.Scope.SHARED );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealUpdatePeerName() throws Exception
+    {
+        prepare();
+
+        hubClient.updatePeerName( PEER_ID, NEW_PEER_NAME );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealGetBalance() throws Exception
+    {
+        prepare();
+
+        System.out.println( hubClient.getBalance() );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealStartContainer() throws Exception
+    {
+        prepare();
+
+        hubClient.startContainer( ENVIRONMENT_ID, CONTAINER_ID );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealStopContainer() throws Exception
+    {
+        prepare();
+
+        hubClient.stopContainer( ENVIRONMENT_ID, CONTAINER_ID );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealDestroyContainer() throws Exception
+    {
+        prepare();
+
+        hubClient.destroyContainer( ENVIRONMENT_ID, CONTAINER_ID );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealDestroyEnvironment() throws Exception
+    {
+        prepare();
+
+        hubClient.destroyEnvironment( ENVIRONMENT_ID );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealGetSshKeys() throws Exception
+    {
+        prepare();
+
+        List<SshKey> sshKeys = hubClient.getSshKeys( ENVIRONMENT_ID );
+
+        for ( SshKey sshKey : sshKeys )
+        {
+            System.out.println( sshKey );
+        }
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealAddSshKey() throws Exception
+    {
+        prepare();
+
+        hubClient.addSshKey( ENVIRONMENT_ID, SSH_KEY );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealRemoveSshKey() throws Exception
+    {
+        prepare();
+
+        hubClient.removeSshKey( ENVIRONMENT_ID, SSH_KEY );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealGetPeers() throws Exception
+    {
+        prepare();
+
+        List<Peer> peers = hubClient.getOwnPeers();
+
+        for ( Peer peer : peers )
+        {
+            System.out.println( peer );
+        }
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealGetEnvironments() throws Exception
+    {
+        prepare();
+
+        List<Environment> environments = hubClient.getEnvironments();
+
+        for ( Environment environment : environments )
+        {
+            System.out.println( environment );
+        }
+    }
+
+
+    @Test
     @Ignore
     public void testRealGetTemplates() throws Exception
     {
         hubClient = ( HubClientImplementation ) HubClients
                 .getClient( HubClient.HubEnv.DEV, "C:\\Users\\Dilshat\\Desktop\\dilshat.aliev_all.asc", "" );
+
         List<Template> templates = hubClient.getTemplates();
+
         for ( Template template : templates )
         {
             System.out.println( template );
@@ -249,15 +576,10 @@ public class HubClientImplementationTest
     @Ignore
     public void testRealCreateEnvironment() throws Exception
     {
-        reset( hubClient );
-        String templateId = "a697e70f3fc538b4f4763588a7868388";//master
-        String peerId = "8BC9E203393B29DECF485BF8934A1421E3ECB58A";
-        String rhId = "B2E4DBC6200D6592298F7CE2D89CD0E8E61E6326";
-
-        hubClient.login( "test.d@mail.com", "test" );
-
+        prepare();
         CreateEnvironmentRequest createEnvironmentRequest = hubClient.createRequest( "test-env" );
-        createEnvironmentRequest.addNode( "test-container", templateId, ContainerSize.SMALL, peerId, rhId );
+        createEnvironmentRequest.addNode( "test-container1", TEMPLATE_ID, ContainerSize.SMALL, PEER_ID, RH_ID );
+        createEnvironmentRequest.addNode( "test-container2", TEMPLATE_ID, ContainerSize.SMALL, PEER_ID, RH_ID );
 
         hubClient.createEnvironment( createEnvironmentRequest );
     }
@@ -267,29 +589,11 @@ public class HubClientImplementationTest
     @Ignore
     public void testRealModifyEnvironment() throws Exception
     {
-        reset( hubClient );
-        String templateId = "a697e70f3fc538b4f4763588a7868388";//master
-        String peerId = "8BC9E203393B29DECF485BF8934A1421E3ECB58A";
-        String rhId = "B2E4DBC6200D6592298F7CE2D89CD0E8E61E6326";
-        String envId = "f0740e29-1519-4dcb-91d1-99c91bd0326b";
-        String contIt = "06C6BE754504777A29F3F77EA2450082B7614323";
-
-        hubClient.login( "test.d@mail.com", "test" );
-
-        ModifyEnvironmentRequest modifyEnvironmentRequest = hubClient.modifyRequest( envId );
-        modifyEnvironmentRequest.addNode( "test-container222", templateId, ContainerSize.SMALL, peerId, rhId );
-        modifyEnvironmentRequest.removeNode( contIt );
+        prepare();
+        ModifyEnvironmentRequest modifyEnvironmentRequest = hubClient.modifyRequest( ENVIRONMENT_ID );
+        modifyEnvironmentRequest.addNode( "test-container3", TEMPLATE_ID, ContainerSize.SMALL, PEER_ID, RH_ID );
+        modifyEnvironmentRequest.removeNode( CONTAINER_ID );
 
         hubClient.modifyEnvironment( modifyEnvironmentRequest );
-    }
-
-
-    @Test
-    public void testRealCreateHubClientWithKey() throws Exception
-    {
-        File keyFile = File.createTempFile( "test-keys", ".tmp" );
-        Files.copy( SignerTest.getKeyFileAsStream(), keyFile.toPath(), StandardCopyOption.REPLACE_EXISTING );
-
-        HubClients.getClient( HubClient.HubEnv.DEV, keyFile.getPath(), "" );
     }
 }
