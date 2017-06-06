@@ -47,7 +47,8 @@ import static org.mockito.Mockito.verify;
 public class HubClientImplementationTest
 {
 
-    private static final String USERNAME = "test.d@mail.com";
+    private static final String USERNAME = "test-d";
+    private static final String EMAIL = "test.d@mail.com";
     private static final String PASSWORD = "test";
     private static final String TEMPLATE_ID = "a697e70f3fc538b4f4763588a7868388";
     private static final String PEER_ID = "ACB7B15EDF77CA3D71CEC940D27A413549546B54";
@@ -103,7 +104,7 @@ public class HubClientImplementationTest
     @Test
     public void testLogin() throws Exception
     {
-        hubClient.login( USERNAME, PASSWORD );
+        hubClient.login( EMAIL, PASSWORD );
 
         verify( hubClient ).execute( any( HttpRequestBase.class ) );
     }
@@ -391,7 +392,7 @@ public class HubClientImplementationTest
         UserImpl user = mock( UserImpl.class );
         doReturn( user ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
 
-        hubClient.findUserByName( USERNAME );
+        hubClient.findUserByName( EMAIL );
 
         verify( hubClient ).execute( any( HttpRequestBase.class ) );
     }
@@ -403,7 +404,7 @@ public class HubClientImplementationTest
         UserImpl user = mock( UserImpl.class );
         doReturn( user ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
 
-        hubClient.findUserByName( USERNAME );
+        hubClient.findUserByName( EMAIL );
 
         verify( hubClient ).execute( any( HttpRequestBase.class ) );
     }
@@ -414,17 +415,41 @@ public class HubClientImplementationTest
     private void prepare()
     {
         hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV );
-        hubClient.login( USERNAME, PASSWORD );
+        hubClient.login( EMAIL, PASSWORD );
     }
 
 
     @Test
     @Ignore
-    public void testRealGetUserInfo() throws Exception
+    public void testRealGetUser() throws Exception
     {
         prepare();
 
         User user = hubClient.getUser( USER_ID );
+
+        System.out.println( user );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealFindUserByEmail() throws Exception
+    {
+        prepare();
+
+        User user = hubClient.findUserByEmail( EMAIL );
+
+        System.out.println( user );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealFindUserByName() throws Exception
+    {
+        prepare();
+
+        User user = hubClient.findUserByName( USERNAME );
 
         System.out.println( user );
     }
