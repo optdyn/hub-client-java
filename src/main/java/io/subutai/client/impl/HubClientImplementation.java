@@ -899,13 +899,13 @@ public class HubClientImplementation implements HubClient
 
 
     @Override
-    public List<Organization> getUserOrganizations( final long userId )
+    public List<Organization> getUserOrganizations( final long userId, boolean ownOnly )
     {
         List<Organization> organizations = Lists.newArrayList();
 
         HttpGet request = new HttpGet(
-                String.format( "https://%s.subut.ai/rest/v1/client/users/%s/organizations", hubEnv.getUrlPrefix(),
-                        userId ) );
+                String.format( "https://%s.subut.ai/rest/v1/client/users/%s/organizations?own=%s",
+                        hubEnv.getUrlPrefix(), userId, ownOnly ? "true" : "false" ) );
 
         CloseableHttpResponse response = null;
         try

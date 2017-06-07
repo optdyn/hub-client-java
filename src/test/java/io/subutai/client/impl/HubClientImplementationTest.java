@@ -441,7 +441,7 @@ public class HubClientImplementationTest
         doReturn( Lists.newArrayList( organization ) ).when( hubClient )
                                                       .parse( eq( response ), any( TypeToken.class ) );
 
-        hubClient.getUserOrganizations( USER_ID );
+        hubClient.getUserOrganizations( USER_ID, false );
 
         verify( hubClient ).execute( any( HttpRequestBase.class ) );
     }
@@ -457,12 +457,12 @@ public class HubClientImplementationTest
 
 
     @Test
-//    @Ignore
+    @Ignore
     public void testRealGetUserOrganizations() throws Exception
     {
         prepare();
 
-        List<Organization> organizations = hubClient.getUserOrganizations( USER_ID );
+        List<Organization> organizations = hubClient.getUserOrganizations( USER_ID, false );
 
         System.out.println( organizations );
     }
