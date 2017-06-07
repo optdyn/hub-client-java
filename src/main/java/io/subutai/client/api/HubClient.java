@@ -230,6 +230,13 @@ public interface HubClient
      */
     List<Peer> getUserPeers( long userId );
 
+    /**
+     * Returns users of peer
+     *
+     * @param peerId peer id
+     */
+    List<User> getPeerUsers( String peerId );
 
-    //todo getUserOrgz, getUserRHs, getPeerUsers
+
+    //todo getUserOrgz, getUserRHs
 }
