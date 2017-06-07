@@ -238,5 +238,7 @@ public interface HubClient
     List<User> getPeerUsers( String peerId );
 
 
-    //todo getUserOrgz, getUserRHs
+    List<Organization> getUserOrganizations( long userId );
+
+    //todo getOrgz
 }

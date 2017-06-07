@@ -57,6 +57,7 @@ import io.subutai.client.api.Environment;
 import io.subutai.client.api.HubClient;
 import io.subutai.client.api.ModifyEnvironmentRequest;
 import io.subutai.client.api.OperationFailedException;
+import io.subutai.client.api.Organization;
 import io.subutai.client.api.Peer;
 import io.subutai.client.api.SshKey;
 import io.subutai.client.api.Template;
@@ -894,6 +895,37 @@ public class HubClientImplementation implements HubClient
         }
 
         return users;
+    }
+
+
+    @Override
+    public List<Organization> getUserOrganizations( final long userId )
+    {
+        List<Organization> organizations = Lists.newArrayList();
+
+        HttpGet request = new HttpGet(
+                String.format( "https://%s.subut.ai/rest/v1/client/users/%s/organizations", hubEnv.getUrlPrefix(),
+                        userId ) );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            response = execute( request );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "get user organizations" );
+
+            List<OrganizationImpl> organizationList = parse( response, new TypeToken<List<OrganizationImpl>>()
+            {
+            } );
+
+            organizations.addAll( organizationList );
+        }
+        finally
+        {
+            close( response );
+        }
+
+        return organizations;
     }
 
     //**************

@@ -26,6 +26,7 @@ import io.subutai.client.api.CreateEnvironmentRequest;
 import io.subutai.client.api.Environment;
 import io.subutai.client.api.HubClient;
 import io.subutai.client.api.ModifyEnvironmentRequest;
+import io.subutai.client.api.Organization;
 import io.subutai.client.api.Peer;
 import io.subutai.client.api.SshKey;
 import io.subutai.client.api.Template;
@@ -427,7 +428,20 @@ public class HubClientImplementationTest
         UserImpl user = mock( UserImpl.class );
         doReturn( Lists.newArrayList( user ) ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
 
-        hubClient.getPeerUsers( PEER_ID);
+        hubClient.getPeerUsers( PEER_ID );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testGetUserOrganizations() throws Exception
+    {
+        OrganizationImpl organization = mock( OrganizationImpl.class );
+        doReturn( Lists.newArrayList( organization ) ).when( hubClient )
+                                                      .parse( eq( response ), any( TypeToken.class ) );
+
+        hubClient.getUserOrganizations( USER_ID );
 
         verify( hubClient ).execute( any( HttpRequestBase.class ) );
     }
@@ -439,6 +453,18 @@ public class HubClientImplementationTest
     {
         hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV );
         hubClient.login( EMAIL, PASSWORD );
+    }
+
+
+    @Test
+//    @Ignore
+    public void testRealGetUserOrganizations() throws Exception
+    {
+        prepare();
+
+        List<Organization> organizations = hubClient.getUserOrganizations( USER_ID );
+
+        System.out.println( organizations );
     }
 
 
