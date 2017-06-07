@@ -410,6 +410,17 @@ public class HubClientImplementationTest
     }
 
 
+    @Test
+    public void testGetUserPeers() throws Exception
+    {
+        doReturn( Lists.newArrayList( peer ) ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
+        hubClient.getUserPeers( USER_ID );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
     /******* Real tests *******/
 
     private void prepare()
@@ -428,6 +439,18 @@ public class HubClientImplementationTest
         User user = hubClient.getUser( USER_ID );
 
         System.out.println( user );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealGetUserPeers() throws Exception
+    {
+        prepare();
+
+        List<Peer> peers = hubClient.getUserPeers( USER_ID );
+
+        System.out.println( peers );
     }
 
 

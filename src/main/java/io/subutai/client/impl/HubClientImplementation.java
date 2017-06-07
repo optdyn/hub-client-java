@@ -836,6 +836,36 @@ public class HubClientImplementation implements HubClient
         return user;
     }
 
+
+    @Override
+    public List<Peer> getUserPeers( final long userId )
+    {
+        List<Peer> peers = Lists.newArrayList();
+
+        HttpGet request = new HttpGet(
+                String.format( "https://%s.subut.ai/rest/v1/client/users/%s/peers", hubEnv.getUrlPrefix(), userId ) );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            response = execute( request );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "get user peers" );
+
+            List<PeerImpl> peerList = parse( response, new TypeToken<List<PeerImpl>>()
+            {
+            } );
+
+            peers.addAll( peerList );
+        }
+        finally
+        {
+            close( response );
+        }
+
+        return peers;
+    }
+
     //**************
 
 

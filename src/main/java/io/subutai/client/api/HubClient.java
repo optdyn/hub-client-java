@@ -221,4 +221,15 @@ public interface HubClient
      * @param email user email
      */
     User findUserByEmail( String email );
+
+
+    /**
+     * Returns public peers of user
+     *
+     * @param userId user id
+     */
+    List<Peer> getUserPeers( long userId );
+
+
+    //todo getUserOrgz, getUserRHs, getPeerUsers
 }
