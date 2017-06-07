@@ -57,6 +57,7 @@ import io.subutai.client.api.Environment;
 import io.subutai.client.api.HubClient;
 import io.subutai.client.api.ModifyEnvironmentRequest;
 import io.subutai.client.api.OperationFailedException;
+import io.subutai.client.api.Organization;
 import io.subutai.client.api.Peer;
 import io.subutai.client.api.SshKey;
 import io.subutai.client.api.Template;
@@ -834,6 +835,97 @@ public class HubClientImplementation implements HubClient
         }
 
         return user;
+    }
+
+
+    @Override
+    public List<Peer> getUserPeers( final long userId )
+    {
+        List<Peer> peers = Lists.newArrayList();
+
+        HttpGet request = new HttpGet(
+                String.format( "https://%s.subut.ai/rest/v1/client/users/%s/peers", hubEnv.getUrlPrefix(), userId ) );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            response = execute( request );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "get user peers" );
+
+            List<PeerImpl> peerList = parse( response, new TypeToken<List<PeerImpl>>()
+            {
+            } );
+
+            peers.addAll( peerList );
+        }
+        finally
+        {
+            close( response );
+        }
+
+        return peers;
+    }
+
+
+    @Override
+    public List<User> getPeerUsers( final String peerId )
+    {
+        List<User> users = Lists.newArrayList();
+
+        HttpGet request = new HttpGet(
+                String.format( "https://%s.subut.ai/rest/v1/client/peers/%s/users", hubEnv.getUrlPrefix(), peerId ) );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            response = execute( request );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "get peer users" );
+
+            List<UserImpl> userList = parse( response, new TypeToken<List<UserImpl>>()
+            {
+            } );
+
+            users.addAll( userList );
+        }
+        finally
+        {
+            close( response );
+        }
+
+        return users;
+    }
+
+
+    @Override
+    public List<Organization> getUserOrganizations( final long userId, boolean ownOnly )
+    {
+        List<Organization> organizations = Lists.newArrayList();
+
+        HttpGet request = new HttpGet(
+                String.format( "https://%s.subut.ai/rest/v1/client/users/%s/organizations?own=%s",
+                        hubEnv.getUrlPrefix(), userId, ownOnly ? "true" : "false" ) );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            response = execute( request );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "get user organizations" );
+
+            List<OrganizationImpl> organizationList = parse( response, new TypeToken<List<OrganizationImpl>>()
+            {
+            } );
+
+            organizations.addAll( organizationList );
+        }
+        finally
+        {
+            close( response );
+        }
+
+        return organizations;
     }
 
     //**************

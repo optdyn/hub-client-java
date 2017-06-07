@@ -26,6 +26,7 @@ import io.subutai.client.api.CreateEnvironmentRequest;
 import io.subutai.client.api.Environment;
 import io.subutai.client.api.HubClient;
 import io.subutai.client.api.ModifyEnvironmentRequest;
+import io.subutai.client.api.Organization;
 import io.subutai.client.api.Peer;
 import io.subutai.client.api.SshKey;
 import io.subutai.client.api.Template;
@@ -51,7 +52,7 @@ public class HubClientImplementationTest
     private static final String EMAIL = "test.d@mail.com";
     private static final String PASSWORD = "test";
     private static final String TEMPLATE_ID = "a697e70f3fc538b4f4763588a7868388";
-    private static final String PEER_ID = "ACB7B15EDF77CA3D71CEC940D27A413549546B54";
+    private static final String PEER_ID = "913B1453BCC2E1D4E1CA03C803F9E40A8D2F03AD";
     private static final String RH_ID = "2E81C1E1CDFC626E82A3B6FEAB0C06B8F070AB5B";
     private static final String ENVIRONMENT_ID = "5dea49fc-d5bf-49f9-a321-2dc1dc9ea148";
     private static final String CONTAINER_ID = "34664840888A070BC40E04A50C7D156051ECD046";
@@ -410,12 +411,60 @@ public class HubClientImplementationTest
     }
 
 
+    @Test
+    public void testGetUserPeers() throws Exception
+    {
+        doReturn( Lists.newArrayList( peer ) ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
+        hubClient.getUserPeers( USER_ID );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testGetPeerUsers() throws Exception
+    {
+        UserImpl user = mock( UserImpl.class );
+        doReturn( Lists.newArrayList( user ) ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
+        hubClient.getPeerUsers( PEER_ID );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testGetUserOrganizations() throws Exception
+    {
+        OrganizationImpl organization = mock( OrganizationImpl.class );
+        doReturn( Lists.newArrayList( organization ) ).when( hubClient )
+                                                      .parse( eq( response ), any( TypeToken.class ) );
+
+        hubClient.getUserOrganizations( USER_ID, false );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
     /******* Real tests *******/
 
     private void prepare()
     {
         hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV );
         hubClient.login( EMAIL, PASSWORD );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealGetUserOrganizations() throws Exception
+    {
+        prepare();
+
+        List<Organization> organizations = hubClient.getUserOrganizations( USER_ID, false );
+
+        System.out.println( organizations );
     }
 
 
@@ -428,6 +477,18 @@ public class HubClientImplementationTest
         User user = hubClient.getUser( USER_ID );
 
         System.out.println( user );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealGetUserPeers() throws Exception
+    {
+        prepare();
+
+        List<Peer> peers = hubClient.getUserPeers( USER_ID );
+
+        System.out.println( peers );
     }
 
 
@@ -573,10 +634,7 @@ public class HubClientImplementationTest
 
         List<SshKey> sshKeys = hubClient.getSshKeys( ENVIRONMENT_ID );
 
-        for ( SshKey sshKey : sshKeys )
-        {
-            System.out.println( sshKey );
-        }
+        System.out.println( sshKeys );
     }
 
 
@@ -608,10 +666,19 @@ public class HubClientImplementationTest
 
         List<Peer> peers = hubClient.getOwnPeers();
 
-        for ( Peer peer : peers )
-        {
-            System.out.println( peer );
-        }
+        System.out.println( peers );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealGetPeerUsers() throws Exception
+    {
+        prepare();
+
+        List<User> users = hubClient.getPeerUsers( PEER_ID );
+
+        System.out.println( users );
     }
 
 
@@ -623,10 +690,7 @@ public class HubClientImplementationTest
 
         List<Environment> environments = hubClient.getEnvironments();
 
-        for ( Environment environment : environments )
-        {
-            System.out.println( environment );
-        }
+        System.out.println( environments );
     }
 
 
@@ -639,10 +703,7 @@ public class HubClientImplementationTest
 
         List<Template> templates = hubClient.getTemplates();
 
-        for ( Template template : templates )
-        {
-            System.out.println( template );
-        }
+        System.out.println( templates );
     }
 
 

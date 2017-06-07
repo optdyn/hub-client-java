@@ -10,7 +10,7 @@ public interface SshKey
 
     long getHubUserId();
 
-    Date getCreateDate();
+    Date getCreationDate();
 
     String getSshKey();
 }
