@@ -14,6 +14,7 @@ public class UserImpl implements User
     private String email;
     private String publicKey;
     private boolean blocked;
+    private String country;
 
 
     public long getId()
@@ -49,6 +50,13 @@ public class UserImpl implements User
     public boolean isBlocked()
     {
         return blocked;
+    }
+
+
+    @Override
+    public String getCountry()
+    {
+        return country;
     }
 
 
