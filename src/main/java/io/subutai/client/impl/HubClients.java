@@ -19,7 +19,7 @@ public class HubClients
     /**
      * This ctr for development only
      */
-    static HubClient getClient( HubClient.HubEnv hubEnv, String pgpKeyFilePath, String pgpKeyPassword )
+    public static HubClient getClient( HubClient.HubEnv hubEnv, String pgpKeyFilePath, String pgpKeyPassword )
             throws PGPException, IOException
     {
         return new HubClientImplementation( hubEnv, pgpKeyFilePath, pgpKeyPassword );
@@ -29,7 +29,7 @@ public class HubClients
     /**
      * This ctr for development only
      */
-    static HubClient getClient( HubClient.HubEnv hubEnv )
+    public static HubClient getClient( HubClient.HubEnv hubEnv )
     {
         return new HubClientImplementation( hubEnv );
     }
