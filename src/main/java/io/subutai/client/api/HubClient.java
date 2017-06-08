@@ -240,5 +240,5 @@ public interface HubClient
 
     List<Organization> getUserOrganizations( long userId, boolean ownOnly );
 
-    //todo getOrgz
+    //todo implement updateUser
 }
