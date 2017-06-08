@@ -14,4 +14,6 @@ public interface User
     String getEmail();
 
     String getPublicKey();
+
+    String getCountry();
 }
