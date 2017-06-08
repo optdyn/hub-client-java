@@ -74,7 +74,7 @@ public class HubClientImplementation implements HubClient
     private static final String UTF8 = "UTF-8";
     private static final String LIST_PEERS = "list peers";
     private static final String SEARCH_USER_INFO = "search user";
-    public static final String GET_USER_ORGANIZATIONS = "get user organizations";
+    private static final String GET_USER_ORGANIZATIONS = "get user organizations";
     private CloseableHttpClient httpclient = HttpClients.createDefault();
     private HttpContext httpContext = new BasicHttpContext();
     private Gson gson = new GsonBuilder().registerTypeAdapter( Date.class, new DateDeserializer() ).create();
