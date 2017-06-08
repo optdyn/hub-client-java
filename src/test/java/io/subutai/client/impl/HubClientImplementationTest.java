@@ -447,6 +447,19 @@ public class HubClientImplementationTest
     }
 
 
+    @Test
+    public void testGetOrganizations() throws Exception
+    {
+        OrganizationImpl organization = mock( OrganizationImpl.class );
+        doReturn( Lists.newArrayList( organization ) ).when( hubClient )
+                                                      .parse( eq( response ), any( TypeToken.class ) );
+
+        hubClient.getOrganizations( false );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
     /******* Real tests *******/
 
     private void prepare()
@@ -463,6 +476,18 @@ public class HubClientImplementationTest
         prepare();
 
         List<Organization> organizations = hubClient.getUserOrganizations( USER_ID, false );
+
+        System.out.println( organizations );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealGetOrganizations() throws Exception
+    {
+        prepare();
+
+        List<Organization> organizations = hubClient.getOrganizations( false );
 
         System.out.println( organizations );
     }

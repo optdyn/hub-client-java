@@ -238,7 +238,18 @@ public interface HubClient
     List<User> getPeerUsers( String peerId );
 
 
-    List<Organization> getUserOrganizations( long userId, boolean ownOnly );
+    /**
+     * Returns user organizations
+     *
+     * @param userId user id
+     * @param own true - return organizations where user is owner, false - return organizations where user is member
+     */
+    List<Organization> getUserOrganizations( long userId, boolean own );
 
-    //todo getOrgz
+    /**
+     * Returns user organizations
+     *
+     * @param own true - return organizations where user is owner, false - return organizations where user is member
+     */
+    List<Organization> getOrganizations( boolean own );
 }
