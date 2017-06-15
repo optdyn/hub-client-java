@@ -52,8 +52,8 @@ public class HubClientImplementationTest
     private static final String EMAIL = "test.d@mail.com";
     private static final String PASSWORD = "test";
     private static final String TEMPLATE_ID = "a697e70f3fc538b4f4763588a7868388";
-    private static final String PEER_ID = "913B1453BCC2E1D4E1CA03C803F9E40A8D2F03AD";
-    private static final String RH_ID = "2E81C1E1CDFC626E82A3B6FEAB0C06B8F070AB5B";
+    private static final String PEER_ID = "CB648EA34703FF31C36D8AD495A405B8EAF272D8";
+    private static final String RH_ID = "60AADF3CF1007690F83030C5A88FCE880CD97AA9";
     private static final String ENVIRONMENT_ID = "5dea49fc-d5bf-49f9-a321-2dc1dc9ea148";
     private static final String CONTAINER_ID = "34664840888A070BC40E04A50C7D156051ECD046";
     private static final String SSH_KEY =
@@ -284,7 +284,6 @@ public class HubClientImplementationTest
         CreateEnvironmentRequestImpl.Node node = mock( CreateEnvironmentRequestImpl.Node.class );
         doReturn( Lists.newArrayList( node ) ).when( createEnvironmentRequest ).getNodes();
         doReturn( "" ).when( hubClient ).toJson( createEnvironmentRequest );
-        doReturn( "template" ).when( node ).getTemplateName();
 
         hubClient.createEnvironment( createEnvironmentRequest );
 
@@ -301,7 +300,6 @@ public class HubClientImplementationTest
         CreateEnvironmentRequestImpl.Node createNode = mock( CreateEnvironmentRequestImpl.Node.class );
         doReturn( Lists.newArrayList( createNode ) ).when( modifyEnvironmentRequest ).getNodesToAdd();
         doReturn( "" ).when( hubClient ).toJson( modifyEnvironmentRequest );
-        doReturn( "template" ).when( createNode ).getTemplateName();
         ModifyEnvironmentRequestImpl.Node destroyNodeDto = mock( ModifyEnvironmentRequestImpl.Node.class );
         doReturn( Lists.newArrayList( destroyNodeDto ) ).when( modifyEnvironmentRequest ).getNodesToRemove();
 

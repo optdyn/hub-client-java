@@ -64,8 +64,6 @@ public class CreateEnvironmentRequestImpl implements CreateEnvironmentRequest
 
         private final String templateId;
 
-        private String templateName;//workaround
-
         private final ContainerQuota quota;
 
         private final String peerId;
@@ -87,24 +85,6 @@ public class CreateEnvironmentRequestImpl implements CreateEnvironmentRequest
             this.quota = new ContainerQuota( containerSize );
             this.peerId = peerId;
             this.resourceHostId = resourceHostId;
-        }
-
-
-        String getTemplateId()
-        {
-            return templateId;
-        }
-
-
-        String getTemplateName()
-        {
-            return templateName;
-        }
-
-
-        void setTemplateName( final String templateName )
-        {
-            this.templateName = templateName;
         }
     }
 }
