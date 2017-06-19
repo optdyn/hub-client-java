@@ -962,7 +962,6 @@ public class HubClientImplementation implements HubClient
     }
 
 
-
     // >>>>> DOMAIN MGMT
 
 
@@ -1006,7 +1005,27 @@ public class HubClientImplementation implements HubClient
     @Override
     public void deleteDomain( final String domainName )
     {
+        CloseableHttpResponse response = null;
+        try
+        {
+            HttpDelete request = new HttpDelete(
+                    String.format( "https://%s.subut.ai/rest/v1/client/domains/%s", hubEnv.getUrlPrefix(),
+                            URLEncoder.encode( domainName, UTF8 ) ) );
 
+            response = execute( request );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "delete domain" );
+        }
+        catch ( UnsupportedEncodingException e )
+        {
+            LOG.error( "Error encoding domain name", e );
+
+            throw new OperationFailedException( "Error encoding domain name", e );
+        }
+        finally
+        {
+            close( response );
+        }
     }
 
 
