@@ -23,6 +23,7 @@ import com.google.gson.reflect.TypeToken;
 
 import io.subutai.client.api.ContainerSize;
 import io.subutai.client.api.CreateEnvironmentRequest;
+import io.subutai.client.api.Domain;
 import io.subutai.client.api.Environment;
 import io.subutai.client.api.HubClient;
 import io.subutai.client.api.ModifyEnvironmentRequest;
@@ -460,12 +461,36 @@ public class HubClientImplementationTest
     }
 
 
+    @Test
+    public void testGetDomains() throws Exception
+    {
+        DomainImpl domain = mock( DomainImpl.class );
+        doReturn( Lists.newArrayList( domain ) ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
+        hubClient.getDomains();
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
     /******* Real tests *******/
 
     private void prepare()
     {
         hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV );
         hubClient.login( EMAIL, PASSWORD );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealGetDomains() throws Exception
+    {
+        prepare();
+
+        List<Domain> domains = hubClient.getDomains();
+
+        System.out.println( domains );
     }
 
 
