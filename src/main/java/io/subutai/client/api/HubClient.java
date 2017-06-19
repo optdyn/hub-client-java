@@ -252,4 +252,12 @@ public interface HubClient
      * @param own true - return organizations where user is owner, false - return organizations where user is member
      */
     List<Organization> getOrganizations( boolean own );
+
+    List<Domain> getDomains();
+
+    void reserveDomain( String domainName );
+
+    void deleteDomain( String domainName );
+
+    List<Domain> getEnvironmentDomains( String envId );
 }

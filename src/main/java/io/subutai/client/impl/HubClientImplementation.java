@@ -53,6 +53,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import io.subutai.client.api.CreateEnvironmentRequest;
+import io.subutai.client.api.Domain;
 import io.subutai.client.api.Environment;
 import io.subutai.client.api.HubClient;
 import io.subutai.client.api.ModifyEnvironmentRequest;
@@ -959,6 +960,64 @@ public class HubClientImplementation implements HubClient
 
         return organizations;
     }
+
+
+
+    // >>>>> DOMAIN MGMT
+
+
+    @Override
+    public List<Domain> getDomains()
+    {
+        List<Domain> domains = Lists.newArrayList();
+
+        HttpGet request =
+                new HttpGet( String.format( "https://%s.subut.ai/rest/v1/client/domains", hubEnv.getUrlPrefix() ) );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            response = execute( request );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "list domains" );
+
+            List<DomainImpl> domainList = parse( response, new TypeToken<List<DomainImpl>>()
+            {
+            } );
+
+            domains.addAll( domainList );
+        }
+        finally
+        {
+            close( response );
+        }
+
+        return domains;
+    }
+
+
+    @Override
+    public void reserveDomain( final String domainName )
+    {
+
+    }
+
+
+    @Override
+    public void deleteDomain( final String domainName )
+    {
+
+    }
+
+
+    @Override
+    public List<Domain> getEnvironmentDomains( final String envId )
+    {
+        return null;
+    }
+
+
+    // <<<<< DOMAIN MGMT
 
     //**************
 
