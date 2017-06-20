@@ -5,8 +5,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 
 import io.subutai.client.api.Container;
-import io.subutai.client.api.ContainerSize;
-import io.subutai.client.api.ContainerState;
 
 
 public class ContainerImpl implements Container

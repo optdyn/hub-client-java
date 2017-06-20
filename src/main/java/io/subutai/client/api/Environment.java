@@ -6,6 +6,11 @@ import java.util.List;
 
 public interface Environment
 {
+    enum EnvironmentStatus
+    {
+        PENDING, EMPTY, UNDER_MODIFICATION, HEALTHY, IMPORTING, UNHEALTHY
+    }
+
     long getEnvironmentTtl();
 
 

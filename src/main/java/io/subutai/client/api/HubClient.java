@@ -2,6 +2,7 @@ package io.subutai.client.api;
 
 
 import java.util.List;
+import java.util.Map;
 
 
 public interface HubClient
@@ -252,4 +253,32 @@ public interface HubClient
      * @param own true - return organizations where user is owner, false - return organizations where user is member
      */
     List<Organization> getOrganizations( boolean own );
+
+    /**
+     * Returns list of user domains
+     *
+     * @return list of full domain names
+     */
+    List<Domain> getDomains();
+
+    /**
+     * Reserves domain
+     *
+     * @param domainName short domain prefix (subdomain without suffix e.g. my-domain or sub-domain.my-domain)
+     */
+    void reserveDomain( String domainName );
+
+    /**
+     * Deletes domain reservation
+     *
+     * @param domainName full domain name  (e.g. my-domain.hub.net or sub-domain.my-domain.hub.net)
+     */
+    void deleteDomain( String domainName );
+
+    /**
+     * Returns list of domain assignments, i.e. what domains are assigned to what environments and containers
+     *
+     * Key is domain, value is list of assignments
+     */
+    Map<String, List<DomainAssignment>> getDomainAssignments();
 }

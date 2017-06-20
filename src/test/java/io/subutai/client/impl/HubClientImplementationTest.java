@@ -5,6 +5,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -19,10 +20,13 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.gson.reflect.TypeToken;
 
-import io.subutai.client.api.ContainerSize;
+import io.subutai.client.api.Container.ContainerSize;
 import io.subutai.client.api.CreateEnvironmentRequest;
+import io.subutai.client.api.Domain;
+import io.subutai.client.api.DomainAssignment;
 import io.subutai.client.api.Environment;
 import io.subutai.client.api.HubClient;
 import io.subutai.client.api.ModifyEnvironmentRequest;
@@ -65,6 +69,8 @@ public class HubClientImplementationTest
                     "/I5a8CDrMJsJLqdgC3EQ17uRy41GHbTwBQs0q2gwfBpefHFXokWwxu06hk0jfwFHWm9xRT79a56hr101Fy4uNjzzVtrWDS4end9VC7bt7Xf/kDxx7FB9DW1wfaYMcCp6YD5O8ENpl35gK35ZXtT5BP2GBoxHGlPdF4PObMCNi5ATtO/gLD8kW1LutO2ldsaY4sHm/JG55UNrpQCpIYe6QfkHsO+fX9/WmjP+iTDdHs1untgurvk5KdhtQxecTvTk3M/ewzHZbEbzYJYzFOsy5f6FQ8U/ckw8PejBzGDUiMGTJXl+GjV9VV3BmkKKeqD5uKu+gta5dynbdfU4r7heAV6oxan2x/rg9iHpOklIRtu2chJYJUq7lQ== dilshat.aliev@gmail.com";
     private static final long USER_ID = 164;
     private static final String NEW_PEER_NAME = "New Peer-Name";
+    private static final String DOMAIN = "domain1";
+    private static final String FULL_DOMAIN = "domain1.stage-hub.net";
 
     private HubClientImplementation hubClient;
 
@@ -458,12 +464,99 @@ public class HubClientImplementationTest
     }
 
 
+    @Test
+    public void testGetDomains() throws Exception
+    {
+        DomainImpl domain = mock( DomainImpl.class );
+        doReturn( Lists.newArrayList( domain ) ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
+        hubClient.getDomains();
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testGetDomainAssignments() throws Exception
+    {
+        DomainAssignmentImpl assignment = mock( DomainAssignmentImpl.class );
+        Map<String, List<DomainAssignment>> map = Maps.newHashMap();
+        doReturn( map ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
+        hubClient.getDomainAssignments();
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testDeleteDomain() throws Exception
+    {
+        hubClient.deleteDomain( DOMAIN );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testReserveDomain() throws Exception
+    {
+        hubClient.reserveDomain( DOMAIN );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
     /******* Real tests *******/
 
     private void prepare()
     {
         hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV );
         hubClient.login( EMAIL, PASSWORD );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealGetDomains() throws Exception
+    {
+        prepare();
+
+        List<Domain> domains = hubClient.getDomains();
+
+        System.out.println( domains );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealGetDomainAssignments() throws Exception
+    {
+        prepare();
+
+        Map<String, List<DomainAssignment>> assignments = hubClient.getDomainAssignments();
+
+        System.out.println( assignments );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealDeleteDomain() throws Exception
+    {
+        prepare();
+
+        hubClient.deleteDomain( FULL_DOMAIN );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealReserveDomain() throws Exception
+    {
+        prepare();
+
+        hubClient.reserveDomain( DOMAIN );
     }
 
 
