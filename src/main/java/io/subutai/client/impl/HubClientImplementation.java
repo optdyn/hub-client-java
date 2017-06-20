@@ -11,6 +11,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 
@@ -47,12 +48,15 @@ import org.apache.http.util.EntityUtils;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import io.subutai.client.api.CreateEnvironmentRequest;
+import io.subutai.client.api.Domain;
+import io.subutai.client.api.DomainAssignment;
 import io.subutai.client.api.Environment;
 import io.subutai.client.api.HubClient;
 import io.subutai.client.api.ModifyEnvironmentRequest;
@@ -75,6 +79,7 @@ public class HubClientImplementation implements HubClient
     private static final String LIST_PEERS = "list peers";
     private static final String SEARCH_USER_INFO = "search user";
     private static final String GET_USER_ORGANIZATIONS = "get user organizations";
+    private static final String ERROR_ENCODING_PARAMETER = "Error encoding parameter";
     private CloseableHttpClient httpclient = HttpClients.createDefault();
     private HttpContext httpContext = new BasicHttpContext();
     private Gson gson = new GsonBuilder().registerTypeAdapter( Date.class, new DateDeserializer() ).create();
@@ -435,9 +440,9 @@ public class HubClientImplementation implements HubClient
         }
         catch ( UnsupportedEncodingException e )
         {
-            LOG.error( "Error encoding name", e );
+            LOG.error( ERROR_ENCODING_PARAMETER, e );
 
-            throw new OperationFailedException( "Error encoding name", e );
+            throw new OperationFailedException( ERROR_ENCODING_PARAMETER, e );
         }
         finally
         {
@@ -792,9 +797,9 @@ public class HubClientImplementation implements HubClient
         }
         catch ( UnsupportedEncodingException e )
         {
-            LOG.error( "Error encoding name", e );
+            LOG.error( ERROR_ENCODING_PARAMETER, e );
 
-            throw new OperationFailedException( "Error encoding name", e );
+            throw new OperationFailedException( ERROR_ENCODING_PARAMETER, e );
         }
         finally
         {
@@ -826,9 +831,9 @@ public class HubClientImplementation implements HubClient
         }
         catch ( UnsupportedEncodingException e )
         {
-            LOG.error( "Error encoding email", e );
+            LOG.error( ERROR_ENCODING_PARAMETER, e );
 
-            throw new OperationFailedException( "Error encoding email", e );
+            throw new OperationFailedException( ERROR_ENCODING_PARAMETER, e );
         }
         finally
         {
@@ -959,6 +964,126 @@ public class HubClientImplementation implements HubClient
 
         return organizations;
     }
+
+
+    // >>>>> DOMAIN MGMT
+
+
+    @Override
+    public List<Domain> getDomains()
+    {
+        List<Domain> domains = Lists.newArrayList();
+
+        HttpGet request =
+                new HttpGet( String.format( "https://%s.subut.ai/rest/v1/client/domains", hubEnv.getUrlPrefix() ) );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            response = execute( request );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "list domains" );
+
+            List<DomainImpl> domainList = parse( response, new TypeToken<List<DomainImpl>>()
+            {
+            } );
+
+            domains.addAll( domainList );
+        }
+        finally
+        {
+            close( response );
+        }
+
+        return domains;
+    }
+
+
+    @Override
+    public void reserveDomain( final String domainName )
+    {
+        CloseableHttpResponse response = null;
+        try
+        {
+            HttpPut request = new HttpPut(
+                    String.format( "https://%s.subut.ai/rest/v1/client/domains/%s", hubEnv.getUrlPrefix(),
+                            URLEncoder.encode( domainName, UTF8 ) ) );
+
+            response = execute( request );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "reserve domain" );
+        }
+        catch ( UnsupportedEncodingException e )
+        {
+            LOG.error( ERROR_ENCODING_PARAMETER, e );
+
+            throw new OperationFailedException( ERROR_ENCODING_PARAMETER, e );
+        }
+        finally
+        {
+            close( response );
+        }
+    }
+
+
+    @Override
+    public void deleteDomain( final String domainName )
+    {
+        CloseableHttpResponse response = null;
+        try
+        {
+            HttpDelete request = new HttpDelete(
+                    String.format( "https://%s.subut.ai/rest/v1/client/domains/%s", hubEnv.getUrlPrefix(),
+                            URLEncoder.encode( domainName, UTF8 ) ) );
+
+            response = execute( request );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "delete domain" );
+        }
+        catch ( UnsupportedEncodingException e )
+        {
+            LOG.error( ERROR_ENCODING_PARAMETER, e );
+
+            throw new OperationFailedException( ERROR_ENCODING_PARAMETER, e );
+        }
+        finally
+        {
+            close( response );
+        }
+    }
+
+
+    @Override
+    public Map<String, List<DomainAssignment>> getDomainAssignments()
+    {
+        Map<String, List<DomainAssignment>> assignments = Maps.newHashMap();
+
+        HttpGet request = new HttpGet(
+                String.format( "https://%s.subut.ai/rest/v1/client/domains/assignments", hubEnv.getUrlPrefix() ) );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            response = execute( request );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "list domain assignments" );
+
+            Map<String, List<DomainAssignmentImpl>> assignmentsList =
+                    parse( response, new TypeToken<Map<String, List<DomainAssignmentImpl>>>()
+                    {
+                    } );
+
+            assignmentsList.forEach( ( k, v ) -> assignments.put( k, Lists.newArrayList( v ) ) );
+        }
+        finally
+        {
+            close( response );
+        }
+
+        return assignments;
+    }
+
+    // <<<<< DOMAIN MGMT
 
     //**************
 
