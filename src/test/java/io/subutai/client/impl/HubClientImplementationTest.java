@@ -23,7 +23,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.reflect.TypeToken;
 
-import io.subutai.client.api.ContainerSize;
+import io.subutai.client.api.Container.ContainerSize;
 import io.subutai.client.api.CreateEnvironmentRequest;
 import io.subutai.client.api.Domain;
 import io.subutai.client.api.DomainAssignment;
