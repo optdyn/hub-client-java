@@ -645,17 +645,6 @@ public class HubClientImplementation implements HubClient
         Preconditions.checkNotNull( createEnvironmentReq.getNodes() );
         Preconditions.checkArgument( !createEnvironmentReq.getNodes().isEmpty() );
 
-        //WORKAROUND!!!
-        List<Template> templates = getTemplates();
-        for ( CreateEnvironmentRequestImpl.Node node : createEnvironmentReq.getNodes() )
-        {
-            node.setTemplateName( getTemplateNameById( templates, node.getTemplateId() ) );
-
-            Preconditions.checkArgument( !isBlank( node.getTemplateName() ),
-                    "Template not found by id " + node.getTemplateId() );
-        }
-        //WORKAROUND!!!
-
         HttpPost request = new HttpPost(
                 String.format( "https://%s.subut.ai/rest/v1/client/environments", hubEnv.getUrlPrefix() ) );
 
@@ -693,20 +682,6 @@ public class HubClientImplementation implements HubClient
                 ( modifyEnvironmentReq.getNodesToAdd() != null && !modifyEnvironmentReq.getNodesToAdd().isEmpty() ) || (
                         modifyEnvironmentReq.getNodesToRemove() != null && !modifyEnvironmentReq.getNodesToRemove()
                                                                                                 .isEmpty() ) );
-
-
-        //WORKAROUND!!!
-        List<Template> templates = getTemplates();
-        for ( CreateEnvironmentRequestImpl.Node node : modifyEnvironmentReq.getNodesToAdd() )
-        {
-            node.setTemplateName( getTemplateNameById( templates, node.getTemplateId() ) );
-
-            if ( Strings.isNullOrEmpty( node.getTemplateName() ) )
-            {
-                throw new OperationFailedException( "Template not found by id " + node.getTemplateId(), null );
-            }
-        }
-        //WORKAROUND!!!
 
         HttpPut request = new HttpPut(
                 String.format( "https://%s.subut.ai/rest/v1/client/environments", hubEnv.getUrlPrefix() ) );
