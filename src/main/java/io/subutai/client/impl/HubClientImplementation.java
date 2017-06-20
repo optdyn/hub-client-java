@@ -76,6 +76,7 @@ public class HubClientImplementation implements HubClient
     private static final String LIST_PEERS = "list peers";
     private static final String SEARCH_USER_INFO = "search user";
     private static final String GET_USER_ORGANIZATIONS = "get user organizations";
+    private static final String ERROR_ENCODING_PARAMETER = "Error encoding parameter";
     private CloseableHttpClient httpclient = HttpClients.createDefault();
     private HttpContext httpContext = new BasicHttpContext();
     private Gson gson = new GsonBuilder().registerTypeAdapter( Date.class, new DateDeserializer() ).create();
@@ -436,9 +437,9 @@ public class HubClientImplementation implements HubClient
         }
         catch ( UnsupportedEncodingException e )
         {
-            LOG.error( "Error encoding name", e );
+            LOG.error( ERROR_ENCODING_PARAMETER, e );
 
-            throw new OperationFailedException( "Error encoding name", e );
+            throw new OperationFailedException( ERROR_ENCODING_PARAMETER, e );
         }
         finally
         {
@@ -793,9 +794,9 @@ public class HubClientImplementation implements HubClient
         }
         catch ( UnsupportedEncodingException e )
         {
-            LOG.error( "Error encoding name", e );
+            LOG.error( ERROR_ENCODING_PARAMETER, e );
 
-            throw new OperationFailedException( "Error encoding name", e );
+            throw new OperationFailedException( ERROR_ENCODING_PARAMETER, e );
         }
         finally
         {
@@ -827,9 +828,9 @@ public class HubClientImplementation implements HubClient
         }
         catch ( UnsupportedEncodingException e )
         {
-            LOG.error( "Error encoding email", e );
+            LOG.error( ERROR_ENCODING_PARAMETER, e );
 
-            throw new OperationFailedException( "Error encoding email", e );
+            throw new OperationFailedException( ERROR_ENCODING_PARAMETER, e );
         }
         finally
         {
@@ -998,7 +999,27 @@ public class HubClientImplementation implements HubClient
     @Override
     public void reserveDomain( final String domainName )
     {
+        CloseableHttpResponse response = null;
+        try
+        {
+            HttpPut request = new HttpPut(
+                    String.format( "https://%s.subut.ai/rest/v1/client/domains/%s", hubEnv.getUrlPrefix(),
+                            URLEncoder.encode( domainName, UTF8 ) ) );
 
+            response = execute( request );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "reserve domain" );
+        }
+        catch ( UnsupportedEncodingException e )
+        {
+            LOG.error( ERROR_ENCODING_PARAMETER, e );
+
+            throw new OperationFailedException( ERROR_ENCODING_PARAMETER, e );
+        }
+        finally
+        {
+            close( response );
+        }
     }
 
 
@@ -1018,9 +1039,9 @@ public class HubClientImplementation implements HubClient
         }
         catch ( UnsupportedEncodingException e )
         {
-            LOG.error( "Error encoding domain name", e );
+            LOG.error( ERROR_ENCODING_PARAMETER, e );
 
-            throw new OperationFailedException( "Error encoding domain name", e );
+            throw new OperationFailedException( ERROR_ENCODING_PARAMETER, e );
         }
         finally
         {
@@ -1032,6 +1053,8 @@ public class HubClientImplementation implements HubClient
     @Override
     public List<Domain> getEnvironmentDomains( final String envId )
     {
+        //TODO
+
         return null;
     }
 

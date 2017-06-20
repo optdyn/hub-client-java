@@ -8,6 +8,9 @@ public interface Domain
         CREATING, RESERVED, ASSIGNED, DESTROYING
     }
 
+    /**
+     * @return full domain name
+     */
     String getName();
 
     State getState();

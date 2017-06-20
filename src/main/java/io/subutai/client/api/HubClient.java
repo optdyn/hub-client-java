@@ -253,11 +253,33 @@ public interface HubClient
      */
     List<Organization> getOrganizations( boolean own );
 
+    /**
+     * Returns list of user domains
+     *
+     * @return list of full domain names
+     */
     List<Domain> getDomains();
 
+    /**
+     * Reserves domain
+     *
+     * @param domainName short domain prefix (subdomain without suffix e.g. my-domain or sub-domain.my-domain)
+     */
     void reserveDomain( String domainName );
 
+    /**
+     * Deletes domain reservation
+     *
+     * @param domainName full domain name  (e.g. my-domain.hub.net or sub-domain.my-domain.hub.net)
+     */
     void deleteDomain( String domainName );
 
+    /**
+     * Returns list of domains assigned to environment
+     *
+     * @param envId id of environment
+     *
+     * @return list of full domain names
+     */
     List<Domain> getEnvironmentDomains( String envId );
 }
