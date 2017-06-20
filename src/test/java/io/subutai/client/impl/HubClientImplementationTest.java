@@ -5,6 +5,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -19,11 +20,13 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.gson.reflect.TypeToken;
 
 import io.subutai.client.api.ContainerSize;
 import io.subutai.client.api.CreateEnvironmentRequest;
 import io.subutai.client.api.Domain;
+import io.subutai.client.api.DomainAssignment;
 import io.subutai.client.api.Environment;
 import io.subutai.client.api.HubClient;
 import io.subutai.client.api.ModifyEnvironmentRequest;
@@ -476,6 +479,19 @@ public class HubClientImplementationTest
 
 
     @Test
+    public void testGetDomainAssignments() throws Exception
+    {
+        DomainAssignmentImpl assignment = mock( DomainAssignmentImpl.class );
+        Map<String, List<DomainAssignment>> map = Maps.newHashMap();
+        doReturn( map ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
+        hubClient.getDomainAssignments();
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
     public void testDeleteDomain() throws Exception
     {
         hubClient.deleteDomain( DOMAIN );
@@ -511,6 +527,18 @@ public class HubClientImplementationTest
         List<Domain> domains = hubClient.getDomains();
 
         System.out.println( domains );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealGetDomainAssignments() throws Exception
+    {
+        prepare();
+
+        Map<String, List<DomainAssignment>> assignments = hubClient.getDomainAssignments();
+
+        System.out.println( assignments );
     }
 
 

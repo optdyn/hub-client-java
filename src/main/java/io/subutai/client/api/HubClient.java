@@ -2,6 +2,7 @@ package io.subutai.client.api;
 
 
 import java.util.List;
+import java.util.Map;
 
 
 public interface HubClient
@@ -275,11 +276,9 @@ public interface HubClient
     void deleteDomain( String domainName );
 
     /**
-     * Returns list of domains assigned to environment
+     * Returns list of domain assignments, i.e. what domains are assigned to what environments and containers
      *
-     * @param envId id of environment
-     *
-     * @return list of full domain names
+     * Key is domain, value is list of assignments
      */
-    List<Domain> getEnvironmentDomains( String envId );
+    Map<String, List<DomainAssignment>> getDomainAssignments();
 }

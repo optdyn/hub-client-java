@@ -11,6 +11,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 
@@ -47,6 +48,7 @@ import org.apache.http.util.EntityUtils;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -54,6 +56,7 @@ import com.google.gson.reflect.TypeToken;
 
 import io.subutai.client.api.CreateEnvironmentRequest;
 import io.subutai.client.api.Domain;
+import io.subutai.client.api.DomainAssignment;
 import io.subutai.client.api.Environment;
 import io.subutai.client.api.HubClient;
 import io.subutai.client.api.ModifyEnvironmentRequest;
@@ -1051,13 +1054,34 @@ public class HubClientImplementation implements HubClient
 
 
     @Override
-    public List<Domain> getEnvironmentDomains( final String envId )
+    public Map<String, List<DomainAssignment>> getDomainAssignments()
     {
-        //TODO
+        Map<String, List<DomainAssignment>> assignments = Maps.newHashMap();
 
-        return null;
+        HttpGet request = new HttpGet(
+                String.format( "https://%s.subut.ai/rest/v1/client/domains/assignments", hubEnv.getUrlPrefix() ) );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            response = execute( request );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "list domain assignments" );
+
+            Map<String, List<DomainAssignmentImpl>> assignmentsList =
+                    parse( response, new TypeToken<Map<String, List<DomainAssignmentImpl>>>()
+                    {
+                    } );
+
+            assignmentsList.forEach( ( k, v ) -> assignments.put( k, Lists.newArrayList( v ) ) );
+        }
+        finally
+        {
+            close( response );
+        }
+
+        return assignments;
     }
-
 
     // <<<<< DOMAIN MGMT
 
