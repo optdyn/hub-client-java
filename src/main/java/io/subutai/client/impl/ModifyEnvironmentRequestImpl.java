@@ -8,7 +8,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gson.annotations.SerializedName;
 
-import io.subutai.client.api.ContainerSize;
+import io.subutai.client.api.Container.ContainerSize;
 import io.subutai.client.api.ModifyEnvironmentRequest;
 
 

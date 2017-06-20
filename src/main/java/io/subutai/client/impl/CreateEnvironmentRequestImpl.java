@@ -7,7 +7,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
-import io.subutai.client.api.ContainerSize;
+import io.subutai.client.api.Container.ContainerSize;
 import io.subutai.client.api.CreateEnvironmentRequest;
 
 

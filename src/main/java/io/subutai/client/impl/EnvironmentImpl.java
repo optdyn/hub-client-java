@@ -9,7 +9,6 @@ import com.google.gson.annotations.SerializedName;
 
 import io.subutai.client.api.Container;
 import io.subutai.client.api.Environment;
-import io.subutai.client.api.EnvironmentStatus;
 
 
 public class EnvironmentImpl implements Environment
