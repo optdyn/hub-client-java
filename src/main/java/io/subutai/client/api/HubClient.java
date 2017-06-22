@@ -264,14 +264,14 @@ public interface HubClient
     /**
      * Reserves domain
      *
-     * @param domainName short domain prefix (subdomain without suffix e.g. my-domain or sub-domain.my-domain)
+     * @param domainName domain name (e.g. my-domain or sub-domain.my-domain)
      */
     void reserveDomain( String domainName );
 
     /**
      * Deletes domain reservation
      *
-     * @param domainName full domain name  (e.g. my-domain.hub.net or sub-domain.my-domain.hub.net)
+     * @param domainName domain name (e.g. my-domain or sub-domain.my-domain)
      */
     void deleteDomain( String domainName );
 
