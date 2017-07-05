@@ -531,6 +531,7 @@ public class HubClientImplementationTest
 
 
     @Test
+    @Ignore
     public void testRealGetFriendsInfo() throws Exception
     {
         prepare();
