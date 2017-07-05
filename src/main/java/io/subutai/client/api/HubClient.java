@@ -281,4 +281,9 @@ public interface HubClient
      * Key is domain, value is list of assignments
      */
     Map<String, List<DomainAssignment>> getDomainAssignments();
+
+    /**
+     * Returns info about user friends, friendship requests
+     */
+    FriendsInfo getFriendsInfo();
 }

@@ -28,6 +28,7 @@ import io.subutai.client.api.CreateEnvironmentRequest;
 import io.subutai.client.api.Domain;
 import io.subutai.client.api.DomainAssignment;
 import io.subutai.client.api.Environment;
+import io.subutai.client.api.FriendsInfo;
 import io.subutai.client.api.HubClient;
 import io.subutai.client.api.ModifyEnvironmentRequest;
 import io.subutai.client.api.Organization;
@@ -508,12 +509,35 @@ public class HubClientImplementationTest
     }
 
 
+    @Test
+    public void testGetFriendsInfo() throws Exception
+    {
+        FriendsInfoImpl friendsInfo = mock( FriendsInfoImpl.class );
+        doReturn( friendsInfo ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
+        hubClient.getFriendsInfo();
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
     /******* Real tests *******/
 
     private void prepare()
     {
         hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV );
         hubClient.login( EMAIL, PASSWORD );
+    }
+
+
+    @Test
+    public void testRealGetFriendsInfo() throws Exception
+    {
+        prepare();
+
+        FriendsInfo friendsInfo = hubClient.getFriendsInfo();
+
+        System.out.println( friendsInfo );
     }
 
 

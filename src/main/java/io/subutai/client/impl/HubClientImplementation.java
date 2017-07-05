@@ -58,6 +58,7 @@ import io.subutai.client.api.CreateEnvironmentRequest;
 import io.subutai.client.api.Domain;
 import io.subutai.client.api.DomainAssignment;
 import io.subutai.client.api.Environment;
+import io.subutai.client.api.FriendsInfo;
 import io.subutai.client.api.HubClient;
 import io.subutai.client.api.ModifyEnvironmentRequest;
 import io.subutai.client.api.OperationFailedException;
@@ -1148,6 +1149,38 @@ public class HubClientImplementation implements HubClient
     }
 
     // <<<<< DOMAIN MGMT
+
+    // FRIENDS MGMT >>>>>
+
+
+    @Override
+    public FriendsInfo getFriendsInfo()
+    {
+        FriendsInfoImpl friendsInfo;
+        CloseableHttpResponse response = null;
+        try
+        {
+            HttpGet request =
+                    new HttpGet( String.format( "https://%s.subut.ai/rest/v1/client/friends", hubEnv.getUrlPrefix() ) );
+
+            response = execute( request );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "get friends info" );
+
+            friendsInfo = parse( response, new TypeToken<FriendsInfoImpl>()
+            {
+            } );
+        }
+        finally
+        {
+            close( response );
+        }
+
+        return friendsInfo;
+    }
+
+
+    // <<<<< FRIENDS MGMT
 
     //**************
 
