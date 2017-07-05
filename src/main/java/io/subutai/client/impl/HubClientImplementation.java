@@ -1202,6 +1202,29 @@ public class HubClientImplementation implements HubClient
         }
     }
 
+
+    @Override
+    public void acceptFriendship( final long userId )
+    {
+        Preconditions.checkArgument( userId > 0 );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            HttpPut request = new HttpPut(
+                    String.format( "https://%s.subut.ai/rest/v1/client/friends/%s/accept", hubEnv.getUrlPrefix(),
+                            userId ) );
+
+            response = execute( request );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "accept friendship request" );
+        }
+        finally
+        {
+            close( response );
+        }
+    }
+
     // <<<<< FRIENDS MGMT
 
     //**************
