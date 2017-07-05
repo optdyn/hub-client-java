@@ -286,4 +286,11 @@ public interface HubClient
      * Returns info about user friends, friendship requests
      */
     FriendsInfo getFriendsInfo();
+
+    /**
+     * Sends friendship request to user
+     *
+     * @param userId user id
+     */
+    void requestFriendship( long userId );
 }
