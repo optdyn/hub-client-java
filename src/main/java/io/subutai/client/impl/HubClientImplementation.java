@@ -1227,7 +1227,7 @@ public class HubClientImplementation implements HubClient
 
 
     @Override
-    public void rejectFriendship( final long userId )
+    public void rejectFriendshipRequest( final long userId )
     {
         Preconditions.checkArgument( userId > 0 );
 
@@ -1241,6 +1241,29 @@ public class HubClientImplementation implements HubClient
             response = execute( request );
 
             checkHttpStatus( response, HttpStatus.SC_OK, "reject friendship request" );
+        }
+        finally
+        {
+            close( response );
+        }
+    }
+
+
+    @Override
+    public void cancelFriendshipRequest( final long userId )
+    {
+        Preconditions.checkArgument( userId > 0 );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            HttpPut request = new HttpPut(
+                    String.format( "https://%s.subut.ai/rest/v1/client/friends/%s/cancel", hubEnv.getUrlPrefix(),
+                            userId ) );
+
+            response = execute( request );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "cancel friendship request" );
         }
         finally
         {

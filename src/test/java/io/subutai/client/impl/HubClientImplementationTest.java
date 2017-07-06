@@ -548,6 +548,15 @@ public class HubClientImplementationTest
     }
 
 
+    @Test
+    public void testCancelFriendship() throws Exception
+    {
+        hubClient.cancelFriendshipRequest( USER_ID );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
     /******* Real tests *******/
 
     private void prepare()
@@ -559,11 +568,21 @@ public class HubClientImplementationTest
 
     @Test
     @Ignore
-    public void testRealRejectFriendship() throws Exception
+    public void testRealCancelFriendshipRequest() throws Exception
     {
         prepare();
 
-        hubClient.rejectFriendship( USER_ID );
+        hubClient.cancelFriendshipRequest( USER_ID );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealRejectFriendshipRequest() throws Exception
+    {
+        prepare();
+
+        hubClient.rejectFriendshipRequest( USER_ID );
     }
 
 

@@ -306,5 +306,12 @@ public interface HubClient
      *
      * @param userId user id
      */
-    void rejectFriendship( long userId );
+    void rejectFriendshipRequest( long userId );
+
+    /**
+     * Cancels request for friendship to user
+     *
+     * @param userId user id
+     */
+    void cancelFriendshipRequest( long userId );
 }
