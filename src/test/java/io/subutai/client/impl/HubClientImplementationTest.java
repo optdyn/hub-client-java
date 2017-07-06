@@ -540,18 +540,27 @@ public class HubClientImplementationTest
 
 
     @Test
-    public void testRejectFriendship() throws Exception
+    public void testRejectFriendshipRequest() throws Exception
     {
-        hubClient.requestFriendship( USER_ID );
+        hubClient.rejectFriendshipRequest( USER_ID );
 
         verify( hubClient ).execute( any( HttpRequestBase.class ) );
     }
 
 
     @Test
-    public void testCancelFriendship() throws Exception
+    public void testCancelFriendshipRequest() throws Exception
     {
         hubClient.cancelFriendshipRequest( USER_ID );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testBreakFriendship() throws Exception
+    {
+        hubClient.breakFriendship( USER_ID );
 
         verify( hubClient ).execute( any( HttpRequestBase.class ) );
     }
@@ -563,6 +572,16 @@ public class HubClientImplementationTest
     {
         hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV );
         hubClient.login( EMAIL, PASSWORD );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealBreakFriendship() throws Exception
+    {
+        prepare();
+
+        hubClient.breakFriendship( USER_ID );
     }
 
 

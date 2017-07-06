@@ -1271,6 +1271,27 @@ public class HubClientImplementation implements HubClient
         }
     }
 
+
+    @Override
+    public void breakFriendship( final long userId )
+    {
+        Preconditions.checkArgument( userId > 0 );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            HttpDelete request = new HttpDelete(
+                    String.format( "https://%s.subut.ai/rest/v1/client/friends/%s", hubEnv.getUrlPrefix(), userId ) );
+
+            response = execute( request );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "break friendship" );
+        }
+        finally
+        {
+            close( response );
+        }
+    }
     // <<<<< FRIENDS MGMT
 
     //**************

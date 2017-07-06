@@ -314,4 +314,11 @@ public interface HubClient
      * @param userId user id
      */
     void cancelFriendshipRequest( long userId );
+
+    /**
+     * Breaks off friendship with user
+     *
+     * @param userId user id
+     */
+    void breakFriendship( long userId );
 }
