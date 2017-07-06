@@ -281,4 +281,44 @@ public interface HubClient
      * Key is domain, value is list of assignments
      */
     Map<String, List<DomainAssignment>> getDomainAssignments();
+
+    /**
+     * Returns info about user friends, friendship requests
+     */
+    FriendsInfo getFriendsInfo();
+
+    /**
+     * Sends friendship request to user
+     *
+     * @param userId user id
+     */
+    void requestFriendship( long userId );
+
+    /**
+     * Accepts request for friendship from user
+     *
+     * @param userId user id
+     */
+    void acceptFriendship( long userId );
+
+    /**
+     * Rejects request for friendship from user
+     *
+     * @param userId user id
+     */
+    void rejectFriendshipRequest( long userId );
+
+    /**
+     * Cancels request for friendship to user
+     *
+     * @param userId user id
+     */
+    void cancelFriendshipRequest( long userId );
+
+    /**
+     * Breaks off friendship with user
+     *
+     * @param userId user id
+     */
+    void breakFriendship( long userId );
 }

@@ -58,6 +58,7 @@ import io.subutai.client.api.CreateEnvironmentRequest;
 import io.subutai.client.api.Domain;
 import io.subutai.client.api.DomainAssignment;
 import io.subutai.client.api.Environment;
+import io.subutai.client.api.FriendsInfo;
 import io.subutai.client.api.HubClient;
 import io.subutai.client.api.ModifyEnvironmentRequest;
 import io.subutai.client.api.OperationFailedException;
@@ -1148,6 +1149,150 @@ public class HubClientImplementation implements HubClient
     }
 
     // <<<<< DOMAIN MGMT
+
+    // FRIENDS MGMT >>>>>
+
+
+    @Override
+    public FriendsInfo getFriendsInfo()
+    {
+        FriendsInfoImpl friendsInfo;
+        CloseableHttpResponse response = null;
+        try
+        {
+            HttpGet request =
+                    new HttpGet( String.format( "https://%s.subut.ai/rest/v1/client/friends", hubEnv.getUrlPrefix() ) );
+
+            response = execute( request );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "get friends info" );
+
+            friendsInfo = parse( response, new TypeToken<FriendsInfoImpl>()
+            {
+            } );
+        }
+        finally
+        {
+            close( response );
+        }
+
+        return friendsInfo;
+    }
+
+
+    @Override
+    public void requestFriendship( final long userId )
+    {
+        Preconditions.checkArgument( userId > 0 );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            HttpPut request = new HttpPut(
+                    String.format( "https://%s.subut.ai/rest/v1/client/friends/%s/request", hubEnv.getUrlPrefix(),
+                            userId ) );
+
+            response = execute( request );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "send friendship request" );
+        }
+        finally
+        {
+            close( response );
+        }
+    }
+
+
+    @Override
+    public void acceptFriendship( final long userId )
+    {
+        Preconditions.checkArgument( userId > 0 );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            HttpPut request = new HttpPut(
+                    String.format( "https://%s.subut.ai/rest/v1/client/friends/%s/accept", hubEnv.getUrlPrefix(),
+                            userId ) );
+
+            response = execute( request );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "accept friendship request" );
+        }
+        finally
+        {
+            close( response );
+        }
+    }
+
+
+    @Override
+    public void rejectFriendshipRequest( final long userId )
+    {
+        Preconditions.checkArgument( userId > 0 );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            HttpPut request = new HttpPut(
+                    String.format( "https://%s.subut.ai/rest/v1/client/friends/%s/reject", hubEnv.getUrlPrefix(),
+                            userId ) );
+
+            response = execute( request );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "reject friendship request" );
+        }
+        finally
+        {
+            close( response );
+        }
+    }
+
+
+    @Override
+    public void cancelFriendshipRequest( final long userId )
+    {
+        Preconditions.checkArgument( userId > 0 );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            HttpPut request = new HttpPut(
+                    String.format( "https://%s.subut.ai/rest/v1/client/friends/%s/cancel", hubEnv.getUrlPrefix(),
+                            userId ) );
+
+            response = execute( request );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "cancel friendship request" );
+        }
+        finally
+        {
+            close( response );
+        }
+    }
+
+
+    @Override
+    public void breakFriendship( final long userId )
+    {
+        Preconditions.checkArgument( userId > 0 );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            HttpDelete request = new HttpDelete(
+                    String.format( "https://%s.subut.ai/rest/v1/client/friends/%s", hubEnv.getUrlPrefix(), userId ) );
+
+            response = execute( request );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "break friendship" );
+        }
+        finally
+        {
+            close( response );
+        }
+    }
+    // <<<<< FRIENDS MGMT
 
     //**************
 
