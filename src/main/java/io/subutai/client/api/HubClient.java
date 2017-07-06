@@ -295,9 +295,16 @@ public interface HubClient
     void requestFriendship( long userId );
 
     /**
-     * Accepts request for friendship from  user
+     * Accepts request for friendship from user
      *
      * @param userId user id
      */
     void acceptFriendship( long userId );
+
+    /**
+     * Rejects request for friendship from user
+     *
+     * @param userId user id
+     */
+    void rejectFriendship( long userId );
 }

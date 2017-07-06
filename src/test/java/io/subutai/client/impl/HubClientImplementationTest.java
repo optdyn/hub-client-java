@@ -539,12 +539,31 @@ public class HubClientImplementationTest
     }
 
 
+    @Test
+    public void testRejectFriendship() throws Exception
+    {
+        hubClient.requestFriendship( USER_ID );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
     /******* Real tests *******/
 
     private void prepare()
     {
         hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV );
         hubClient.login( EMAIL, PASSWORD );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealRejectFriendship() throws Exception
+    {
+        prepare();
+
+        hubClient.rejectFriendship( USER_ID );
     }
 
 
