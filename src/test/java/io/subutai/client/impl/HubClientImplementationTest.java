@@ -24,13 +24,13 @@ import com.google.common.collect.Maps;
 import com.google.gson.reflect.TypeToken;
 
 import io.subutai.client.api.Container.ContainerSize;
-import io.subutai.client.api.CreateEnvironmentRequest;
+import io.subutai.client.api.EnvironmentCreationRequest;
 import io.subutai.client.api.Domain;
 import io.subutai.client.api.DomainAssignment;
 import io.subutai.client.api.Environment;
 import io.subutai.client.api.FriendsInfo;
 import io.subutai.client.api.HubClient;
-import io.subutai.client.api.ModifyEnvironmentRequest;
+import io.subutai.client.api.EnvironmentModificationRequest;
 import io.subutai.client.api.Organization;
 import io.subutai.client.api.Peer;
 import io.subutai.client.api.SshKey;
@@ -81,11 +81,11 @@ public class HubClientImplementationTest
     @Mock
     private EnvironmentImpl environment;
     @Mock
-    private CreateEnvironmentRequestImpl createEnvironmentRequest;
+    private EnvironmentCreationRequestImpl createEnvironmentRequest;
     @Mock
     private Template template;
     @Mock
-    private ModifyEnvironmentRequestImpl modifyEnvironmentRequest;
+    private EnvironmentModificationRequestImpl modifyEnvironmentRequest;
     @Mock
     private KurjunClient kurjunClient;
 
@@ -287,7 +287,7 @@ public class HubClientImplementationTest
         returnHttpCode( HttpStatus.SC_ACCEPTED );
         doReturn( Lists.newArrayList( template ) ).when( hubClient ).getTemplates();
         doReturn( "template" ).when( hubClient ).getTemplateNameById( anyList(), anyString() );
-        CreateEnvironmentRequestImpl.Node node = mock( CreateEnvironmentRequestImpl.Node.class );
+        EnvironmentCreationRequestImpl.Node node = mock( EnvironmentCreationRequestImpl.Node.class );
         doReturn( Lists.newArrayList( node ) ).when( createEnvironmentRequest ).getNodes();
         doReturn( "" ).when( hubClient ).toJson( createEnvironmentRequest );
         doReturn( "template" ).when( node ).getTemplateName();
@@ -304,11 +304,11 @@ public class HubClientImplementationTest
         returnHttpCode( HttpStatus.SC_ACCEPTED );
         doReturn( Lists.newArrayList( template ) ).when( hubClient ).getTemplates();
         doReturn( "template" ).when( hubClient ).getTemplateNameById( anyList(), anyString() );
-        CreateEnvironmentRequestImpl.Node createNode = mock( CreateEnvironmentRequestImpl.Node.class );
+        EnvironmentCreationRequestImpl.Node createNode = mock( EnvironmentCreationRequestImpl.Node.class );
         doReturn( Lists.newArrayList( createNode ) ).when( modifyEnvironmentRequest ).getNodesToAdd();
         doReturn( "" ).when( hubClient ).toJson( modifyEnvironmentRequest );
         doReturn( "template" ).when( createNode ).getTemplateName();
-        ModifyEnvironmentRequestImpl.Node destroyNodeDto = mock( ModifyEnvironmentRequestImpl.Node.class );
+        EnvironmentModificationRequestImpl.Node destroyNodeDto = mock( EnvironmentModificationRequestImpl.Node.class );
         doReturn( Lists.newArrayList( destroyNodeDto ) ).when( modifyEnvironmentRequest ).getNodesToRemove();
 
         hubClient.modifyEnvironment( modifyEnvironmentRequest );
@@ -949,11 +949,11 @@ public class HubClientImplementationTest
     public void testRealCreateEnvironment() throws Exception
     {
         prepare();
-        CreateEnvironmentRequest createEnvironmentRequest = hubClient.createRequest( "test-env" );
-        createEnvironmentRequest.addNode( "test-container1", TEMPLATE_ID, ContainerSize.SMALL, PEER_ID, RH_ID );
-        createEnvironmentRequest.addNode( "test-container2", TEMPLATE_ID, ContainerSize.SMALL, PEER_ID, RH_ID );
+        EnvironmentCreationRequest environmentCreationRequest = hubClient.createRequest( "test-env" );
+        environmentCreationRequest.addNode( "test-container1", TEMPLATE_ID, ContainerSize.SMALL, PEER_ID, RH_ID );
+        environmentCreationRequest.addNode( "test-container2", TEMPLATE_ID, ContainerSize.SMALL, PEER_ID, RH_ID );
 
-        hubClient.createEnvironment( createEnvironmentRequest );
+        hubClient.createEnvironment( environmentCreationRequest );
     }
 
 
@@ -962,7 +962,7 @@ public class HubClientImplementationTest
     public void testRealModifyEnvironment() throws Exception
     {
         prepare();
-        ModifyEnvironmentRequest modifyEnvironmentRequest = hubClient.modifyRequest( ENVIRONMENT_ID );
+        EnvironmentModificationRequest modifyEnvironmentRequest = hubClient.modifyRequest( ENVIRONMENT_ID );
         modifyEnvironmentRequest.addNode( "test-container3", TEMPLATE_ID, ContainerSize.SMALL, PEER_ID, RH_ID );
         modifyEnvironmentRequest.removeNode( CONTAINER_ID );
 

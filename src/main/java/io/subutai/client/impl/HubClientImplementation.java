@@ -54,13 +54,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-import io.subutai.client.api.CreateEnvironmentRequest;
+import io.subutai.client.api.EnvironmentCreationRequest;
 import io.subutai.client.api.Domain;
 import io.subutai.client.api.DomainAssignment;
 import io.subutai.client.api.Environment;
 import io.subutai.client.api.FriendsInfo;
 import io.subutai.client.api.HubClient;
-import io.subutai.client.api.ModifyEnvironmentRequest;
+import io.subutai.client.api.EnvironmentModificationRequest;
 import io.subutai.client.api.OperationFailedException;
 import io.subutai.client.api.Organization;
 import io.subutai.client.api.Peer;
@@ -630,25 +630,26 @@ public class HubClientImplementation implements HubClient
     }
 
 
-    public CreateEnvironmentRequest createRequest( final String environmentName )
+    public EnvironmentCreationRequest createRequest( final String environmentName )
     {
         Preconditions.checkArgument( !isBlank( environmentName ) );
 
-        return new CreateEnvironmentRequestImpl( environmentName );
+        return new EnvironmentCreationRequestImpl( environmentName );
     }
 
 
-    public void createEnvironment( final CreateEnvironmentRequest createEnvironmentRequest )
+    public void createEnvironment( final EnvironmentCreationRequest environmentCreationRequest )
     {
-        Preconditions.checkNotNull( createEnvironmentRequest );
-        Preconditions.checkArgument( createEnvironmentRequest instanceof CreateEnvironmentRequestImpl );
-        CreateEnvironmentRequestImpl createEnvironmentReq = ( CreateEnvironmentRequestImpl ) createEnvironmentRequest;
+        Preconditions.checkNotNull( environmentCreationRequest );
+        Preconditions.checkArgument( environmentCreationRequest instanceof EnvironmentCreationRequestImpl );
+        EnvironmentCreationRequestImpl
+                createEnvironmentReq = ( EnvironmentCreationRequestImpl ) environmentCreationRequest;
         Preconditions.checkNotNull( createEnvironmentReq.getNodes() );
         Preconditions.checkArgument( !createEnvironmentReq.getNodes().isEmpty() );
 
         //WORKAROUND!!!
         List<Template> templates = getTemplates();
-        for ( CreateEnvironmentRequestImpl.Node node : createEnvironmentReq.getNodes() )
+        for ( EnvironmentCreationRequestImpl.Node node : createEnvironmentReq.getNodes() )
         {
             node.setTemplateName( getTemplateNameById( templates, node.getTemplateId() ) );
 
@@ -677,19 +678,19 @@ public class HubClientImplementation implements HubClient
     }
 
 
-    public ModifyEnvironmentRequest modifyRequest( final String envId )
+    public EnvironmentModificationRequest modifyRequest( final String envId )
     {
         Preconditions.checkArgument( !isBlank( envId ) );
 
-        return new ModifyEnvironmentRequestImpl( envId );
+        return new EnvironmentModificationRequestImpl( envId );
     }
 
 
-    public void modifyEnvironment( final ModifyEnvironmentRequest modifyEnvironmentRequest )
+    public void modifyEnvironment( final EnvironmentModificationRequest environmentModificationRequest )
     {
-        Preconditions.checkNotNull( modifyEnvironmentRequest );
-        Preconditions.checkArgument( modifyEnvironmentRequest instanceof ModifyEnvironmentRequestImpl );
-        ModifyEnvironmentRequestImpl modifyEnvironmentReq = ( ModifyEnvironmentRequestImpl ) modifyEnvironmentRequest;
+        Preconditions.checkNotNull( environmentModificationRequest );
+        Preconditions.checkArgument( environmentModificationRequest instanceof EnvironmentModificationRequestImpl );
+        EnvironmentModificationRequestImpl modifyEnvironmentReq = ( EnvironmentModificationRequestImpl ) environmentModificationRequest;
         Preconditions.checkArgument(
                 ( modifyEnvironmentReq.getNodesToAdd() != null && !modifyEnvironmentReq.getNodesToAdd().isEmpty() ) || (
                         modifyEnvironmentReq.getNodesToRemove() != null && !modifyEnvironmentReq.getNodesToRemove()
@@ -698,7 +699,7 @@ public class HubClientImplementation implements HubClient
 
         //WORKAROUND!!!
         List<Template> templates = getTemplates();
-        for ( CreateEnvironmentRequestImpl.Node node : modifyEnvironmentReq.getNodesToAdd() )
+        for ( EnvironmentCreationRequestImpl.Node node : modifyEnvironmentReq.getNodesToAdd() )
         {
             node.setTemplateName( getTemplateNameById( templates, node.getTemplateId() ) );
 
