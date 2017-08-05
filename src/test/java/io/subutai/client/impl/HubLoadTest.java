@@ -51,7 +51,7 @@ public class HubLoadTest
     }
 
 
-    public void testCreateEnvironment( String peerId )
+    private void testCreateEnvironment( String peerId )
     {
         //create env creation request
         String envName = "env-" + UUID.randomUUID();
