@@ -24,13 +24,13 @@ import com.google.common.collect.Maps;
 import com.google.gson.reflect.TypeToken;
 
 import io.subutai.client.api.Container.ContainerSize;
-import io.subutai.client.api.EnvironmentCreationRequest;
 import io.subutai.client.api.Domain;
 import io.subutai.client.api.DomainAssignment;
 import io.subutai.client.api.Environment;
+import io.subutai.client.api.EnvironmentCreationRequest;
+import io.subutai.client.api.EnvironmentModificationRequest;
 import io.subutai.client.api.FriendsInfo;
 import io.subutai.client.api.HubClient;
-import io.subutai.client.api.EnvironmentModificationRequest;
 import io.subutai.client.api.Organization;
 import io.subutai.client.api.Peer;
 import io.subutai.client.api.SshKey;
@@ -561,6 +561,17 @@ public class HubClientImplementationTest
     public void testBreakFriendship() throws Exception
     {
         hubClient.breakFriendship( USER_ID );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testCreateEnvironmentFromBlueprint() throws Exception
+    {
+        returnHttpCode( HttpStatus.SC_ACCEPTED );
+
+        hubClient.createEnvironmentFromBlueprint( "blueprint" );
 
         verify( hubClient ).execute( any( HttpRequestBase.class ) );
     }
