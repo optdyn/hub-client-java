@@ -732,6 +732,31 @@ public class HubClientImplementation implements HubClient
     }
 
 
+    @Override
+    public void createEnvironmentFromBlueprint( final String blueprint )
+    {
+        HttpPost request = new HttpPost(
+                String.format( "https://%s.subut.ai/rest/v1/client/environments/blueprint", hubEnv.getUrlPrefix() ) );
+
+        request.setEntity( new StringEntity( blueprint, ContentType.APPLICATION_JSON ) );
+        request.addHeader( KURJUN_TOKEN_HEADER, getKurjunToken() );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            response = execute( request );
+
+            checkHttpStatus( response, HttpStatus.SC_ACCEPTED, "create environment from blueprint" );
+
+            System.out.println( readContent( response ) );
+        }
+        finally
+        {
+            close( response );
+        }
+    }
+    
+
     String getTemplateNameById( final List<Template> templates, final String templateId )
     {
         for ( Template template : templates )

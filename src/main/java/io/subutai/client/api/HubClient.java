@@ -321,4 +321,12 @@ public interface HubClient
      * @param userId user id
      */
     void breakFriendship( long userId );
+
+
+    /**
+     * Allows to create environment from blueprint json
+     *
+     * @param blueprint blueprint json
+     */
+    void createEnvironmentFromBlueprint( String blueprint );
 }

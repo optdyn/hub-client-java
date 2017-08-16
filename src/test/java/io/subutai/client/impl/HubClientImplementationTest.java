@@ -57,10 +57,10 @@ public class HubClientImplementationTest
     private static final String EMAIL = "test.d@mail.com";
     private static final String PASSWORD = "test";
     private static final String TEMPLATE_ID = "a697e70f3fc538b4f4763588a7868388";
-    private static final String PEER_ID = "913B1453BCC2E1D4E1CA03C803F9E40A8D2F03AD";
-    private static final String RH_ID = "2E81C1E1CDFC626E82A3B6FEAB0C06B8F070AB5B";
-    private static final String ENVIRONMENT_ID = "5dea49fc-d5bf-49f9-a321-2dc1dc9ea148";
-    private static final String CONTAINER_ID = "34664840888A070BC40E04A50C7D156051ECD046";
+    private static final String PEER_ID = "94E0A1C6EB6718A608D8754EBD3BD7BB1F2B36A1";
+    private static final String RH_ID = "25127DD45F45417738248549BCEF91DF28AC3854";
+    private static final String ENVIRONMENT_ID = "3bd12be7-e2f7-4884-9a71-20e21381e2e9";
+    private static final String CONTAINER_ID = "1648E5166B5160DCB47CDF60D269772CC3337E1E";
     private static final String SSH_KEY =
             "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCjUo/8VklFC8cRyHE502tUXit15L8Qg2z/47c6PMpQThR0sjhURgoILms"
                     + "/IX180yGqgkpjdX08MIkmANhbXDmSFh6T4lUzqGGoC7lerePwkA2yJWlsP+7JKk9oDSaYJ3lkfvKZnz8ZG7JS1jg"
@@ -967,5 +967,26 @@ public class HubClientImplementationTest
         modifyEnvironmentRequest.removeNode( CONTAINER_ID );
 
         hubClient.modifyEnvironment( modifyEnvironmentRequest );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealCreateEnvironmentFromBlueprint() throws Exception
+    {
+        prepare();
+
+        String blueprint =
+                "{\n" + "  \"name\": \"test env\",\n" + "  \"description\": \"test blueprint\",\n" + "  \"nodes\": [\n"
+                        + "    {\n" + "      \"name\": \"master\",\n" + "      \"template\": \"master\",\n"
+                        + "      \"peer_group\": \"GROUP1\",\n" + "      \"size\": \"TINY\"\n" + "    }\n" + "  ],\n"
+                        + "  \"peerGroups\": [\n" + "    {\n" + "      \"name\": \"GROUP1\",\n"
+                        + "      \"pricingPref\": {\n" + "        \"maxPrice\": \"200\"\n" + "      },\n"
+                        + "      \"hwPreferences\": {\n" + "        \"avgCpuLoad\": \"10\",\n"
+                        + "        \"minFreeRam\": \"512MiB\",\n" + "        \"minFreeDiskSpace\": \"500MiB\"\n"
+                        + "      },\n" + "      \"zonePreferences\": {},\n" + "      \"proximityPreferences\": {}\n"
+                        + "    }\n" + "  ]\n" + "}";
+
+        hubClient.createEnvironmentFromBlueprint( blueprint );
     }
 }
