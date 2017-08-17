@@ -1,4 +1,4 @@
-# Java client for Subutai Social Hub
+# Java client for Subutai Hub
 
 Example usage:
 
