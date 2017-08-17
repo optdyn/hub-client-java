@@ -24,13 +24,13 @@ import com.google.common.collect.Maps;
 import com.google.gson.reflect.TypeToken;
 
 import io.subutai.client.api.Container.ContainerSize;
-import io.subutai.client.api.CreateEnvironmentRequest;
 import io.subutai.client.api.Domain;
 import io.subutai.client.api.DomainAssignment;
 import io.subutai.client.api.Environment;
+import io.subutai.client.api.EnvironmentCreationRequest;
+import io.subutai.client.api.EnvironmentModificationRequest;
 import io.subutai.client.api.FriendsInfo;
 import io.subutai.client.api.HubClient;
-import io.subutai.client.api.ModifyEnvironmentRequest;
 import io.subutai.client.api.Organization;
 import io.subutai.client.api.Peer;
 import io.subutai.client.api.SshKey;
@@ -57,10 +57,10 @@ public class HubClientImplementationTest
     private static final String EMAIL = "test.d@mail.com";
     private static final String PASSWORD = "test";
     private static final String TEMPLATE_ID = "a697e70f3fc538b4f4763588a7868388";
-    private static final String PEER_ID = "913B1453BCC2E1D4E1CA03C803F9E40A8D2F03AD";
-    private static final String RH_ID = "2E81C1E1CDFC626E82A3B6FEAB0C06B8F070AB5B";
-    private static final String ENVIRONMENT_ID = "5dea49fc-d5bf-49f9-a321-2dc1dc9ea148";
-    private static final String CONTAINER_ID = "34664840888A070BC40E04A50C7D156051ECD046";
+    private static final String PEER_ID = "94E0A1C6EB6718A608D8754EBD3BD7BB1F2B36A1";
+    private static final String RH_ID = "25127DD45F45417738248549BCEF91DF28AC3854";
+    private static final String ENVIRONMENT_ID = "3bd12be7-e2f7-4884-9a71-20e21381e2e9";
+    private static final String CONTAINER_ID = "1648E5166B5160DCB47CDF60D269772CC3337E1E";
     private static final String SSH_KEY =
             "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCjUo/8VklFC8cRyHE502tUXit15L8Qg2z/47c6PMpQThR0sjhURgoILms"
                     + "/IX180yGqgkpjdX08MIkmANhbXDmSFh6T4lUzqGGoC7lerePwkA2yJWlsP+7JKk9oDSaYJ3lkfvKZnz8ZG7JS1jg"
@@ -81,11 +81,11 @@ public class HubClientImplementationTest
     @Mock
     private EnvironmentImpl environment;
     @Mock
-    private CreateEnvironmentRequestImpl createEnvironmentRequest;
+    private EnvironmentCreationRequestImpl createEnvironmentRequest;
     @Mock
     private Template template;
     @Mock
-    private ModifyEnvironmentRequestImpl modifyEnvironmentRequest;
+    private EnvironmentModificationRequestImpl modifyEnvironmentRequest;
     @Mock
     private KurjunClient kurjunClient;
 
@@ -287,7 +287,7 @@ public class HubClientImplementationTest
         returnHttpCode( HttpStatus.SC_ACCEPTED );
         doReturn( Lists.newArrayList( template ) ).when( hubClient ).getTemplates();
         doReturn( "template" ).when( hubClient ).getTemplateNameById( anyList(), anyString() );
-        CreateEnvironmentRequestImpl.Node node = mock( CreateEnvironmentRequestImpl.Node.class );
+        EnvironmentCreationRequestImpl.Node node = mock( EnvironmentCreationRequestImpl.Node.class );
         doReturn( Lists.newArrayList( node ) ).when( createEnvironmentRequest ).getNodes();
         doReturn( "" ).when( hubClient ).toJson( createEnvironmentRequest );
         doReturn( "template" ).when( node ).getTemplateName();
@@ -304,11 +304,11 @@ public class HubClientImplementationTest
         returnHttpCode( HttpStatus.SC_ACCEPTED );
         doReturn( Lists.newArrayList( template ) ).when( hubClient ).getTemplates();
         doReturn( "template" ).when( hubClient ).getTemplateNameById( anyList(), anyString() );
-        CreateEnvironmentRequestImpl.Node createNode = mock( CreateEnvironmentRequestImpl.Node.class );
+        EnvironmentCreationRequestImpl.Node createNode = mock( EnvironmentCreationRequestImpl.Node.class );
         doReturn( Lists.newArrayList( createNode ) ).when( modifyEnvironmentRequest ).getNodesToAdd();
         doReturn( "" ).when( hubClient ).toJson( modifyEnvironmentRequest );
         doReturn( "template" ).when( createNode ).getTemplateName();
-        ModifyEnvironmentRequestImpl.Node destroyNodeDto = mock( ModifyEnvironmentRequestImpl.Node.class );
+        EnvironmentModificationRequestImpl.Node destroyNodeDto = mock( EnvironmentModificationRequestImpl.Node.class );
         doReturn( Lists.newArrayList( destroyNodeDto ) ).when( modifyEnvironmentRequest ).getNodesToRemove();
 
         hubClient.modifyEnvironment( modifyEnvironmentRequest );
@@ -561,6 +561,17 @@ public class HubClientImplementationTest
     public void testBreakFriendship() throws Exception
     {
         hubClient.breakFriendship( USER_ID );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testCreateEnvironmentFromBlueprint() throws Exception
+    {
+        returnHttpCode( HttpStatus.SC_ACCEPTED );
+
+        hubClient.createEnvironmentFromBlueprint( "blueprint" );
 
         verify( hubClient ).execute( any( HttpRequestBase.class ) );
     }
@@ -949,11 +960,11 @@ public class HubClientImplementationTest
     public void testRealCreateEnvironment() throws Exception
     {
         prepare();
-        CreateEnvironmentRequest createEnvironmentRequest = hubClient.createRequest( "test-env" );
-        createEnvironmentRequest.addNode( "test-container1", TEMPLATE_ID, ContainerSize.SMALL, PEER_ID, RH_ID );
-        createEnvironmentRequest.addNode( "test-container2", TEMPLATE_ID, ContainerSize.SMALL, PEER_ID, RH_ID );
+        EnvironmentCreationRequest environmentCreationRequest = hubClient.createRequest( "test-env" );
+        environmentCreationRequest.addNode( "test-container1", TEMPLATE_ID, ContainerSize.SMALL, PEER_ID, RH_ID );
+        environmentCreationRequest.addNode( "test-container2", TEMPLATE_ID, ContainerSize.SMALL, PEER_ID, RH_ID );
 
-        hubClient.createEnvironment( createEnvironmentRequest );
+        hubClient.createEnvironment( environmentCreationRequest );
     }
 
 
@@ -962,10 +973,31 @@ public class HubClientImplementationTest
     public void testRealModifyEnvironment() throws Exception
     {
         prepare();
-        ModifyEnvironmentRequest modifyEnvironmentRequest = hubClient.modifyRequest( ENVIRONMENT_ID );
+        EnvironmentModificationRequest modifyEnvironmentRequest = hubClient.modifyRequest( ENVIRONMENT_ID );
         modifyEnvironmentRequest.addNode( "test-container3", TEMPLATE_ID, ContainerSize.SMALL, PEER_ID, RH_ID );
         modifyEnvironmentRequest.removeNode( CONTAINER_ID );
 
         hubClient.modifyEnvironment( modifyEnvironmentRequest );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealCreateEnvironmentFromBlueprint() throws Exception
+    {
+        prepare();
+
+        String blueprint =
+                "{\n" + "  \"name\": \"test env\",\n" + "  \"description\": \"test blueprint\",\n" + "  \"nodes\": [\n"
+                        + "    {\n" + "      \"name\": \"master\",\n" + "      \"template\": \"master\",\n"
+                        + "      \"peer_group\": \"GROUP1\",\n" + "      \"size\": \"TINY\"\n" + "    }\n" + "  ],\n"
+                        + "  \"peerGroups\": [\n" + "    {\n" + "      \"name\": \"GROUP1\",\n"
+                        + "      \"pricingPref\": {\n" + "        \"maxPrice\": \"200\"\n" + "      },\n"
+                        + "      \"hwPreferences\": {\n" + "        \"avgCpuLoad\": \"10\",\n"
+                        + "        \"minFreeRam\": \"512MiB\",\n" + "        \"minFreeDiskSpace\": \"500MiB\"\n"
+                        + "      },\n" + "      \"zonePreferences\": {},\n" + "      \"proximityPreferences\": {}\n"
+                        + "    }\n" + "  ]\n" + "}";
+
+        hubClient.createEnvironmentFromBlueprint( blueprint );
     }
 }
