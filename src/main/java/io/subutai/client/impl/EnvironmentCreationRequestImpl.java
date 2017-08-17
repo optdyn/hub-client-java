@@ -7,11 +7,11 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
-import io.subutai.client.api.ContainerSize;
-import io.subutai.client.api.CreateEnvironmentRequest;
+import io.subutai.client.api.Container.ContainerSize;
+import io.subutai.client.api.EnvironmentCreationRequest;
 
 
-public class CreateEnvironmentRequestImpl implements CreateEnvironmentRequest
+public class EnvironmentCreationRequestImpl implements EnvironmentCreationRequest
 {
     private final String environmentName;
 
@@ -22,7 +22,7 @@ public class CreateEnvironmentRequestImpl implements CreateEnvironmentRequest
     private Boolean registerHosts = true;
 
 
-    CreateEnvironmentRequestImpl( final String environmentName )
+    EnvironmentCreationRequestImpl( final String environmentName )
     {
         Preconditions.checkArgument( !Strings.isNullOrEmpty( environmentName ) );
 

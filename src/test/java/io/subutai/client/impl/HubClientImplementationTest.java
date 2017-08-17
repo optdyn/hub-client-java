@@ -5,6 +5,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -19,16 +20,22 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.gson.reflect.TypeToken;
 
-import io.subutai.client.api.ContainerSize;
-import io.subutai.client.api.CreateEnvironmentRequest;
+import io.subutai.client.api.Container.ContainerSize;
+import io.subutai.client.api.Domain;
+import io.subutai.client.api.DomainAssignment;
 import io.subutai.client.api.Environment;
+import io.subutai.client.api.EnvironmentCreationRequest;
+import io.subutai.client.api.EnvironmentModificationRequest;
+import io.subutai.client.api.FriendsInfo;
 import io.subutai.client.api.HubClient;
-import io.subutai.client.api.ModifyEnvironmentRequest;
+import io.subutai.client.api.Organization;
 import io.subutai.client.api.Peer;
 import io.subutai.client.api.SshKey;
 import io.subutai.client.api.Template;
+import io.subutai.client.api.User;
 import io.subutai.client.pgp.SignerTest;
 
 import static org.junit.Assert.assertTrue;
@@ -46,13 +53,14 @@ import static org.mockito.Mockito.verify;
 public class HubClientImplementationTest
 {
 
-    private static final String USERNAME = "test.d@mail.com";
+    private static final String USERNAME = "test-d";
+    private static final String EMAIL = "test.d@mail.com";
     private static final String PASSWORD = "test";
     private static final String TEMPLATE_ID = "a697e70f3fc538b4f4763588a7868388";
-    private static final String PEER_ID = "ACB7B15EDF77CA3D71CEC940D27A413549546B54";
-    private static final String RH_ID = "2E81C1E1CDFC626E82A3B6FEAB0C06B8F070AB5B";
-    private static final String ENVIRONMENT_ID = "5dea49fc-d5bf-49f9-a321-2dc1dc9ea148";
-    private static final String CONTAINER_ID = "34664840888A070BC40E04A50C7D156051ECD046";
+    private static final String PEER_ID = "94E0A1C6EB6718A608D8754EBD3BD7BB1F2B36A1";
+    private static final String RH_ID = "25127DD45F45417738248549BCEF91DF28AC3854";
+    private static final String ENVIRONMENT_ID = "3bd12be7-e2f7-4884-9a71-20e21381e2e9";
+    private static final String CONTAINER_ID = "1648E5166B5160DCB47CDF60D269772CC3337E1E";
     private static final String SSH_KEY =
             "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCjUo/8VklFC8cRyHE502tUXit15L8Qg2z/47c6PMpQThR0sjhURgoILms"
                     + "/IX180yGqgkpjdX08MIkmANhbXDmSFh6T4lUzqGGoC7lerePwkA2yJWlsP+7JKk9oDSaYJ3lkfvKZnz8ZG7JS1jg"
@@ -60,8 +68,9 @@ public class HubClientImplementationTest
                     + "+tUK4R7kJBecYQGkJj4ILt/cAGrY0sg8Ol+WBOq4ex3zCF1zJrdJCxW4t2NUyNfCxW7kV2uUhbWNuj+n"
                     +
                     "/I5a8CDrMJsJLqdgC3EQ17uRy41GHbTwBQs0q2gwfBpefHFXokWwxu06hk0jfwFHWm9xRT79a56hr101Fy4uNjzzVtrWDS4end9VC7bt7Xf/kDxx7FB9DW1wfaYMcCp6YD5O8ENpl35gK35ZXtT5BP2GBoxHGlPdF4PObMCNi5ATtO/gLD8kW1LutO2ldsaY4sHm/JG55UNrpQCpIYe6QfkHsO+fX9/WmjP+iTDdHs1untgurvk5KdhtQxecTvTk3M/ewzHZbEbzYJYzFOsy5f6FQ8U/ckw8PejBzGDUiMGTJXl+GjV9VV3BmkKKeqD5uKu+gta5dynbdfU4r7heAV6oxan2x/rg9iHpOklIRtu2chJYJUq7lQ== dilshat.aliev@gmail.com";
-    private static final String USER_ID = "164";
+    private static final long USER_ID = 164;
     private static final String NEW_PEER_NAME = "New Peer-Name";
+    private static final String DOMAIN = "domain";
 
     private HubClientImplementation hubClient;
 
@@ -72,11 +81,11 @@ public class HubClientImplementationTest
     @Mock
     private EnvironmentImpl environment;
     @Mock
-    private CreateEnvironmentRequestImpl createEnvironmentRequest;
+    private EnvironmentCreationRequestImpl createEnvironmentRequest;
     @Mock
     private Template template;
     @Mock
-    private ModifyEnvironmentRequestImpl modifyEnvironmentRequest;
+    private EnvironmentModificationRequestImpl modifyEnvironmentRequest;
     @Mock
     private KurjunClient kurjunClient;
 
@@ -102,7 +111,7 @@ public class HubClientImplementationTest
     @Test
     public void testLogin() throws Exception
     {
-        hubClient.login( USERNAME, PASSWORD );
+        hubClient.login( EMAIL, PASSWORD );
 
         verify( hubClient ).execute( any( HttpRequestBase.class ) );
     }
@@ -278,7 +287,7 @@ public class HubClientImplementationTest
         returnHttpCode( HttpStatus.SC_ACCEPTED );
         doReturn( Lists.newArrayList( template ) ).when( hubClient ).getTemplates();
         doReturn( "template" ).when( hubClient ).getTemplateNameById( anyList(), anyString() );
-        CreateEnvironmentRequestImpl.Node node = mock( CreateEnvironmentRequestImpl.Node.class );
+        EnvironmentCreationRequestImpl.Node node = mock( EnvironmentCreationRequestImpl.Node.class );
         doReturn( Lists.newArrayList( node ) ).when( createEnvironmentRequest ).getNodes();
         doReturn( "" ).when( hubClient ).toJson( createEnvironmentRequest );
         doReturn( "template" ).when( node ).getTemplateName();
@@ -295,11 +304,11 @@ public class HubClientImplementationTest
         returnHttpCode( HttpStatus.SC_ACCEPTED );
         doReturn( Lists.newArrayList( template ) ).when( hubClient ).getTemplates();
         doReturn( "template" ).when( hubClient ).getTemplateNameById( anyList(), anyString() );
-        CreateEnvironmentRequestImpl.Node createNode = mock( CreateEnvironmentRequestImpl.Node.class );
+        EnvironmentCreationRequestImpl.Node createNode = mock( EnvironmentCreationRequestImpl.Node.class );
         doReturn( Lists.newArrayList( createNode ) ).when( modifyEnvironmentRequest ).getNodesToAdd();
         doReturn( "" ).when( hubClient ).toJson( modifyEnvironmentRequest );
         doReturn( "template" ).when( createNode ).getTemplateName();
-        ModifyEnvironmentRequestImpl.Node destroyNodeDto = mock( ModifyEnvironmentRequestImpl.Node.class );
+        EnvironmentModificationRequestImpl.Node destroyNodeDto = mock( EnvironmentModificationRequestImpl.Node.class );
         doReturn( Lists.newArrayList( destroyNodeDto ) ).when( modifyEnvironmentRequest ).getNodesToRemove();
 
         hubClient.modifyEnvironment( modifyEnvironmentRequest );
@@ -372,12 +381,386 @@ public class HubClientImplementationTest
     }
 
 
+    @Test
+    public void testGetUser() throws Exception
+    {
+        UserImpl user = mock( UserImpl.class );
+        doReturn( user ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
+        hubClient.getUser( USER_ID );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testFindUserByName() throws Exception
+    {
+        UserImpl user = mock( UserImpl.class );
+        doReturn( user ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
+        hubClient.findUserByName( EMAIL );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testFindUserByEmail() throws Exception
+    {
+        UserImpl user = mock( UserImpl.class );
+        doReturn( user ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
+        hubClient.findUserByName( EMAIL );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testGetUserPeers() throws Exception
+    {
+        doReturn( Lists.newArrayList( peer ) ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
+        hubClient.getUserPeers( USER_ID );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testGetPeerUsers() throws Exception
+    {
+        UserImpl user = mock( UserImpl.class );
+        doReturn( Lists.newArrayList( user ) ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
+        hubClient.getPeerUsers( PEER_ID );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testGetUserOrganizations() throws Exception
+    {
+        OrganizationImpl organization = mock( OrganizationImpl.class );
+        doReturn( Lists.newArrayList( organization ) ).when( hubClient )
+                                                      .parse( eq( response ), any( TypeToken.class ) );
+
+        hubClient.getUserOrganizations( USER_ID, false );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testGetOrganizations() throws Exception
+    {
+        OrganizationImpl organization = mock( OrganizationImpl.class );
+        doReturn( Lists.newArrayList( organization ) ).when( hubClient )
+                                                      .parse( eq( response ), any( TypeToken.class ) );
+
+        hubClient.getOrganizations( false );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testGetDomains() throws Exception
+    {
+        DomainImpl domain = mock( DomainImpl.class );
+        doReturn( Lists.newArrayList( domain ) ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
+        hubClient.getDomains();
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testGetDomainAssignments() throws Exception
+    {
+        DomainAssignmentImpl assignment = mock( DomainAssignmentImpl.class );
+        Map<String, List<DomainAssignment>> map = Maps.newHashMap();
+        doReturn( map ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
+        hubClient.getDomainAssignments();
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testDeleteDomain() throws Exception
+    {
+        hubClient.deleteDomain( DOMAIN );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testReserveDomain() throws Exception
+    {
+        hubClient.reserveDomain( DOMAIN );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testGetFriendsInfo() throws Exception
+    {
+        FriendsInfoImpl friendsInfo = mock( FriendsInfoImpl.class );
+        doReturn( friendsInfo ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
+        hubClient.getFriendsInfo();
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testRequestFriendship() throws Exception
+    {
+        hubClient.requestFriendship( USER_ID );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testAcceptFriendship() throws Exception
+    {
+        hubClient.acceptFriendship( USER_ID );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testRejectFriendshipRequest() throws Exception
+    {
+        hubClient.rejectFriendshipRequest( USER_ID );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testCancelFriendshipRequest() throws Exception
+    {
+        hubClient.cancelFriendshipRequest( USER_ID );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testBreakFriendship() throws Exception
+    {
+        hubClient.breakFriendship( USER_ID );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testCreateEnvironmentFromBlueprint() throws Exception
+    {
+        returnHttpCode( HttpStatus.SC_ACCEPTED );
+
+        hubClient.createEnvironmentFromBlueprint( "blueprint" );
+
+        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
     /******* Real tests *******/
 
     private void prepare()
     {
         hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV );
-        hubClient.login( USERNAME, PASSWORD );
+        hubClient.login( EMAIL, PASSWORD );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealBreakFriendship() throws Exception
+    {
+        prepare();
+
+        hubClient.breakFriendship( USER_ID );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealCancelFriendshipRequest() throws Exception
+    {
+        prepare();
+
+        hubClient.cancelFriendshipRequest( USER_ID );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealRejectFriendshipRequest() throws Exception
+    {
+        prepare();
+
+        hubClient.rejectFriendshipRequest( USER_ID );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealAcceptFriendship() throws Exception
+    {
+        prepare();
+
+        hubClient.acceptFriendship( USER_ID );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealRequestFriendship() throws Exception
+    {
+        prepare();
+
+        hubClient.requestFriendship( USER_ID );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealGetFriendsInfo() throws Exception
+    {
+        prepare();
+
+        FriendsInfo friendsInfo = hubClient.getFriendsInfo();
+
+        System.out.println( friendsInfo );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealGetDomains() throws Exception
+    {
+        prepare();
+
+        List<Domain> domains = hubClient.getDomains();
+
+        System.out.println( domains );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealGetDomainAssignments() throws Exception
+    {
+        prepare();
+
+        Map<String, List<DomainAssignment>> assignments = hubClient.getDomainAssignments();
+
+        System.out.println( assignments );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealDeleteDomain() throws Exception
+    {
+        prepare();
+
+        hubClient.deleteDomain( DOMAIN );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealReserveDomain() throws Exception
+    {
+        prepare();
+
+        hubClient.reserveDomain( DOMAIN );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealGetUserOrganizations() throws Exception
+    {
+        prepare();
+
+        List<Organization> organizations = hubClient.getUserOrganizations( USER_ID, false );
+
+        System.out.println( organizations );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealGetOrganizations() throws Exception
+    {
+        prepare();
+
+        List<Organization> organizations = hubClient.getOrganizations( false );
+
+        System.out.println( organizations );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealGetUser() throws Exception
+    {
+        prepare();
+
+        User user = hubClient.getUser( USER_ID );
+
+        System.out.println( user );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealGetUserPeers() throws Exception
+    {
+        prepare();
+
+        List<Peer> peers = hubClient.getUserPeers( USER_ID );
+
+        System.out.println( peers );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealFindUserByEmail() throws Exception
+    {
+        prepare();
+
+        User user = hubClient.findUserByEmail( EMAIL );
+
+        System.out.println( user );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealFindUserByName() throws Exception
+    {
+        prepare();
+
+        User user = hubClient.findUserByName( USERNAME );
+
+        System.out.println( user );
     }
 
 
@@ -499,10 +882,7 @@ public class HubClientImplementationTest
 
         List<SshKey> sshKeys = hubClient.getSshKeys( ENVIRONMENT_ID );
 
-        for ( SshKey sshKey : sshKeys )
-        {
-            System.out.println( sshKey );
-        }
+        System.out.println( sshKeys );
     }
 
 
@@ -534,10 +914,19 @@ public class HubClientImplementationTest
 
         List<Peer> peers = hubClient.getOwnPeers();
 
-        for ( Peer peer : peers )
-        {
-            System.out.println( peer );
-        }
+        System.out.println( peers );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealGetPeerUsers() throws Exception
+    {
+        prepare();
+
+        List<User> users = hubClient.getPeerUsers( PEER_ID );
+
+        System.out.println( users );
     }
 
 
@@ -549,10 +938,7 @@ public class HubClientImplementationTest
 
         List<Environment> environments = hubClient.getEnvironments();
 
-        for ( Environment environment : environments )
-        {
-            System.out.println( environment );
-        }
+        System.out.println( environments );
     }
 
 
@@ -565,10 +951,7 @@ public class HubClientImplementationTest
 
         List<Template> templates = hubClient.getTemplates();
 
-        for ( Template template : templates )
-        {
-            System.out.println( template );
-        }
+        System.out.println( templates );
     }
 
 
@@ -577,11 +960,11 @@ public class HubClientImplementationTest
     public void testRealCreateEnvironment() throws Exception
     {
         prepare();
-        CreateEnvironmentRequest createEnvironmentRequest = hubClient.createRequest( "test-env" );
-        createEnvironmentRequest.addNode( "test-container1", TEMPLATE_ID, ContainerSize.SMALL, PEER_ID, RH_ID );
-        createEnvironmentRequest.addNode( "test-container2", TEMPLATE_ID, ContainerSize.SMALL, PEER_ID, RH_ID );
+        EnvironmentCreationRequest environmentCreationRequest = hubClient.createRequest( "test-env" );
+        environmentCreationRequest.addNode( "test-container1", TEMPLATE_ID, ContainerSize.SMALL, PEER_ID, RH_ID );
+        environmentCreationRequest.addNode( "test-container2", TEMPLATE_ID, ContainerSize.SMALL, PEER_ID, RH_ID );
 
-        hubClient.createEnvironment( createEnvironmentRequest );
+        hubClient.createEnvironment( environmentCreationRequest );
     }
 
 
@@ -590,10 +973,31 @@ public class HubClientImplementationTest
     public void testRealModifyEnvironment() throws Exception
     {
         prepare();
-        ModifyEnvironmentRequest modifyEnvironmentRequest = hubClient.modifyRequest( ENVIRONMENT_ID );
+        EnvironmentModificationRequest modifyEnvironmentRequest = hubClient.modifyRequest( ENVIRONMENT_ID );
         modifyEnvironmentRequest.addNode( "test-container3", TEMPLATE_ID, ContainerSize.SMALL, PEER_ID, RH_ID );
         modifyEnvironmentRequest.removeNode( CONTAINER_ID );
 
         hubClient.modifyEnvironment( modifyEnvironmentRequest );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealCreateEnvironmentFromBlueprint() throws Exception
+    {
+        prepare();
+
+        String blueprint =
+                "{\n" + "  \"name\": \"test env\",\n" + "  \"description\": \"test blueprint\",\n" + "  \"nodes\": [\n"
+                        + "    {\n" + "      \"name\": \"master\",\n" + "      \"template\": \"master\",\n"
+                        + "      \"peer_group\": \"GROUP1\",\n" + "      \"size\": \"TINY\"\n" + "    }\n" + "  ],\n"
+                        + "  \"peerGroups\": [\n" + "    {\n" + "      \"name\": \"GROUP1\",\n"
+                        + "      \"pricingPref\": {\n" + "        \"maxPrice\": \"200\"\n" + "      },\n"
+                        + "      \"hwPreferences\": {\n" + "        \"avgCpuLoad\": \"10\",\n"
+                        + "        \"minFreeRam\": \"512MiB\",\n" + "        \"minFreeDiskSpace\": \"500MiB\"\n"
+                        + "      },\n" + "      \"zonePreferences\": {},\n" + "      \"proximityPreferences\": {}\n"
+                        + "    }\n" + "  ]\n" + "}";
+
+        hubClient.createEnvironmentFromBlueprint( blueprint );
     }
 }

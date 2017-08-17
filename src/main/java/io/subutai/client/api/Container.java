@@ -3,6 +3,17 @@ package io.subutai.client.api;
 
 public interface Container
 {
+    enum ContainerState
+    {
+        BUILDING, STARTING, RUNNING, STOPPING, STOPPED, ABORTING, FREEZING, FROZEN, UNKNOWN
+    }
+
+
+    enum ContainerSize
+    {
+        TINY, SMALL, MEDIUM, LARGE, HUGE
+    }
+
     String getContainerId();
 
 

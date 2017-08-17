@@ -33,7 +33,7 @@ public class SshKeyImpl implements SshKey
 
 
     @Override
-    public Date getCreateDate()
+    public Date getCreationDate()
     {
         return createDate;
     }

@@ -8,21 +8,21 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gson.annotations.SerializedName;
 
-import io.subutai.client.api.ContainerSize;
-import io.subutai.client.api.ModifyEnvironmentRequest;
+import io.subutai.client.api.Container.ContainerSize;
+import io.subutai.client.api.EnvironmentModificationRequest;
 
 
-public class ModifyEnvironmentRequestImpl implements ModifyEnvironmentRequest
+public class EnvironmentModificationRequestImpl implements EnvironmentModificationRequest
 {
     private final String environmentId;
     @SerializedName( "add" )
-    private final List<CreateEnvironmentRequestImpl.Node> nodesToAdd;
+    private final List<EnvironmentCreationRequestImpl.Node> nodesToAdd;
 
     @SerializedName( "remove" )
     private final List<Node> nodesToRemove;
 
 
-    ModifyEnvironmentRequestImpl( final String environmentId )
+    EnvironmentModificationRequestImpl( final String environmentId )
     {
         Preconditions.checkArgument( !Strings.isNullOrEmpty( environmentId ) );
 
@@ -35,7 +35,7 @@ public class ModifyEnvironmentRequestImpl implements ModifyEnvironmentRequest
     public void addNode( final String hostname, final String templateId, final ContainerSize containerSize,
                          final String peerId, final String resourceHostId )
     {
-        this.nodesToAdd.add( new CreateEnvironmentRequestImpl.Node( hostname, templateId, containerSize, peerId,
+        this.nodesToAdd.add( new EnvironmentCreationRequestImpl.Node( hostname, templateId, containerSize, peerId,
                 resourceHostId ) );
     }
 
@@ -46,7 +46,7 @@ public class ModifyEnvironmentRequestImpl implements ModifyEnvironmentRequest
     }
 
 
-    List<CreateEnvironmentRequestImpl.Node> getNodesToAdd()
+    List<EnvironmentCreationRequestImpl.Node> getNodesToAdd()
     {
         return nodesToAdd;
     }
