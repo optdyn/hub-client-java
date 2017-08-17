@@ -15,7 +15,7 @@ List<Template> templates = client.getTemplates();
 
 ....
 
-CreateEnvironmentRequest request = client.createRequest();
+EnvironmentCreationRequest request = client.createRequest("my-test-env");
 
 request.addNode( "test-container", templateId, ContainerSize.SMALL, peerId, hostId );
 
