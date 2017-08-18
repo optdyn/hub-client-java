@@ -135,28 +135,28 @@ public interface HubClient
      *
      * @param environmentName - name of future environment
      */
-    CreateEnvironmentRequest createRequest( String environmentName );
+    EnvironmentCreationRequest createRequest( String environmentName );
 
     /**
      * Creates environment modification request object that should be populated further by calling party.
      *
      * @param environmentId environment id
      */
-    ModifyEnvironmentRequest modifyRequest( String environmentId );
+    EnvironmentModificationRequest modifyRequest( String environmentId );
 
     /**
      * Allows to create environment
      *
-     * @param createEnvironmentRequest create environment request object returned by call to HubClient#createRequest
+     * @param environmentCreationRequest create environment request object returned by call to HubClient#createRequest
      */
-    void createEnvironment( CreateEnvironmentRequest createEnvironmentRequest );
+    void createEnvironment( EnvironmentCreationRequest environmentCreationRequest );
 
     /**
      * Allows to modify environment
      *
-     * @param modifyEnvironmentRequest modify environment request object returned by call to HubClient#modifyRequest
+     * @param environmentModificationRequest modify environment request object returned by call to HubClient#modifyRequest
      */
-    void modifyEnvironment( ModifyEnvironmentRequest modifyEnvironmentRequest );
+    void modifyEnvironment( EnvironmentModificationRequest environmentModificationRequest );
 
     /**
      * Returns user balance
@@ -329,4 +329,12 @@ public interface HubClient
      * @param userId user id
      */
     void breakFriendship( long userId );
+
+
+    /**
+     * Allows to create environment from blueprint json
+     *
+     * @param blueprint blueprint json
+     */
+    void createEnvironmentFromBlueprint( String blueprint );
 }
