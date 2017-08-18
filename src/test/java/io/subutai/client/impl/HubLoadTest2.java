@@ -22,20 +22,20 @@ import static junit.framework.TestCase.assertEquals;
 public class HubLoadTest2
 {
     private static final String TEMPLATE_ID = "a697e70f3fc538b4f4763588a7868388";
-    private static final String EMAIL = "amamutov@optimal-dynamics.com";
-    private static final String PASSWORD = "abc";
-    private static final int NUM_OF_PARALLEL_ENV_CREATIONS = 10;
-    private static final int NUM_OF_CONTAINERS_PER_ENV = 3;
+    private static final String EMAIL = "a@od.com";
+    private static final String PASSWORD = "password";
+    private static final int NUM_OF_PARALLEL_ENV_CREATIONS = 3;
+    private static final int NUM_OF_CONTAINERS_PER_ENV = 2;
     private HubClient hubClient;
     private Set<String> envNames = Sets.newConcurrentHashSet();
 
     private static int envCounter = 1;
     private static int contCounter = 1;
 
-    private static final String PEER1_ID = "A84661CAA2EF594905E2E22FB8E25948C01BCB6D";
+    private static final String PEER1_ID = "FA8C8C02662978F5F7F91986B9F8D5F751C9CE32";
     private static final String PEER1_MH_ID = "BA732D237A26FC1BC713C0EDFE522F10552988FB";
 
-    private static final String PEER2_ID = "95F4964C00E245A47609A3CE25E1D4410C71B01D";
+    private static final String PEER2_ID = "BD3118CD163BB887DBCE54B942A802A024CC4E9F";
     private static final String PEER2_MH_ID = "CB468989F50E33C4A53D41C82FCA514CE98BFF4D";
     private static final String PEER2_RH1_ID = "76B31C9C730B3342A491470D40014D5E9D8E4087";
 
@@ -68,7 +68,15 @@ public class HubLoadTest2
         }
 
         //initiate env creation
-        hubClient.createEnvironment( createEnvironmentRequest );
+        try
+        {
+            hubClient.createEnvironment( createEnvironmentRequest );
+        }
+        catch ( Exception e )
+        {
+            System.out.println( "Failed to create env. with name: "+envName );
+            e.printStackTrace();
+        }
     }
 
 //    @Test
@@ -89,7 +97,15 @@ public class HubLoadTest2
         }
 
         //initiate env creation
-        hubClient.createEnvironment( createEnvironmentRequest );
+        try
+        {
+            hubClient.createEnvironment( createEnvironmentRequest );
+        }
+        catch ( Exception e )
+        {
+            System.out.println( "Failed to create env. with name: "+envName );
+            e.printStackTrace();
+        }
     }
 
 
@@ -112,7 +128,15 @@ public class HubLoadTest2
         }
 
         //initiate env creation
-        hubClient.createEnvironment( createEnvironmentRequest );
+        try
+        {
+            hubClient.createEnvironment( createEnvironmentRequest );
+        }
+        catch ( Exception e )
+        {
+            System.out.println( "Failed to create env. with name: "+envName );
+            e.printStackTrace();
+        }
     }
 
 
@@ -124,15 +148,15 @@ public class HubLoadTest2
         List<CompletableFuture> futures = Lists.newArrayList();
 
         //run NUM_OF_PARALLEL_ENV_CREATIONS environment creations in parallel
-        for ( int i = 1; i <= Math.round( NUM_OF_PARALLEL_ENV_CREATIONS / 3 ); i++ )
+        for ( int i = 1; i <= Math.round( NUM_OF_PARALLEL_ENV_CREATIONS ); i++ )
         {
             futures.add( CompletableFuture.runAsync( this::testCreateEnvironmentOnPeer1 ) );
         }
-        for ( int i = 1; i <= Math.round( NUM_OF_PARALLEL_ENV_CREATIONS / 3 ); i++ )
+        for ( int i = 1; i <= Math.round( NUM_OF_PARALLEL_ENV_CREATIONS ); i++ )
         {
             futures.add( CompletableFuture.runAsync( this::testCreateEnvironmentOnPeer2 ) );
         }
-        for ( int i = 1; i <= Math.round( NUM_OF_PARALLEL_ENV_CREATIONS / 3 ); i++ )
+        for ( int i = 1; i <= Math.round( NUM_OF_PARALLEL_ENV_CREATIONS ); i++ )
         {
             futures.add( CompletableFuture.runAsync( this::testCreateEnvironmentOnBothPeers ) );
         }

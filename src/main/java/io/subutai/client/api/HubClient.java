@@ -9,20 +9,28 @@ public interface HubClient
 {
     enum HubEnv
     {
-        DEV( "dev" ), STAGE( "stage" ), PROD( "hub" );
+        DEV( "chub", "dev" ), STAGE( "stage", "stage" ), PROD( "hub", "" );
 
         private String urlPrefix;
+        private String cdnPrefix;
 
 
-        HubEnv( final String urlPrefix )
+        HubEnv( final String urlPrefix, final String cdnPrefix )
         {
             this.urlPrefix = urlPrefix;
+            this.cdnPrefix = cdnPrefix;
         }
 
 
         public String getUrlPrefix()
         {
             return urlPrefix;
+        }
+
+
+        public String getCdnPrefix()
+        {
+            return cdnPrefix;
         }
     }
 
