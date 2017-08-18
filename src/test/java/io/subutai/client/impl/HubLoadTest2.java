@@ -12,8 +12,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import io.subutai.client.api.Container;
-import io.subutai.client.api.CreateEnvironmentRequest;
 import io.subutai.client.api.Environment;
+import io.subutai.client.api.EnvironmentCreationRequest;
 import io.subutai.client.api.HubClient;
 
 import static junit.framework.TestCase.assertEquals;
@@ -51,68 +51,77 @@ public class HubLoadTest2
     }
 
 
-//    @Test
+    //    @Test
     public void testCreateEnvironmentOnPeer1()
     {
         //create env creation request
         String envName = "peer1-env-" + envCounter;
         envCounter++;
         envNames.add( envName.toLowerCase() );
-        CreateEnvironmentRequest createEnvironmentRequest = hubClient.createRequest( envName );
+        EnvironmentCreationRequest EnvironmentCreationRequest = hubClient.createRequest( envName );
 
         //populate request with container orders
         for ( int i = 1; i <= NUM_OF_CONTAINERS_PER_ENV; i++ )
         {
-            createEnvironmentRequest.addNode( "cont_" + contCounter, TEMPLATE_ID, Container.ContainerSize.TINY, PEER1_ID, PEER1_MH_ID );
+            EnvironmentCreationRequest
+                    .addNode( "cont_" + contCounter, TEMPLATE_ID, Container.ContainerSize.TINY, PEER1_ID, PEER1_MH_ID );
             contCounter++;
         }
 
         //initiate env creation
-        hubClient.createEnvironment( createEnvironmentRequest );
+        hubClient.createEnvironment( EnvironmentCreationRequest );
     }
 
-//    @Test
+
+    //    @Test
     public void testCreateEnvironmentOnPeer2()
     {
         //create env creation request
         String envName = "peer2-env-" + envCounter;
         envCounter++;
         envNames.add( envName.toLowerCase() );
-        CreateEnvironmentRequest createEnvironmentRequest = hubClient.createRequest( envName );
+        EnvironmentCreationRequest EnvironmentCreationRequest = hubClient.createRequest( envName );
 
         //populate request with container orders
         for ( int i = 1; i <= NUM_OF_CONTAINERS_PER_ENV; i++ )
         {
-            createEnvironmentRequest.addNode( "cont_" + contCounter, TEMPLATE_ID, Container.ContainerSize.TINY, PEER2_ID, PEER2_MH_ID );
-            createEnvironmentRequest.addNode( "cont_" + contCounter, TEMPLATE_ID, Container.ContainerSize.TINY, PEER2_ID, PEER2_RH1_ID );
+            EnvironmentCreationRequest
+                    .addNode( "cont_" + contCounter, TEMPLATE_ID, Container.ContainerSize.TINY, PEER2_ID, PEER2_MH_ID );
+            EnvironmentCreationRequest
+                    .addNode( "cont_" + contCounter, TEMPLATE_ID, Container.ContainerSize.TINY, PEER2_ID,
+                            PEER2_RH1_ID );
             contCounter++;
         }
 
         //initiate env creation
-        hubClient.createEnvironment( createEnvironmentRequest );
+        hubClient.createEnvironment( EnvironmentCreationRequest );
     }
 
 
-//    @Test
+    //    @Test
     public void testCreateEnvironmentOnBothPeers()
     {
         //create env creation request
         String envName = "test-env-" + envCounter;
         envCounter++;
         envNames.add( envName.toLowerCase() );
-        CreateEnvironmentRequest createEnvironmentRequest = hubClient.createRequest( envName );
+        EnvironmentCreationRequest EnvironmentCreationRequest = hubClient.createRequest( envName );
 
         //populate request with container orders
         for ( int i = 1; i <= NUM_OF_CONTAINERS_PER_ENV; i++ )
         {
-            createEnvironmentRequest.addNode( "cont_" + contCounter, TEMPLATE_ID, Container.ContainerSize.TINY, PEER1_ID, PEER1_MH_ID );
-            createEnvironmentRequest.addNode( "cont_" + contCounter, TEMPLATE_ID, Container.ContainerSize.TINY, PEER2_ID, PEER2_MH_ID );
-            createEnvironmentRequest.addNode( "cont_" + contCounter, TEMPLATE_ID, Container.ContainerSize.TINY, PEER2_ID, PEER2_RH1_ID );
+            EnvironmentCreationRequest
+                    .addNode( "cont_" + contCounter, TEMPLATE_ID, Container.ContainerSize.TINY, PEER1_ID, PEER1_MH_ID );
+            EnvironmentCreationRequest
+                    .addNode( "cont_" + contCounter, TEMPLATE_ID, Container.ContainerSize.TINY, PEER2_ID, PEER2_MH_ID );
+            EnvironmentCreationRequest
+                    .addNode( "cont_" + contCounter, TEMPLATE_ID, Container.ContainerSize.TINY, PEER2_ID,
+                            PEER2_RH1_ID );
             contCounter++;
         }
 
         //initiate env creation
-        hubClient.createEnvironment( createEnvironmentRequest );
+        hubClient.createEnvironment( EnvironmentCreationRequest );
     }
 
 

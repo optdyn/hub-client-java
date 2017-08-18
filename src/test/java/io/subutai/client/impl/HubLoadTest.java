@@ -17,8 +17,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import io.subutai.client.api.Container;
-import io.subutai.client.api.CreateEnvironmentRequest;
 import io.subutai.client.api.Environment;
+import io.subutai.client.api.EnvironmentCreationRequest;
 import io.subutai.client.api.HubClient;
 
 import static junit.framework.TestCase.assertEquals;
@@ -56,7 +56,7 @@ public class HubLoadTest
         //create env creation request
         String envName = "env-" + UUID.randomUUID();
         envNames.add( envName.toLowerCase() );
-        CreateEnvironmentRequest createEnvironmentRequest = hubClient.createRequest( envName );
+        EnvironmentCreationRequest createEnvironmentRequest = hubClient.createRequest( envName );
 
         //populate request with container orders
         Iterator<String> rhIdsIt = Iterables.cycle( PEERS.get( peerId ) ).iterator();
