@@ -37,6 +37,8 @@ public class EnvironmentImpl implements Environment
     private String environmentOwner;
     @SerializedName( "environment_vni" )
     private long environmentVni;
+    @SerializedName( "hub_id" )
+    private long hubId;
 
 
     @SerializedName( "environment_containers" )
@@ -58,6 +60,12 @@ public class EnvironmentImpl implements Environment
     public String getEnvironmentId()
     {
         return environmentId;
+    }
+
+
+    public long getHubId()
+    {
+        return hubId;
     }
 
 

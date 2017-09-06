@@ -7,9 +7,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -20,22 +26,27 @@ import io.subutai.client.api.Container;
 import io.subutai.client.api.Environment;
 import io.subutai.client.api.EnvironmentCreationRequest;
 import io.subutai.client.api.HubClient;
+import io.subutai.client.api.User;
 
 import static junit.framework.TestCase.assertEquals;
 
-
+@Ignore
 public class HubLoadTest
 {
+    private static final Logger LOG = LoggerFactory.getLogger( HubLoadTest.class );
+
     //key = peer id, values = { rhs ids }
-    private static final Map<String, Set<String>> PEERS = ImmutableMap.of( "E612D4E6FBB99864E16EB479416B55A8DEC7CD8B",
-            Sets.newHashSet( "98E2BCF35E208D583E49998E169E99C92FAA7D08" ), "5FBEC130640364AF7D8950103840F8299D7F7198",
-            Sets.newHashSet( "96E01B5F2B04D15CC51D72DB52F700B133790496" ) );
+    private static final Map<String, Set<String>> PEERS = ImmutableMap.of( "EC17E3CDD93253E520069D0561D9002471CFC5A9",
+            Sets.newHashSet( "B9B9E764999071816F4120A313B662798D84A26E" )/*, "0D3C09A2CE28AEB4F9331745417B6F8908D00B63",
+            Sets.newHashSet( "B6551B9D133D21496F69BB6880BA0EADED375ED1" ), "EC312EAE10A67C53297560025E6223577473936B",
+            Sets.newHashSet( "B9B9E764999071816F4120A313B662798D84A26E" ) */ );
 
     private static final String TEMPLATE_ID = "a697e70f3fc538b4f4763588a7868388";
     private static final String EMAIL = "test.d@mail.com";
     private static final String PASSWORD = "test";
-    private static final int NUM_OF_PARALLEL_ENV_CREATIONS_PER_PEER = 5;
-    private static final int NUM_OF_CONTAINERS_PER_ENV = 5;
+    private static final int NUM_OF_PARALLEL_ENV_CREATIONS_PER_PEER = 10;
+    private static final int NUM_OF_CONTAINERS_PER_ENV = 2;
+    private static final long USER_ID = 224;
     private HubClient hubClient;
     private Set<String> envNames = Sets.newConcurrentHashSet();
 
@@ -73,6 +84,37 @@ public class HubLoadTest
 
 
     @Test
+    public void testGetUsers() throws ExecutionException, InterruptedException
+    {
+        int MAX_THREADS = 500;
+
+        List<CompletableFuture> futures = Lists.newArrayList();
+
+        ExecutorService executor = Executors.newFixedThreadPool( MAX_THREADS );
+
+        for ( int i = 1; i <= MAX_THREADS * 3; i++ )
+        {
+            futures.add( CompletableFuture.runAsync( () -> {
+                try
+                {
+                    List<Environment> environments = hubClient.getEnvironments();
+
+                    System.out.println( "number of envs: " + environments.size() );
+                }
+                catch ( Exception e )
+                {
+                    LOG.error( e.getMessage() );
+                }
+            }, executor ) );
+        }
+
+        CompletableFuture.allOf( futures.toArray( new CompletableFuture[0] ) ).get();
+
+        executor.shutdown();
+    }
+
+
+    @Test
     public void testCreateEnvironmentsInParallel() throws Exception
     {
         envNames.clear();
@@ -84,7 +126,16 @@ public class HubLoadTest
         {
             for ( int i = 1; i <= NUM_OF_PARALLEL_ENV_CREATIONS_PER_PEER; i++ )
             {
-                futures.add( CompletableFuture.runAsync( () -> testCreateEnvironment( peerId ) ) );
+                futures.add( CompletableFuture.runAsync( () -> {
+                    try
+                    {
+                        testCreateEnvironment( peerId );
+                    }
+                    catch ( Exception e )
+                    {
+                        LOG.error( e.getMessage() );
+                    }
+                } ) );
             }
         }
 
@@ -94,7 +145,7 @@ public class HubLoadTest
         List<Environment> environments;
         do
         {
-            Thread.sleep( 1000 );
+            Thread.sleep( 3000 );
             environments = hubClient.getEnvironments();
         }
         while ( environments.stream().filter( e -> envNames.contains( e.getEnvironmentName().toLowerCase() ) ).anyMatch(

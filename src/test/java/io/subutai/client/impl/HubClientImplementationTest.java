@@ -57,10 +57,10 @@ public class HubClientImplementationTest
     private static final String EMAIL = "test.d@mail.com";
     private static final String PASSWORD = "test";
     private static final String TEMPLATE_ID = "a697e70f3fc538b4f4763588a7868388";
-    private static final String PEER_ID = "94E0A1C6EB6718A608D8754EBD3BD7BB1F2B36A1";
-    private static final String RH_ID = "25127DD45F45417738248549BCEF91DF28AC3854";
-    private static final String ENVIRONMENT_ID = "3bd12be7-e2f7-4884-9a71-20e21381e2e9";
-    private static final String CONTAINER_ID = "1648E5166B5160DCB47CDF60D269772CC3337E1E";
+    private static final String PEER_ID = "54A21F87B0E1CBA7154DB7376134F7EC3ABB8AC2";
+    private static final String RH_ID = "4A8EEDD6A0EEC98A7F59AE2EC51F62F0D132BB7A";
+    private static final String ENVIRONMENT_ID = "154958e4-a081-4cb8-bce3-daf79eebe2e3";
+    private static final String CONTAINER_ID = "6643FC1A1605F4FAA21246186DDA53B35E7917FD";
     private static final String SSH_KEY =
             "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCjUo/8VklFC8cRyHE502tUXit15L8Qg2z/47c6PMpQThR0sjhURgoILms"
                     + "/IX180yGqgkpjdX08MIkmANhbXDmSFh6T4lUzqGGoC7lerePwkA2yJWlsP+7JKk9oDSaYJ3lkfvKZnz8ZG7JS1jg"
@@ -285,12 +285,15 @@ public class HubClientImplementationTest
     public void testCreateEnvironment() throws Exception
     {
         returnHttpCode( HttpStatus.SC_ACCEPTED );
+
         doReturn( Lists.newArrayList( template ) ).when( hubClient ).getTemplates();
         doReturn( "template" ).when( hubClient ).getTemplateNameById( anyList(), anyString() );
         EnvironmentCreationRequestImpl.Node node = mock( EnvironmentCreationRequestImpl.Node.class );
         doReturn( Lists.newArrayList( node ) ).when( createEnvironmentRequest ).getNodes();
         doReturn( "" ).when( hubClient ).toJson( createEnvironmentRequest );
         doReturn( "template" ).when( node ).getTemplateName();
+        EnvironmentRefImpl user = mock( EnvironmentRefImpl.class );
+        doReturn( user ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
 
         hubClient.createEnvironment( createEnvironmentRequest );
 

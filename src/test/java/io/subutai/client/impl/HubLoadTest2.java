@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
@@ -19,6 +20,7 @@ import io.subutai.client.api.HubClient;
 import static junit.framework.TestCase.assertEquals;
 
 
+@Ignore
 public class HubLoadTest2
 {
     private static final String TEMPLATE_ID = "a697e70f3fc538b4f4763588a7868388";
@@ -75,7 +77,7 @@ public class HubLoadTest2
         }
         catch ( Exception e )
         {
-            System.out.println( "Failed to create env. with name: "+envName );
+            System.out.println( "Failed to create env. with name: " + envName );
             e.printStackTrace();
         }
     }
@@ -108,7 +110,7 @@ public class HubLoadTest2
         }
         catch ( Exception e )
         {
-            System.out.println( "Failed to create env. with name: "+envName );
+            System.out.println( "Failed to create env. with name: " + envName );
             e.printStackTrace();
         }
     }
@@ -143,7 +145,7 @@ public class HubLoadTest2
         }
         catch ( Exception e )
         {
-            System.out.println( "Failed to create env. with name: "+envName );
+            System.out.println( "Failed to create env. with name: " + envName );
             e.printStackTrace();
         }
     }

@@ -19,6 +19,8 @@ public interface Environment
 
     String getEnvironmentId();
 
+    long getHubId();
+
 
     String getEnvironmentStatusDescription();
 
