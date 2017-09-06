@@ -57,10 +57,10 @@ public class HubClientImplementationTest
     private static final String EMAIL = "test.d@mail.com";
     private static final String PASSWORD = "test";
     private static final String TEMPLATE_ID = "a697e70f3fc538b4f4763588a7868388";
-    private static final String PEER_ID = "94E0A1C6EB6718A608D8754EBD3BD7BB1F2B36A1";
-    private static final String RH_ID = "25127DD45F45417738248549BCEF91DF28AC3854";
-    private static final String ENVIRONMENT_ID = "3bd12be7-e2f7-4884-9a71-20e21381e2e9";
-    private static final String CONTAINER_ID = "1648E5166B5160DCB47CDF60D269772CC3337E1E";
+    private static final String PEER_ID = "EC17E3CDD93253E520069D0561D9002471CFC5A9";
+    private static final String RH_ID = "B9B9E764999071816F4120A313B662798D84A26E";
+    private static final String ENVIRONMENT_ID = "154958e4-a081-4cb8-bce3-daf79eebe2e3";
+    private static final String CONTAINER_ID = "6643FC1A1605F4FAA21246186DDA53B35E7917FD";
     private static final String SSH_KEY =
             "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCjUo/8VklFC8cRyHE502tUXit15L8Qg2z/47c6PMpQThR0sjhURgoILms"
                     + "/IX180yGqgkpjdX08MIkmANhbXDmSFh6T4lUzqGGoC7lerePwkA2yJWlsP+7JKk9oDSaYJ3lkfvKZnz8ZG7JS1jg"
@@ -967,7 +967,7 @@ public class HubClientImplementationTest
         environmentCreationRequest.addNode( "test-container1", TEMPLATE_ID, ContainerSize.SMALL, PEER_ID, RH_ID );
         environmentCreationRequest.addNode( "test-container2", TEMPLATE_ID, ContainerSize.SMALL, PEER_ID, RH_ID );
 
-        hubClient.createEnvironment( environmentCreationRequest );
+        System.out.println( hubClient.createEnvironment( environmentCreationRequest ) );
     }
 
 
