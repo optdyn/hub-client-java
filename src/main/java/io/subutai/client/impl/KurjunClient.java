@@ -165,7 +165,7 @@ class KurjunClient
     private String getKurjunBaseUrl()
     {
         return String.format( "https://%scdn.subut.ai:8338/kurjun/rest",
-                hubEnv == HubClient.HubEnv.PROD ? "" : hubEnv.getUrlPrefix() );
+                hubEnv == HubClient.HubEnv.PROD ? "" : hubEnv.getCdnPrefix() );
     }
 
 

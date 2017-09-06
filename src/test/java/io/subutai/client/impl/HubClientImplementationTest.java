@@ -285,12 +285,15 @@ public class HubClientImplementationTest
     public void testCreateEnvironment() throws Exception
     {
         returnHttpCode( HttpStatus.SC_ACCEPTED );
+
         doReturn( Lists.newArrayList( template ) ).when( hubClient ).getTemplates();
         doReturn( "template" ).when( hubClient ).getTemplateNameById( anyList(), anyString() );
         EnvironmentCreationRequestImpl.Node node = mock( EnvironmentCreationRequestImpl.Node.class );
         doReturn( Lists.newArrayList( node ) ).when( createEnvironmentRequest ).getNodes();
         doReturn( "" ).when( hubClient ).toJson( createEnvironmentRequest );
         doReturn( "template" ).when( node ).getTemplateName();
+        EnvironmentRefImpl user = mock( EnvironmentRefImpl.class );
+        doReturn( user ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
 
         hubClient.createEnvironment( createEnvironmentRequest );
 

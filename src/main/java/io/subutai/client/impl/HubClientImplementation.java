@@ -54,13 +54,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-import io.subutai.client.api.EnvironmentCreationRequest;
 import io.subutai.client.api.Domain;
 import io.subutai.client.api.DomainAssignment;
 import io.subutai.client.api.Environment;
+import io.subutai.client.api.EnvironmentCreationRequest;
+import io.subutai.client.api.EnvironmentModificationRequest;
+import io.subutai.client.api.EnvironmentRef;
 import io.subutai.client.api.FriendsInfo;
 import io.subutai.client.api.HubClient;
-import io.subutai.client.api.EnvironmentModificationRequest;
 import io.subutai.client.api.OperationFailedException;
 import io.subutai.client.api.Organization;
 import io.subutai.client.api.Peer;
@@ -638,12 +639,12 @@ public class HubClientImplementation implements HubClient
     }
 
 
-    public void createEnvironment( final EnvironmentCreationRequest environmentCreationRequest )
+    public EnvironmentRef createEnvironment( final EnvironmentCreationRequest environmentCreationRequest )
     {
         Preconditions.checkNotNull( environmentCreationRequest );
         Preconditions.checkArgument( environmentCreationRequest instanceof EnvironmentCreationRequestImpl );
-        EnvironmentCreationRequestImpl
-                createEnvironmentReq = ( EnvironmentCreationRequestImpl ) environmentCreationRequest;
+        EnvironmentCreationRequestImpl createEnvironmentReq =
+                ( EnvironmentCreationRequestImpl ) environmentCreationRequest;
         Preconditions.checkNotNull( createEnvironmentReq.getNodes() );
         Preconditions.checkArgument( !createEnvironmentReq.getNodes().isEmpty() );
 
@@ -658,23 +659,31 @@ public class HubClientImplementation implements HubClient
         }
         //WORKAROUND!!!
 
+
         HttpPost request = new HttpPost(
                 String.format( "https://%s.subut.ai/rest/v1/client/environments", hubEnv.getUrlPrefix() ) );
 
         request.setEntity( new StringEntity( toJson( createEnvironmentReq ), ContentType.APPLICATION_JSON ) );
         request.addHeader( KURJUN_TOKEN_HEADER, getKurjunToken() );
 
+        EnvironmentRefImpl environmentRef;
         CloseableHttpResponse response = null;
         try
         {
             response = execute( request );
 
             checkHttpStatus( response, HttpStatus.SC_ACCEPTED, "create environment" );
+
+            environmentRef = parse( response, new TypeToken<EnvironmentRefImpl>()
+            {
+            } );
         }
         finally
         {
             close( response );
         }
+
+        return environmentRef;
     }
 
 
@@ -690,7 +699,8 @@ public class HubClientImplementation implements HubClient
     {
         Preconditions.checkNotNull( environmentModificationRequest );
         Preconditions.checkArgument( environmentModificationRequest instanceof EnvironmentModificationRequestImpl );
-        EnvironmentModificationRequestImpl modifyEnvironmentReq = ( EnvironmentModificationRequestImpl ) environmentModificationRequest;
+        EnvironmentModificationRequestImpl modifyEnvironmentReq =
+                ( EnvironmentModificationRequestImpl ) environmentModificationRequest;
         Preconditions.checkArgument(
                 ( modifyEnvironmentReq.getNodesToAdd() != null && !modifyEnvironmentReq.getNodesToAdd().isEmpty() ) || (
                         modifyEnvironmentReq.getNodesToRemove() != null && !modifyEnvironmentReq.getNodesToRemove()
@@ -755,7 +765,7 @@ public class HubClientImplementation implements HubClient
             close( response );
         }
     }
-    
+
 
     String getTemplateNameById( final List<Template> templates, final String templateId )
     {

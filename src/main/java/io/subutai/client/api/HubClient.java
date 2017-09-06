@@ -9,20 +9,28 @@ public interface HubClient
 {
     enum HubEnv
     {
-        DEV( "dev" ), STAGE( "stage" ), PROD( "hub" );
+        DEV( "dev", "dev" ), STAGE( "stage", "stage" ), PROD( "hub", "" );
 
         private String urlPrefix;
+        private String cdnPrefix;
 
 
-        HubEnv( final String urlPrefix )
+        HubEnv( final String urlPrefix, final String cdnPrefix )
         {
             this.urlPrefix = urlPrefix;
+            this.cdnPrefix = cdnPrefix;
         }
 
 
         public String getUrlPrefix()
         {
             return urlPrefix;
+        }
+
+
+        public String getCdnPrefix()
+        {
+            return cdnPrefix;
         }
     }
 
@@ -141,12 +149,13 @@ public interface HubClient
      *
      * @param environmentCreationRequest create environment request object returned by call to HubClient#createRequest
      */
-    void createEnvironment( EnvironmentCreationRequest environmentCreationRequest );
+    EnvironmentRef createEnvironment( EnvironmentCreationRequest environmentCreationRequest );
 
     /**
      * Allows to modify environment
      *
-     * @param environmentModificationRequest modify environment request object returned by call to HubClient#modifyRequest
+     * @param environmentModificationRequest modify environment request object returned by call to
+     * HubClient#modifyRequest
      */
     void modifyEnvironment( EnvironmentModificationRequest environmentModificationRequest );
 
