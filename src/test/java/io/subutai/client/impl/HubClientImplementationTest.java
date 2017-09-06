@@ -57,8 +57,8 @@ public class HubClientImplementationTest
     private static final String EMAIL = "test.d@mail.com";
     private static final String PASSWORD = "test";
     private static final String TEMPLATE_ID = "a697e70f3fc538b4f4763588a7868388";
-    private static final String PEER_ID = "54A21F87B0E1CBA7154DB7376134F7EC3ABB8AC2";
-    private static final String RH_ID = "4A8EEDD6A0EEC98A7F59AE2EC51F62F0D132BB7A";
+    private static final String PEER_ID = "EC17E3CDD93253E520069D0561D9002471CFC5A9";
+    private static final String RH_ID = "B9B9E764999071816F4120A313B662798D84A26E";
     private static final String ENVIRONMENT_ID = "154958e4-a081-4cb8-bce3-daf79eebe2e3";
     private static final String CONTAINER_ID = "6643FC1A1605F4FAA21246186DDA53B35E7917FD";
     private static final String SSH_KEY =
@@ -967,7 +967,7 @@ public class HubClientImplementationTest
         environmentCreationRequest.addNode( "test-container1", TEMPLATE_ID, ContainerSize.SMALL, PEER_ID, RH_ID );
         environmentCreationRequest.addNode( "test-container2", TEMPLATE_ID, ContainerSize.SMALL, PEER_ID, RH_ID );
 
-        hubClient.createEnvironment( environmentCreationRequest );
+        System.out.println( hubClient.createEnvironment( environmentCreationRequest ) );
     }
 
 
