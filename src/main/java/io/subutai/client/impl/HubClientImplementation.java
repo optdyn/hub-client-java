@@ -1474,8 +1474,6 @@ public class HubClientImplementation implements HubClient
 
     private void close( CloseableHttpResponse response )
     {
-        EntityUtils.consumeQuietly( response.getEntity() );
-
         IOUtils.closeQuietly( response );
     }
 
