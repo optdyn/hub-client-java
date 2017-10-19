@@ -580,6 +580,18 @@ public class HubClientImplementationTest
     }
 
 
+    @Test
+    public void testUploadFile() throws Exception
+    {
+        File keyFile = File.createTempFile( "test-keys", ".tmp" );
+        Files.copy( SignerTest.getKeyFileAsStream(), keyFile.toPath(), StandardCopyOption.REPLACE_EXISTING );
+
+        hubClient.uploadFile( keyFile.getPath(), "version" );
+
+        verify( kurjunClient ).uploadFile( keyFile.getPath(), "version", "" );
+    }
+
+
     /******* Real tests *******/
 
     private void prepare()
@@ -950,11 +962,22 @@ public class HubClientImplementationTest
     public void testRealGetTemplates() throws Exception
     {
         hubClient = ( HubClientImplementation ) HubClients
-                .getClient( HubClient.HubEnv.DEV, "C:\\Users\\Dilshat\\Desktop\\dilshat.aliev_all.asc", "" );
+                .getClient( HubClient.HubEnv.PROD, "C:\\Users\\saltanat\\Downloads\\test.d_all.asc", "" );
 
         List<Template> templates = hubClient.getTemplates();
 
         System.out.println( templates );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealUploadFile() throws Exception
+    {
+        hubClient = ( HubClientImplementation ) HubClients
+                .getClient( HubClient.HubEnv.PROD, "C:\\Users\\saltanat\\Downloads\\test.d_all.asc", "" );
+
+        hubClient.uploadFile( "C:\\Users\\saltanat\\Desktop\\test-file.txt", "1.2.3" );
     }
 
 
