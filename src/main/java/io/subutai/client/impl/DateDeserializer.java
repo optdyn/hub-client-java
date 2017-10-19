@@ -4,6 +4,7 @@ package io.subutai.client.impl;
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -28,7 +29,7 @@ public class DateDeserializer implements JsonDeserializer<Date>
         String date = element.getAsString();
 
         SimpleDateFormat formatter = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss" );
-        formatter.setTimeZone( TimeZone.getTimeZone( "KGT" ) );
+        formatter.setTimeZone( tryToGetLocalTZ() );
 
         try
         {
@@ -39,5 +40,12 @@ public class DateDeserializer implements JsonDeserializer<Date>
             LOG.error( "Failed to parse Date " + date, e );
             return null;
         }
+    }
+
+
+    private TimeZone tryToGetLocalTZ()
+    {
+        TimeZone timeZone = Calendar.getInstance().getTimeZone();
+        return TimeZone.getTimeZone( timeZone.getDisplayName( false, TimeZone.SHORT ) );
     }
 }

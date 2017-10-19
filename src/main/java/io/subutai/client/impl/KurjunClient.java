@@ -1,6 +1,7 @@
 package io.subutai.client.impl;
 
 
+import java.io.File;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -10,6 +11,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -57,6 +59,35 @@ class KurjunClient
     List<Template> getTemplates( String token )
     {
         return getKurjunTemplates( token );
+    }
+
+
+    void uploadFile( final String filename, final String version, final String kurjunToken )
+    {
+        HttpPost post = new HttpPost( String.format( "%s/raw/upload", getKurjunBaseUrl() ) );
+        CloseableHttpClient client = HttpClients.createDefault();
+        try
+        {
+            File file = new File( filename );
+            MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+            builder.setMode( HttpMultipartMode.BROWSER_COMPATIBLE );
+            builder.addBinaryBody( "file", file, ContentType.DEFAULT_BINARY, file.getName() );
+            builder.addTextBody( "token", kurjunToken, ContentType.DEFAULT_BINARY );
+            if ( !StringUtil.isBlank( version ) )
+            {
+                builder.addTextBody( "version", version, ContentType.DEFAULT_BINARY );
+            }
+            HttpEntity entity = builder.build();
+            post.setEntity( entity );
+
+            CloseableHttpResponse response = execute( client, post );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "upload file" );
+        }
+        finally
+        {
+            IOUtils.closeQuietly( client );
+        }
     }
 
 
@@ -166,12 +197,6 @@ class KurjunClient
     {
         return String.format( "https://%scdn.subut.ai:8338/kurjun/rest",
                 hubEnv == HubClient.HubEnv.PROD ? "" : hubEnv.getCdnPrefix() );
-    }
-
-
-    String toJson( Object object )
-    {
-        return gson.toJson( object );
     }
 
 

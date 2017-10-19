@@ -131,6 +131,14 @@ public interface HubClient
     List<Template> getTemplates();
 
     /**
+     * Uploads a file to Kurjun RAW category
+     *
+     * @param filename full path to file
+     * @param version optional version of file
+     */
+    void uploadFile( String filename, String version );
+
+    /**
      * Creates environment creation request object that should be populated further by calling party.
      *
      * @param environmentName - name of future environment

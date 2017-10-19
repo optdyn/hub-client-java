@@ -108,7 +108,7 @@ public class HubClientImplementation implements HubClient
     {
         this( hubEnv );
 
-        Preconditions.checkArgument( !isBlank( pgpKeyFilePath ) );
+        Preconditions.checkArgument( !StringUtil.isBlank( pgpKeyFilePath ) );
 
         this.pgpKeyPassword = Strings.isNullOrEmpty( pgpKeyPassword ) ? "" : pgpKeyPassword;
 
@@ -116,16 +116,10 @@ public class HubClientImplementation implements HubClient
     }
 
 
-    private boolean isBlank( String str )
-    {
-        return Strings.nullToEmpty( str ).trim().isEmpty();
-    }
-
-
     public void login( final String username, final String password )
     {
-        Preconditions.checkArgument( !isBlank( username ) );
-        Preconditions.checkArgument( !isBlank( password ) );
+        Preconditions.checkArgument( !StringUtil.isBlank( username ) );
+        Preconditions.checkArgument( !StringUtil.isBlank( password ) );
 
         HttpPost request =
                 new HttpPost( String.format( "https://%s.subut.ai/rest/v1/client/login", hubEnv.getUrlPrefix() ) );
@@ -332,7 +326,7 @@ public class HubClientImplementation implements HubClient
     @Override
     public void sharePeer( final String peerId, final long userId )
     {
-        Preconditions.checkArgument( !isBlank( peerId ) );
+        Preconditions.checkArgument( !StringUtil.isBlank( peerId ) );
         Preconditions.checkArgument( userId > 0 );
 
         HttpPut request = new HttpPut(
@@ -356,7 +350,7 @@ public class HubClientImplementation implements HubClient
     @Override
     public void unsharePeer( final String peerId, final long userId )
     {
-        Preconditions.checkArgument( !isBlank( peerId ) );
+        Preconditions.checkArgument( !StringUtil.isBlank( peerId ) );
         Preconditions.checkArgument( userId > 0 );
 
         HttpDelete request = new HttpDelete(
@@ -380,7 +374,7 @@ public class HubClientImplementation implements HubClient
     @Override
     public void addPeerToFavorites( final String peerId )
     {
-        Preconditions.checkArgument( !isBlank( peerId ) );
+        Preconditions.checkArgument( !StringUtil.isBlank( peerId ) );
 
         HttpPut request = new HttpPut(
                 String.format( "https://%s.subut.ai/rest/v1/client/peers/favorite/%s", hubEnv.getUrlPrefix(),
@@ -403,7 +397,7 @@ public class HubClientImplementation implements HubClient
     @Override
     public void removePeerFromFavorites( final String peerId )
     {
-        Preconditions.checkArgument( !isBlank( peerId ) );
+        Preconditions.checkArgument( !StringUtil.isBlank( peerId ) );
 
         HttpDelete request = new HttpDelete(
                 String.format( "https://%s.subut.ai/rest/v1/client/peers/favorite/%s", hubEnv.getUrlPrefix(),
@@ -426,7 +420,7 @@ public class HubClientImplementation implements HubClient
     @Override
     public void updatePeerScope( final String peerId, final Peer.Scope scope )
     {
-        Preconditions.checkArgument( !isBlank( peerId ) );
+        Preconditions.checkArgument( !StringUtil.isBlank( peerId ) );
         Preconditions.checkNotNull( scope );
 
         HttpPut request = new HttpPut(
@@ -450,8 +444,8 @@ public class HubClientImplementation implements HubClient
     @Override
     public void updatePeerName( final String peerId, final String name )
     {
-        Preconditions.checkArgument( !isBlank( peerId ) );
-        Preconditions.checkArgument( !isBlank( name ) );
+        Preconditions.checkArgument( !StringUtil.isBlank( peerId ) );
+        Preconditions.checkArgument( !StringUtil.isBlank( name ) );
 
         CloseableHttpResponse response = null;
         try
@@ -480,7 +474,7 @@ public class HubClientImplementation implements HubClient
     @Override
     public List<SshKey> getSshKeys( final String envId )
     {
-        Preconditions.checkArgument( !isBlank( envId ) );
+        Preconditions.checkArgument( !StringUtil.isBlank( envId ) );
 
         List<SshKey> sshKeys = Lists.newArrayList();
 
@@ -510,8 +504,8 @@ public class HubClientImplementation implements HubClient
 
     public void addSshKey( final String envId, final String sshKey )
     {
-        Preconditions.checkArgument( !isBlank( envId ) );
-        Preconditions.checkArgument( !isBlank( sshKey ) );
+        Preconditions.checkArgument( !StringUtil.isBlank( envId ) );
+        Preconditions.checkArgument( !StringUtil.isBlank( sshKey ) );
 
         HttpPost request = new HttpPost(
                 String.format( "https://%s.subut.ai/rest/v1/client/environments/%s/ssh-keys/add", hubEnv.getUrlPrefix(),
@@ -537,8 +531,8 @@ public class HubClientImplementation implements HubClient
 
     public void removeSshKey( final String envId, final String sshKey )
     {
-        Preconditions.checkArgument( !isBlank( envId ) );
-        Preconditions.checkArgument( !isBlank( sshKey ) );
+        Preconditions.checkArgument( !StringUtil.isBlank( envId ) );
+        Preconditions.checkArgument( !StringUtil.isBlank( sshKey ) );
 
         HttpPost request = new HttpPost(
                 String.format( "https://%s.subut.ai/rest/v1/client/environments/%s/ssh-keys/remove",
@@ -564,8 +558,8 @@ public class HubClientImplementation implements HubClient
 
     public void startContainer( final String envId, final String contId )
     {
-        Preconditions.checkArgument( !isBlank( envId ) );
-        Preconditions.checkArgument( !isBlank( contId ) );
+        Preconditions.checkArgument( !StringUtil.isBlank( envId ) );
+        Preconditions.checkArgument( !StringUtil.isBlank( contId ) );
 
         HttpPut request = new HttpPut(
                 String.format( "https://%s.subut.ai/rest/v1/client/environments/%s/containers/%s/start",
@@ -587,8 +581,8 @@ public class HubClientImplementation implements HubClient
 
     public void stopContainer( final String envId, final String contId )
     {
-        Preconditions.checkArgument( !isBlank( envId ) );
-        Preconditions.checkArgument( !isBlank( contId ) );
+        Preconditions.checkArgument( !StringUtil.isBlank( envId ) );
+        Preconditions.checkArgument( !StringUtil.isBlank( contId ) );
 
         HttpPut request = new HttpPut(
                 String.format( "https://%s.subut.ai/rest/v1/client/environments/%s/containers/%s/stop",
@@ -610,8 +604,8 @@ public class HubClientImplementation implements HubClient
 
     public void destroyContainer( final String envId, final String contId )
     {
-        Preconditions.checkArgument( !isBlank( envId ) );
-        Preconditions.checkArgument( !isBlank( contId ) );
+        Preconditions.checkArgument( !StringUtil.isBlank( envId ) );
+        Preconditions.checkArgument( !StringUtil.isBlank( contId ) );
 
         HttpDelete request = new HttpDelete(
                 String.format( "https://%s.subut.ai/rest/v1/client/environments/%s/containers/%s",
@@ -633,7 +627,7 @@ public class HubClientImplementation implements HubClient
 
     public EnvironmentCreationRequest createRequest( final String environmentName )
     {
-        Preconditions.checkArgument( !isBlank( environmentName ) );
+        Preconditions.checkArgument( !StringUtil.isBlank( environmentName ) );
 
         return new EnvironmentCreationRequestImpl( environmentName );
     }
@@ -654,7 +648,7 @@ public class HubClientImplementation implements HubClient
         {
             node.setTemplateName( getTemplateNameById( templates, node.getTemplateId() ) );
 
-            Preconditions.checkArgument( !isBlank( node.getTemplateName() ),
+            Preconditions.checkArgument( !StringUtil.isBlank( node.getTemplateName() ),
                     "Template not found by id " + node.getTemplateId() );
         }
         //WORKAROUND!!!
@@ -689,7 +683,7 @@ public class HubClientImplementation implements HubClient
 
     public EnvironmentModificationRequest modifyRequest( final String envId )
     {
-        Preconditions.checkArgument( !isBlank( envId ) );
+        Preconditions.checkArgument( !StringUtil.isBlank( envId ) );
 
         return new EnvironmentModificationRequestImpl( envId );
     }
@@ -783,7 +777,7 @@ public class HubClientImplementation implements HubClient
 
     public void destroyEnvironment( final String envId )
     {
-        Preconditions.checkArgument( !isBlank( envId ) );
+        Preconditions.checkArgument( !StringUtil.isBlank( envId ) );
 
         HttpDelete request = new HttpDelete(
                 String.format( "https://%s.subut.ai/rest/v1/client/environments/%s", hubEnv.getUrlPrefix(), envId ) );
@@ -805,6 +799,12 @@ public class HubClientImplementation implements HubClient
     public List<Template> getTemplates()
     {
         return kurjunClient.getTemplates( getKurjunToken() );
+    }
+
+
+    public void uploadFile( String filename, String version )
+    {
+        kurjunClient.uploadFile( filename, version, getKurjunToken() );
     }
 
 
@@ -866,7 +866,7 @@ public class HubClientImplementation implements HubClient
     @Override
     public User findUserByName( final String name )
     {
-        Preconditions.checkArgument( !isBlank( name ) );
+        Preconditions.checkArgument( !StringUtil.isBlank( name ) );
 
         UserImpl user;
         CloseableHttpResponse response = null;
@@ -902,7 +902,7 @@ public class HubClientImplementation implements HubClient
     @Override
     public User findUserByEmail( final String email )
     {
-        Preconditions.checkArgument( !isBlank( email ) );
+        Preconditions.checkArgument( !StringUtil.isBlank( email ) );
 
         UserImpl user;
         CloseableHttpResponse response = null;
@@ -970,7 +970,7 @@ public class HubClientImplementation implements HubClient
     @Override
     public List<User> getPeerUsers( final String peerId )
     {
-        Preconditions.checkArgument( !isBlank( peerId ) );
+        Preconditions.checkArgument( !StringUtil.isBlank( peerId ) );
 
         List<User> users = Lists.newArrayList();
 
@@ -1099,7 +1099,7 @@ public class HubClientImplementation implements HubClient
     @Override
     public void reserveDomain( final String domainName )
     {
-        Preconditions.checkArgument( !isBlank( domainName ) );
+        Preconditions.checkArgument( !StringUtil.isBlank( domainName ) );
 
         CloseableHttpResponse response = null;
         try
@@ -1128,7 +1128,7 @@ public class HubClientImplementation implements HubClient
     @Override
     public void deleteDomain( final String domainName )
     {
-        Preconditions.checkArgument( !isBlank( domainName ) );
+        Preconditions.checkArgument( !StringUtil.isBlank( domainName ) );
 
         CloseableHttpResponse response = null;
         try
