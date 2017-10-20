@@ -761,20 +761,6 @@ public class HubClientImplementation implements HubClient
     }
 
 
-    String getTemplateNameById( final List<Template> templates, final String templateId )
-    {
-        for ( Template template : templates )
-        {
-            if ( template.getId().equalsIgnoreCase( templateId ) )
-            {
-                return template.getName();
-            }
-        }
-
-        return null;
-    }
-
-
     public void destroyEnvironment( final String envId )
     {
         Preconditions.checkArgument( !StringUtil.isBlank( envId ) );
@@ -793,18 +779,6 @@ public class HubClientImplementation implements HubClient
         {
             close( response );
         }
-    }
-
-
-    public List<Template> getTemplates()
-    {
-        return kurjunClient.getTemplates( getKurjunToken() );
-    }
-
-
-    public String uploadFile( String filename, String version )
-    {
-        return kurjunClient.uploadFile( filename, version, getKurjunToken() );
     }
 
 
@@ -1329,6 +1303,45 @@ public class HubClientImplementation implements HubClient
         }
     }
     // <<<<< FRIENDS MGMT
+
+    // KURJUN >>>>>
+
+
+    public List<Template> getTemplates()
+    {
+        String token = getKurjunToken();
+        System.out.println( "Kurjun token " + token );
+        return kurjunClient.getTemplates( token );
+    }
+
+
+    String getTemplateNameById( final List<Template> templates, final String templateId )
+    {
+        for ( Template template : templates )
+        {
+            if ( template.getId().equalsIgnoreCase( templateId ) )
+            {
+                return template.getName();
+            }
+        }
+
+        return null;
+    }
+
+
+    public String uploadFile( String filename, String version )
+    {
+        return kurjunClient.uploadFile( filename, version, getKurjunToken() );
+    }
+
+
+    @Override
+    public void shareFile( final String fileId, final String userFingerprint )
+    {
+        kurjunClient.shareFile( fileId, userFingerprint, getKurjunToken() );
+    }
+
+    // <<<<< KURJUN
 
     //**************
 

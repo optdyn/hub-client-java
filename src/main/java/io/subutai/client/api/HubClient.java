@@ -125,20 +125,6 @@ public interface HubClient
      */
     void destroyEnvironment( String envId );
 
-    /**
-     * Returns list of templates accessible to user
-     */
-    List<Template> getTemplates();
-
-    /**
-     * Uploads a file to Kurjun RAW category
-     *
-     * @param filename full path to file
-     * @param version optional version of file
-     *
-     * @return hash of uploaded file
-     */
-    String uploadFile( String filename, String version );
 
     /**
      * Creates environment creation request object that should be populated further by calling party.
@@ -348,4 +334,29 @@ public interface HubClient
      * @param blueprint blueprint json
      */
     void createEnvironmentFromBlueprint( String blueprint );
+
+    //*********** KURJUN API ***************************
+
+    /**
+     * Returns list of templates accessible to user
+     */
+    List<Template> getTemplates();
+
+    /**
+     * Uploads a file to Kurjun RAW category
+     *
+     * @param filename full path to file
+     * @param version optional version of file
+     *
+     * @return id of uploaded file
+     */
+    String uploadFile( String filename, String version );
+
+    /**
+     * Shares a RAW file with a user
+     *
+     * @param fileId id of file
+     * @param userFingerprint fingerprint of user user to share the file with
+     */
+    void shareFile( String fileId, String userFingerprint );
 }

@@ -71,6 +71,7 @@ public class HubClientImplementationTest
     private static final long USER_ID = 164;
     private static final String NEW_PEER_NAME = "New Peer-Name";
     private static final String DOMAIN = "domain";
+    private static final String FILE_ID = "c3f72b82-97ff-481d-903d-6a6fc378b1f2";
 
     private HubClientImplementation hubClient;
 
@@ -595,6 +596,15 @@ public class HubClientImplementationTest
     }
 
 
+    @Test
+    public void testShareFile() throws Exception
+    {
+        hubClient.shareFile( "id", "user" );
+
+        verify( kurjunClient ).shareFile( "id", "user", "" );
+    }
+
+
     /******* Real tests *******/
 
     private void prepare()
@@ -965,7 +975,7 @@ public class HubClientImplementationTest
     public void testRealGetTemplates() throws Exception
     {
         hubClient = ( HubClientImplementation ) HubClients
-                .getClient( HubClient.HubEnv.PROD, "C:\\Users\\saltanat\\Downloads\\test.d_all.asc", "" );
+                .getClient( HubClient.HubEnv.PROD, "C:\\Users\\Dilshat\\Desktop\\test.d_all.asc", "" );
 
         List<Template> templates = hubClient.getTemplates();
 
@@ -981,6 +991,23 @@ public class HubClientImplementationTest
                 .getClient( HubClient.HubEnv.PROD, "C:\\Users\\Dilshat\\Desktop\\test.d_all.asc", "" );
 
         System.out.println( hubClient.uploadFile( "C:\\Users\\Dilshat\\Desktop\\test-file.txt", "1.2.3" ) );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealShareFile() throws Exception
+    {
+        hubClient = ( HubClientImplementation ) HubClients
+                .getClient( HubClient.HubEnv.PROD, "C:\\Users\\Dilshat\\Desktop\\test.d_all.asc", "" );
+
+        hubClient.login( EMAIL, PASSWORD );
+
+        //get user by username, get ourselves
+        User user = hubClient.findUserByEmail( EMAIL );
+
+        //share file with ourselves, effectively making it private
+        hubClient.shareFile( FILE_ID, user.getFingerprint() );
     }
 
 
