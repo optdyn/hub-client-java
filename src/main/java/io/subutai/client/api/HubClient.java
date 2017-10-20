@@ -135,8 +135,10 @@ public interface HubClient
      *
      * @param filename full path to file
      * @param version optional version of file
+     *
+     * @return hash of uploaded file
      */
-    void uploadFile( String filename, String version );
+    String uploadFile( String filename, String version );
 
     /**
      * Creates environment creation request object that should be populated further by calling party.

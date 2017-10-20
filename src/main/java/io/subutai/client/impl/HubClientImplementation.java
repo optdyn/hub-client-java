@@ -802,9 +802,9 @@ public class HubClientImplementation implements HubClient
     }
 
 
-    public void uploadFile( String filename, String version )
+    public String uploadFile( String filename, String version )
     {
-        kurjunClient.uploadFile( filename, version, getKurjunToken() );
+        return kurjunClient.uploadFile( filename, version, getKurjunToken() );
     }
 
 

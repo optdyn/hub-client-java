@@ -62,7 +62,7 @@ class KurjunClient
     }
 
 
-    void uploadFile( final String filename, final String version, final String kurjunToken )
+    String uploadFile( final String filename, final String version, final String kurjunToken )
     {
         HttpPost post = new HttpPost( String.format( "%s/raw/upload", getKurjunBaseUrl() ) );
         CloseableHttpClient client = HttpClients.createDefault();
@@ -83,6 +83,8 @@ class KurjunClient
             CloseableHttpResponse response = execute( client, post );
 
             checkHttpStatus( response, HttpStatus.SC_OK, "upload file" );
+
+            return readContent( response );
         }
         finally
         {
