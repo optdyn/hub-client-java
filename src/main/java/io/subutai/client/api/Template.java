@@ -3,6 +3,7 @@ package io.subutai.client.api;
 
 import java.util.Set;
 
+import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 
 
@@ -12,6 +13,25 @@ public class Template
     {
         I386, I686, X86_64, IA64, ALPHA, AMD64, ARM, ARMEB, ARMEL, HPPA, M32R, M68K, MIPS, MIPSEL, POWERPC, PPC64, S390,
         S390X, SH3, SH3EB, SH4, SH4EB, SPARC, ARMHF, ARMV7, UNKNOWN
+    }
+
+
+    public static class Hash
+    {
+        private String md5;
+        private String sha256;
+
+
+        public String getMd5()
+        {
+            return md5;
+        }
+
+
+        public String getSha256()
+        {
+            return sha256;
+        }
     }
 
 
@@ -25,6 +45,7 @@ public class Template
     private String version;
     private String filename;
     private HostArchitecture architecture;
+    private Hash hash;
 
 
     public String getId()
@@ -81,11 +102,15 @@ public class Template
     }
 
 
+    public Hash getHash()
+    {
+        return hash;
+    }
+
+
     @Override
     public String toString()
     {
-        return "Template{" + "id='" + id + '\'' + ", name='" + name + '\'' + ", size=" + size + ", owners=" + owners
-                + ", tags=" + tags + ", parent='" + parent + '\'' + ", version='" + version + '\'' + ", filename='"
-                + filename + '\'' + ", architecture=" + architecture + '}';
+        return new GsonBuilder().setPrettyPrinting().create().toJson( this );
     }
 }
