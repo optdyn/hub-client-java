@@ -617,6 +617,15 @@ public class HubClientImplementationTest
     }
 
 
+    @Test
+    public void testGetSharedUsers() throws Exception
+    {
+        hubClient.getSharedUsers( "id" );
+
+        verify( kurjunClient ).getSharedUsers( "id", "" );
+    }
+
+
     /******* Real tests *******/
 
     private void prepare()
@@ -1033,6 +1042,19 @@ public class HubClientImplementationTest
 
         //share file with ourselves, effectively making it private
         hubClient.shareFile( FILE_ID, user.getFingerprint() );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealGetSharedUsers() throws Exception
+    {
+        hubClient = ( HubClientImplementation ) HubClients
+                .getClient( HubClient.HubEnv.PROD, "C:\\Users\\Dilshat\\Desktop\\test.d_all.asc", "" );
+
+        List<String> users = hubClient.getSharedUsers( FILE_ID );
+
+        System.out.println( users );
     }
 
 

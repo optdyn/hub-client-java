@@ -373,6 +373,16 @@ public interface HubClient
     void shareFile( String fileId, String userFingerprint );
 
     /**
+     * Returns a list for users with whom the file is shared with. If the returned list is empty, it means the file is
+     * public
+     *
+     * @param fileId id of file
+     *
+     * @return list of user fingerprints
+     */
+    List<String> getSharedUsers( String fileId );
+
+    /**
      * Returns a currently active Kurjun token. The same token will be returned during {@link
      * io.subutai.client.api.HubClient#KURJUN_TOKEN_TTL_MIN } for the same instance of the client. If no token is
      * obtained yet or the current token is expired , a new token is attempted to be obtained. The client must be
