@@ -46,7 +46,6 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.Files;
@@ -110,7 +109,7 @@ public class HubClientImplementation implements HubClient
 
         Preconditions.checkArgument( !StringUtil.isBlank( pgpKeyFilePath ) );
 
-        this.pgpKeyPassword = Strings.isNullOrEmpty( pgpKeyPassword ) ? "" : pgpKeyPassword;
+        this.pgpKeyPassword = StringUtil.isBlank( pgpKeyPassword ) ? "" : pgpKeyPassword;
 
         loadSecretKey( pgpKeyFilePath );
     }
@@ -707,7 +706,7 @@ public class HubClientImplementation implements HubClient
         {
             node.setTemplateName( getTemplateNameById( templates, node.getTemplateId() ) );
 
-            if ( Strings.isNullOrEmpty( node.getTemplateName() ) )
+            if ( StringUtil.isBlank( node.getTemplateName() ) )
             {
                 throw new OperationFailedException( "Template not found by id " + node.getTemplateId(), null );
             }
@@ -1417,7 +1416,7 @@ public class HubClientImplementation implements HubClient
 
                     String token = kurjunClient.getToken( username, new String( signedAuthId, UTF8 ) );
 
-                    kurjunToken = Strings.isNullOrEmpty( token ) ? "" : token;
+                    kurjunToken = StringUtil.isBlank( token ) ? "" : token;
 
                     kurjunTokenSetTime = System.currentTimeMillis();
                 }

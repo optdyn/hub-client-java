@@ -19,6 +19,7 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.reflect.TypeToken;
@@ -38,6 +39,7 @@ import io.subutai.client.api.Template;
 import io.subutai.client.api.User;
 import io.subutai.client.pgp.SignerTest;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyList;
@@ -1055,5 +1057,15 @@ public class HubClientImplementationTest
                         + "    }\n" + "  ]\n" + "}";
 
         hubClient.createEnvironmentFromBlueprint( blueprint );
+    }
+
+
+    @Test
+    public void testForTesting() throws Exception
+    {
+        String t = "  ";
+
+        assertFalse( Strings.isNullOrEmpty( t ) );
+        assertTrue( StringUtil.isBlank( t ) );
     }
 }

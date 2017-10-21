@@ -4,7 +4,6 @@ package io.subutai.client.impl;
 import java.util.List;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gson.annotations.SerializedName;
 
@@ -24,7 +23,7 @@ public class EnvironmentModificationRequestImpl implements EnvironmentModificati
 
     EnvironmentModificationRequestImpl( final String environmentId )
     {
-        Preconditions.checkArgument( !Strings.isNullOrEmpty( environmentId ) );
+        Preconditions.checkArgument( !StringUtil.isBlank( environmentId ) );
 
         this.environmentId = environmentId;
         this.nodesToAdd = Lists.newArrayList();
@@ -65,7 +64,7 @@ public class EnvironmentModificationRequestImpl implements EnvironmentModificati
 
         Node( final String containerId )
         {
-            Preconditions.checkArgument( !Strings.isNullOrEmpty( containerId ) );
+            Preconditions.checkArgument( !StringUtil.isBlank( containerId ) );
 
             this.containerId = containerId;
         }
