@@ -1346,6 +1346,13 @@ public class HubClientImplementation implements HubClient
         kurjunClient.shareFile( fileId, userFingerprint, getKurjunToken() );
     }
 
+
+    @Override
+    public List<String> getSharedUsers( final String fileId )
+    {
+        return kurjunClient.getSharedUsers( fileId, getKurjunToken() );
+    }
+
     // <<<<< KURJUN
 
     //**************

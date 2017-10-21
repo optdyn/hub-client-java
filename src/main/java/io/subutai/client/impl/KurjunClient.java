@@ -3,6 +3,7 @@ package io.subutai.client.impl;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -63,19 +64,19 @@ class KurjunClient
     }
 
 
-    List<Template> getTemplates( String kurjunToken )
+    List<Template> getTemplates( String token )
     {
-        return getKurjunTemplates( kurjunToken );
+        return getKurjunTemplates( token );
     }
 
 
-    public List<RawFile> getRawFiles( final String kurjunToken )
+    public List<RawFile> getRawFiles( final String token )
     {
-        return getKurjunRawFiles( kurjunToken );
+        return getKurjunRawFiles( token );
     }
 
 
-    String uploadFile( final String filename, final String version, final String kurjunToken )
+    String uploadFile( final String filename, final String version, final String token )
     {
         HttpPost post = new HttpPost( String.format( "%s/raw/upload", getKurjunBaseUrl() ) );
         CloseableHttpClient client = HttpClients.createDefault();
@@ -85,7 +86,7 @@ class KurjunClient
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
             builder.setMode( HttpMultipartMode.BROWSER_COMPATIBLE );
             builder.addBinaryBody( "file", file, ContentType.DEFAULT_BINARY, file.getName() );
-            builder.addTextBody( "token", kurjunToken, ContentType.DEFAULT_BINARY );
+            builder.addTextBody( "token", token, ContentType.DEFAULT_BINARY );
             if ( !StringUtil.isBlank( version ) )
             {
                 builder.addTextBody( "version", version, ContentType.DEFAULT_BINARY );
@@ -106,12 +107,12 @@ class KurjunClient
     }
 
 
-    public void shareFile( final String fileId, final String userFingerprint, final String kurjunToken )
+    public void shareFile( final String fileId, final String userFingerprint, final String token )
     {
         HttpPost post = new HttpPost( String.format( "%s/share", getKurjunBaseUrl() ) );
 
         Map<String, Object> permissionMap = Maps.newHashMap();
-        permissionMap.put( "token", kurjunToken );
+        permissionMap.put( "token", token );
         permissionMap.put( "id", fileId );
         permissionMap.put( "add", Lists.newArrayList( userFingerprint ) );
         //        permissionMap.put( "remove", Lists.newArrayList( userFingerprint ) );
@@ -194,6 +195,39 @@ class KurjunClient
         }
 
         return rawFiles;
+    }
+
+
+    public List<String> getSharedUsers( final String fileId, final String token )
+    {
+        List<String> users = Lists.newArrayList();
+
+        CloseableHttpClient client = HttpClients.createDefault();
+        try
+        {
+            HttpGet httpGet = new HttpGet( String.format( "%s/share?id=%s&token=%s&repo=raw", getKurjunBaseUrl(),
+                    URLEncoder.encode( fileId, "UTF-8" ), StringUtil.isBlank( token ) ? "" : token ) );
+
+            CloseableHttpResponse response = execute( client, httpGet );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "list shared users" );
+
+            List<String> userList = parse( response, new TypeToken<List<String>>()
+            {
+            } );
+
+            users.addAll( userList );
+        }
+        catch ( UnsupportedEncodingException e )
+        {
+            throw new OperationFailedException( "Failed to encode request", e );
+        }
+        finally
+        {
+            IOUtils.closeQuietly( client );
+        }
+
+        return users;
     }
 
 
