@@ -350,6 +350,11 @@ public interface HubClient
     List<Template> getTemplates();
 
     /**
+     * Returns list of raw files accessible to user
+     */
+    List<RawFile> getRawFiles();
+
+    /**
      * Uploads a file to Kurjun RAW category
      *
      * @param filename full path to file

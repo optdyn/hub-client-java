@@ -25,7 +25,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
@@ -33,6 +32,7 @@ import com.google.gson.reflect.TypeToken;
 
 import io.subutai.client.api.HubClient;
 import io.subutai.client.api.OperationFailedException;
+import io.subutai.client.api.RawFile;
 import io.subutai.client.api.Template;
 
 
@@ -63,9 +63,15 @@ class KurjunClient
     }
 
 
-    List<Template> getTemplates( String token )
+    List<Template> getTemplates( String kurjunToken )
     {
-        return getKurjunTemplates( token );
+        return getKurjunTemplates( kurjunToken );
+    }
+
+
+    public List<RawFile> getRawFiles( final String kurjunToken )
+    {
+        return getKurjunRawFiles( kurjunToken );
     }
 
 
@@ -108,7 +114,7 @@ class KurjunClient
         permissionMap.put( "token", kurjunToken );
         permissionMap.put( "id", fileId );
         permissionMap.put( "add", Lists.newArrayList( userFingerprint ) );
-//        permissionMap.put( "remove", Lists.newArrayList( userFingerprint ) );
+        //        permissionMap.put( "remove", Lists.newArrayList( userFingerprint ) );
         permissionMap.put( "repo", "raw" );
         List<NameValuePair> params = new ArrayList<>();
         params.add( new BasicNameValuePair( "json", gson.toJson( permissionMap ) ) );
@@ -138,7 +144,7 @@ class KurjunClient
         List<Template> templates = Lists.newArrayList();
 
         HttpGet httpGet = new HttpGet( String.format( "%s/template/info?token=%s", getKurjunBaseUrl(),
-                Strings.isNullOrEmpty( token ) ? "" : token ) );
+                StringUtil.isBlank( token ) ? "" : token ) );
 
         CloseableHttpClient client = HttpClients.createDefault();
         try
@@ -147,11 +153,11 @@ class KurjunClient
 
             checkHttpStatus( response, HttpStatus.SC_OK, "list templates" );
 
-            List<Template> peerList = parse( response, new TypeToken<List<Template>>()
+            List<Template> templateList = parse( response, new TypeToken<List<Template>>()
             {
             } );
 
-            templates.addAll( peerList );
+            templates.addAll( templateList );
         }
         finally
         {
@@ -159,6 +165,35 @@ class KurjunClient
         }
 
         return templates;
+    }
+
+
+    private List<RawFile> getKurjunRawFiles( String token )
+    {
+        List<RawFile> rawFiles = Lists.newArrayList();
+
+        HttpGet httpGet = new HttpGet(
+                String.format( "%s/raw/info?token=%s", getKurjunBaseUrl(), StringUtil.isBlank( token ) ? "" : token ) );
+
+        CloseableHttpClient client = HttpClients.createDefault();
+        try
+        {
+            CloseableHttpResponse response = execute( client, httpGet );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "list raw files" );
+
+            List<RawFile> fileList = parse( response, new TypeToken<List<RawFile>>()
+            {
+            } );
+
+            rawFiles.addAll( fileList );
+        }
+        finally
+        {
+            IOUtils.closeQuietly( client );
+        }
+
+        return rawFiles;
     }
 
 

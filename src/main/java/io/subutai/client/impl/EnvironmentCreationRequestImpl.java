@@ -4,7 +4,6 @@ package io.subutai.client.impl;
 import java.util.List;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import io.subutai.client.api.Container.ContainerSize;
@@ -24,7 +23,7 @@ public class EnvironmentCreationRequestImpl implements EnvironmentCreationReques
 
     EnvironmentCreationRequestImpl( final String environmentName )
     {
-        Preconditions.checkArgument( !Strings.isNullOrEmpty( environmentName ) );
+        Preconditions.checkArgument( !StringUtil.isBlank( environmentName ) );
 
         this.environmentName = environmentName;
         this.nodes = Lists.newArrayList();
@@ -76,10 +75,10 @@ public class EnvironmentCreationRequestImpl implements EnvironmentCreationReques
         Node( final String hostname, final String templateId, final ContainerSize containerSize, final String peerId,
               final String resourceHostId )
         {
-            Preconditions.checkArgument( !Strings.isNullOrEmpty( hostname ) );
-            Preconditions.checkArgument( !Strings.isNullOrEmpty( templateId ) );
-            Preconditions.checkArgument( !Strings.isNullOrEmpty( peerId ) );
-            Preconditions.checkArgument( !Strings.isNullOrEmpty( resourceHostId ) );
+            Preconditions.checkArgument( !StringUtil.isBlank( hostname ) );
+            Preconditions.checkArgument( !StringUtil.isBlank( templateId ) );
+            Preconditions.checkArgument( !StringUtil.isBlank( peerId ) );
+            Preconditions.checkArgument( !StringUtil.isBlank( resourceHostId ) );
             Preconditions.checkNotNull( containerSize );
 
             this.hostname = hostname;
