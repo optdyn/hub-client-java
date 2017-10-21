@@ -2,11 +2,16 @@ package io.subutai.client.impl;
 
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -16,11 +21,13 @@ import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -62,7 +69,7 @@ class KurjunClient
     }
 
 
-    void uploadFile( final String filename, final String version, final String kurjunToken )
+    String uploadFile( final String filename, final String version, final String kurjunToken )
     {
         HttpPost post = new HttpPost( String.format( "%s/raw/upload", getKurjunBaseUrl() ) );
         CloseableHttpClient client = HttpClients.createDefault();
@@ -83,6 +90,41 @@ class KurjunClient
             CloseableHttpResponse response = execute( client, post );
 
             checkHttpStatus( response, HttpStatus.SC_OK, "upload file" );
+
+            return readContent( response );
+        }
+        finally
+        {
+            IOUtils.closeQuietly( client );
+        }
+    }
+
+
+    public void shareFile( final String fileId, final String userFingerprint, final String kurjunToken )
+    {
+        HttpPost post = new HttpPost( String.format( "%s/share", getKurjunBaseUrl() ) );
+
+        Map<String, Object> permissionMap = Maps.newHashMap();
+        permissionMap.put( "token", kurjunToken );
+        permissionMap.put( "id", fileId );
+        permissionMap.put( "add", Lists.newArrayList( userFingerprint ) );
+//        permissionMap.put( "remove", Lists.newArrayList( userFingerprint ) );
+        permissionMap.put( "repo", "raw" );
+        List<NameValuePair> params = new ArrayList<>();
+        params.add( new BasicNameValuePair( "json", gson.toJson( permissionMap ) ) );
+
+        CloseableHttpClient client = HttpClients.createDefault();
+        try
+        {
+            post.setEntity( new UrlEncodedFormEntity( params ) );
+
+            CloseableHttpResponse response = execute( client, post );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "share file" );
+        }
+        catch ( UnsupportedEncodingException e )
+        {
+            throw new OperationFailedException( "Failed to encode request", e );
         }
         finally
         {

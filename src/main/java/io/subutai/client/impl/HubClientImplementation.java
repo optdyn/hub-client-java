@@ -761,20 +761,6 @@ public class HubClientImplementation implements HubClient
     }
 
 
-    String getTemplateNameById( final List<Template> templates, final String templateId )
-    {
-        for ( Template template : templates )
-        {
-            if ( template.getId().equalsIgnoreCase( templateId ) )
-            {
-                return template.getName();
-            }
-        }
-
-        return null;
-    }
-
-
     public void destroyEnvironment( final String envId )
     {
         Preconditions.checkArgument( !StringUtil.isBlank( envId ) );
@@ -793,18 +779,6 @@ public class HubClientImplementation implements HubClient
         {
             close( response );
         }
-    }
-
-
-    public List<Template> getTemplates()
-    {
-        return kurjunClient.getTemplates( getKurjunToken() );
-    }
-
-
-    public void uploadFile( String filename, String version )
-    {
-        kurjunClient.uploadFile( filename, version, getKurjunToken() );
     }
 
 
@@ -1330,6 +1304,45 @@ public class HubClientImplementation implements HubClient
     }
     // <<<<< FRIENDS MGMT
 
+    // KURJUN >>>>>
+
+
+    public List<Template> getTemplates()
+    {
+        String token = getKurjunToken();
+
+        return kurjunClient.getTemplates( token );
+    }
+
+
+    String getTemplateNameById( final List<Template> templates, final String templateId )
+    {
+        for ( Template template : templates )
+        {
+            if ( template.getId().equalsIgnoreCase( templateId ) )
+            {
+                return template.getName();
+            }
+        }
+
+        return null;
+    }
+
+
+    public String uploadFile( String filename, String version )
+    {
+        return kurjunClient.uploadFile( filename, version, getKurjunToken() );
+    }
+
+
+    @Override
+    public void shareFile( final String fileId, final String userFingerprint )
+    {
+        kurjunClient.shareFile( fileId, userFingerprint, getKurjunToken() );
+    }
+
+    // <<<<< KURJUN
+
     //**************
 
 
@@ -1381,7 +1394,8 @@ public class HubClientImplementation implements HubClient
     }
 
 
-    private synchronized String getKurjunToken()
+    @Override
+    public synchronized String getKurjunToken()
     {
         if ( secretKey == null )
         {
@@ -1391,7 +1405,8 @@ public class HubClientImplementation implements HubClient
         {
             try
             {
-                if ( System.currentTimeMillis() - kurjunTokenSetTime > TimeUnit.MINUTES.toMillis( 30 ) )
+                if ( System.currentTimeMillis() - kurjunTokenSetTime > TimeUnit.MINUTES
+                        .toMillis( KURJUN_TOKEN_TTL_MIN ) )
                 {
                     String username = Signer.getFingerprint( secretKey );
 
@@ -1410,6 +1425,8 @@ public class HubClientImplementation implements HubClient
             catch ( Exception e )
             {
                 LOG.error( "Error obtaining Kurjun token", e );
+
+                throw new OperationFailedException( "Error obtaining Kurjun token", e );
             }
 
             return kurjunToken;

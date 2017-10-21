@@ -66,11 +66,12 @@ public class HubClientImplementationTest
                     + "/IX180yGqgkpjdX08MIkmANhbXDmSFh6T4lUzqGGoC7lerePwkA2yJWlsP+7JKk9oDSaYJ3lkfvKZnz8ZG7JS1jg"
                     + "+sRiTsYYfyANHBJ8sDAK+eNDDms1oorrxk704r8oeNuRaE4BNKhVO4wpRJHEo4/uztLB0jkvG5OUFea5E0jCk"
                     + "+tUK4R7kJBecYQGkJj4ILt/cAGrY0sg8Ol+WBOq4ex3zCF1zJrdJCxW4t2NUyNfCxW7kV2uUhbWNuj+n"
-                    + 
+                    +
                     "/I5a8CDrMJsJLqdgC3EQ17uRy41GHbTwBQs0q2gwfBpefHFXokWwxu06hk0jfwFHWm9xRT79a56hr101Fy4uNjzzVtrWDS4end9VC7bt7Xf/kDxx7FB9DW1wfaYMcCp6YD5O8ENpl35gK35ZXtT5BP2GBoxHGlPdF4PObMCNi5ATtO/gLD8kW1LutO2ldsaY4sHm/JG55UNrpQCpIYe6QfkHsO+fX9/WmjP+iTDdHs1untgurvk5KdhtQxecTvTk3M/ewzHZbEbzYJYzFOsy5f6FQ8U/ckw8PejBzGDUiMGTJXl+GjV9VV3BmkKKeqD5uKu+gta5dynbdfU4r7heAV6oxan2x/rg9iHpOklIRtu2chJYJUq7lQ== dilshat.aliev@gmail.com";
     private static final long USER_ID = 164;
     private static final String NEW_PEER_NAME = "New Peer-Name";
     private static final String DOMAIN = "domain";
+    private static final String FILE_ID = "c3f72b82-97ff-481d-903d-6a6fc378b1f2";
 
     private HubClientImplementation hubClient;
 
@@ -595,6 +596,15 @@ public class HubClientImplementationTest
     }
 
 
+    @Test
+    public void testShareFile() throws Exception
+    {
+        hubClient.shareFile( "id", "user" );
+
+        verify( kurjunClient ).shareFile( "id", "user", "" );
+    }
+
+
     /******* Real tests *******/
 
     private void prepare()
@@ -965,7 +975,7 @@ public class HubClientImplementationTest
     public void testRealGetTemplates() throws Exception
     {
         hubClient = ( HubClientImplementation ) HubClients
-                .getClient( HubClient.HubEnv.PROD, "C:\\Users\\saltanat\\Downloads\\test.d_all.asc", "" );
+                .getClient( HubClient.HubEnv.PROD, "C:\\Users\\Dilshat\\Desktop\\test.d_all.asc", "" );
 
         List<Template> templates = hubClient.getTemplates();
 
@@ -978,9 +988,26 @@ public class HubClientImplementationTest
     public void testRealUploadFile() throws Exception
     {
         hubClient = ( HubClientImplementation ) HubClients
-                .getClient( HubClient.HubEnv.PROD, "C:\\Users\\saltanat\\Downloads\\test.d_all.asc", "" );
+                .getClient( HubClient.HubEnv.PROD, "C:\\Users\\Dilshat\\Desktop\\test.d_all.asc", "" );
 
-        hubClient.uploadFile( "C:\\Users\\saltanat\\Desktop\\test-file.txt", "1.2.3" );
+        System.out.println( hubClient.uploadFile( "C:\\Users\\Dilshat\\Desktop\\test-file.txt", "1.2.3" ) );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealShareFile() throws Exception
+    {
+        hubClient = ( HubClientImplementation ) HubClients
+                .getClient( HubClient.HubEnv.PROD, "C:\\Users\\Dilshat\\Desktop\\test.d_all.asc", "" );
+
+        hubClient.login( EMAIL, PASSWORD );
+
+        //get user by username, get ourselves
+        User user = hubClient.findUserByEmail( EMAIL );
+
+        //share file with ourselves, effectively making it private
+        hubClient.shareFile( FILE_ID, user.getFingerprint() );
     }
 
 

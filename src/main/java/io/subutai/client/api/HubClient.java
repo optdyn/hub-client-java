@@ -5,8 +5,15 @@ import java.util.List;
 import java.util.Map;
 
 
+/**
+ * Hub client. Provides Hub functionality, e.g. environment creation and management API.
+ * All methods can throw unchecked exception {@link OperationFailedException} with the original exception in the cause
+ */
 public interface HubClient
 {
+    long KURJUN_TOKEN_TTL_MIN = 30;
+
+
     enum HubEnv
     {
         DEV( "dev", "dev" ), STAGE( "stage", "stage" ), PROD( "hub", "" );
@@ -125,18 +132,6 @@ public interface HubClient
      */
     void destroyEnvironment( String envId );
 
-    /**
-     * Returns list of templates accessible to user
-     */
-    List<Template> getTemplates();
-
-    /**
-     * Uploads a file to Kurjun RAW category
-     *
-     * @param filename full path to file
-     * @param version optional version of file
-     */
-    void uploadFile( String filename, String version );
 
     /**
      * Creates environment creation request object that should be populated further by calling party.
@@ -346,4 +341,39 @@ public interface HubClient
      * @param blueprint blueprint json
      */
     void createEnvironmentFromBlueprint( String blueprint );
+
+    //*********** KURJUN API ***************************
+
+    /**
+     * Returns list of templates accessible to user
+     */
+    List<Template> getTemplates();
+
+    /**
+     * Uploads a file to Kurjun RAW category
+     *
+     * @param filename full path to file
+     * @param version optional version of file
+     *
+     * @return id of uploaded file
+     */
+    String uploadFile( String filename, String version );
+
+    /**
+     * Shares a RAW file with a user
+     *
+     * @param fileId id of file
+     * @param userFingerprint fingerprint of user user to share the file with
+     */
+    void shareFile( String fileId, String userFingerprint );
+
+    /**
+     * Returns a currently active Kurjun token. The same token will be returned during {@link
+     * io.subutai.client.api.HubClient#KURJUN_TOKEN_TTL_MIN } for the same instance of the client. If no token is
+     * obtained yet or the current token is expired , a new token is attempted to be obtained. The client must be
+     * instantiated using factory method
+     * {@link io.subutai.client.impl.HubClients#getClient(String pgpKeyFilePath, String pgpKeyPassword) } in order
+     * to be able to obtain a token from Kurjun.
+     */
+    String getKurjunToken();
 }
