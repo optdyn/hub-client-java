@@ -6,7 +6,7 @@ import java.util.Map;
 
 
 /**
- * Hub client that provides functionality to use Hub API, i.e. create environments.
+ * Hub client. Provides Hub functionality, e.g. environment creation and management API.
  * All methods can throw unchecked exception {@link OperationFailedException} with the original exception in the cause
  */
 public interface HubClient
