@@ -5,8 +5,15 @@ import java.util.List;
 import java.util.Map;
 
 
+/**
+ * Hub client that provides functionality to use Hub API, i.e. create environments.
+ * All methods can throw unchecked exception {@link OperationFailedException} with the original exception in the cause
+ */
 public interface HubClient
 {
+    long KURJUN_TOKEN_TTL_MIN = 30;
+
+
     enum HubEnv
     {
         DEV( "dev", "dev" ), STAGE( "stage", "stage" ), PROD( "hub", "" );
@@ -359,4 +366,14 @@ public interface HubClient
      * @param userFingerprint fingerprint of user user to share the file with
      */
     void shareFile( String fileId, String userFingerprint );
+
+    /**
+     * Returns a currently active Kurjun token. The same token will be returned during {@link
+     * io.subutai.client.api.HubClient#KURJUN_TOKEN_TTL_MIN } for the same instance of the client. If no token is
+     * obtained yet or the current token is expired , a new token is attempted to be obtained. The client must be
+     * instantiated using factory method
+     * {@link io.subutai.client.impl.HubClients#getClient(String pgpKeyFilePath, String pgpKeyPassword) } in order
+     * to be able to obtain a token from Kurjun.
+     */
+    String getKurjunToken();
 }

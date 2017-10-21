@@ -1310,7 +1310,7 @@ public class HubClientImplementation implements HubClient
     public List<Template> getTemplates()
     {
         String token = getKurjunToken();
-        System.out.println( "Kurjun token " + token );
+
         return kurjunClient.getTemplates( token );
     }
 
@@ -1394,7 +1394,8 @@ public class HubClientImplementation implements HubClient
     }
 
 
-    private synchronized String getKurjunToken()
+    @Override
+    public synchronized String getKurjunToken()
     {
         if ( secretKey == null )
         {
@@ -1404,7 +1405,8 @@ public class HubClientImplementation implements HubClient
         {
             try
             {
-                if ( System.currentTimeMillis() - kurjunTokenSetTime > TimeUnit.MINUTES.toMillis( 30 ) )
+                if ( System.currentTimeMillis() - kurjunTokenSetTime > TimeUnit.MINUTES
+                        .toMillis( KURJUN_TOKEN_TTL_MIN ) )
                 {
                     String username = Signer.getFingerprint( secretKey );
 
@@ -1423,6 +1425,8 @@ public class HubClientImplementation implements HubClient
             catch ( Exception e )
             {
                 LOG.error( "Error obtaining Kurjun token", e );
+
+                throw new OperationFailedException( "Error obtaining Kurjun token", e );
             }
 
             return kurjunToken;
