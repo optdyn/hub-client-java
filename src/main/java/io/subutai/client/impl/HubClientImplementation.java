@@ -64,6 +64,7 @@ import io.subutai.client.api.HubClient;
 import io.subutai.client.api.OperationFailedException;
 import io.subutai.client.api.Organization;
 import io.subutai.client.api.Peer;
+import io.subutai.client.api.RawFile;
 import io.subutai.client.api.SshKey;
 import io.subutai.client.api.Template;
 import io.subutai.client.api.User;
@@ -1308,9 +1309,14 @@ public class HubClientImplementation implements HubClient
 
     public List<Template> getTemplates()
     {
-        String token = getKurjunToken();
+        return kurjunClient.getTemplates( getKurjunToken() );
+    }
 
-        return kurjunClient.getTemplates( token );
+
+    @Override
+    public List<RawFile> getRawFiles()
+    {
+        return kurjunClient.getRawFiles( getKurjunToken() );
     }
 
 

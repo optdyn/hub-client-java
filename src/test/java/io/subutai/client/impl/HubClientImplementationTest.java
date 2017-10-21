@@ -34,6 +34,7 @@ import io.subutai.client.api.FriendsInfo;
 import io.subutai.client.api.HubClient;
 import io.subutai.client.api.Organization;
 import io.subutai.client.api.Peer;
+import io.subutai.client.api.RawFile;
 import io.subutai.client.api.SshKey;
 import io.subutai.client.api.Template;
 import io.subutai.client.api.User;
@@ -281,6 +282,15 @@ public class HubClientImplementationTest
         hubClient.getTemplates();
 
         verify( kurjunClient ).getTemplates( "" );
+    }
+
+
+    @Test
+    public void tesGetRawFiles() throws Exception
+    {
+        hubClient.getRawFiles();
+
+        verify( kurjunClient ).getRawFiles( "" );
     }
 
 
@@ -982,6 +992,19 @@ public class HubClientImplementationTest
         List<Template> templates = hubClient.getTemplates();
 
         System.out.println( templates );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealGetRawFiles() throws Exception
+    {
+        hubClient = ( HubClientImplementation ) HubClients
+                .getClient( HubClient.HubEnv.PROD, "C:\\Users\\Dilshat\\Desktop\\test.d_all.asc", "" );
+
+        List<RawFile> rawFiles = hubClient.getRawFiles();
+
+        System.out.println( rawFiles );
     }
 
 
