@@ -6,8 +6,8 @@ import java.util.Map;
 
 
 /**
- * Hub client. Provides Hub functionality, e.g. environment creation and management API.
- * All methods can throw unchecked exception {@link OperationFailedException} with the original exception in the cause
+ * Hub client. Provides Hub functionality, e.g. environment creation and management API. All methods can throw unchecked
+ * exception {@link OperationFailedException} with the original exception in the cause
  */
 public interface HubClient
 {
@@ -365,12 +365,27 @@ public interface HubClient
     String uploadFile( String filename, String version );
 
     /**
+     * Removes a RAW file from Kurjun
+     *
+     * @param fileId id of file
+     */
+    void removeFile( String fileId );
+
+    /**
      * Shares a RAW file with a user
      *
      * @param fileId id of file
-     * @param userFingerprint fingerprint of user user to share the file with
+     * @param userFingerprint fingerprint of user to share the file with
      */
     void shareFile( String fileId, String userFingerprint );
+
+    /**
+     * Unshares a RAW file with a user
+     *
+     * @param fileId id of file
+     * @param userFingerprint fingerprint of user to unshare the file with
+     */
+    void unshareFile( String fileId, String userFingerprint );
 
     /**
      * Returns a list for users with whom the file is shared with. If the returned list is empty, it means the file is
@@ -386,9 +401,8 @@ public interface HubClient
      * Returns a currently active Kurjun token. The same token will be returned during {@link
      * io.subutai.client.api.HubClient#KURJUN_TOKEN_TTL_MIN } for the same instance of the client. If no token is
      * obtained yet or the current token is expired , a new token is attempted to be obtained. The client must be
-     * instantiated using factory method
-     * {@link io.subutai.client.impl.HubClients#getClient(String pgpKeyFilePath, String pgpKeyPassword) } in order
-     * to be able to obtain a token from Kurjun.
+     * instantiated using factory method {@link io.subutai.client.impl.HubClients#getClient(String pgpKeyFilePath, *
+     * String pgpKeyPassword) } in order to be able to obtain a token from Kurjun.
      */
     String getKurjunToken();
 }
