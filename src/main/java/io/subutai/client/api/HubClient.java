@@ -365,6 +365,14 @@ public interface HubClient
     String uploadFile( String filename, String version );
 
     /**
+     * Downloads a RAW file from Kurjun
+     *
+     * @param fileId id of file
+     * @param outputDirectory directory path to save the file to, e.g. "/tmp"
+     */
+    void downloadFile( String fileId, String outputDirectory );
+
+    /**
      * Removes a RAW file from Kurjun
      *
      * @param fileId id of file

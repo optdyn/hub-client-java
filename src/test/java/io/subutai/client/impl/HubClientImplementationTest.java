@@ -74,7 +74,7 @@ public class HubClientImplementationTest
     private static final long USER_ID = 164;
     private static final String NEW_PEER_NAME = "New Peer-Name";
     private static final String DOMAIN = "domain";
-    private static final String FILE_ID = "1b082c58-a24d-474e-aeeb-ca2b902ce4ab";
+    private static final String FILE_ID = "9d2bb08feae8b56ac1ef8833ede1f8c3";
 
     private HubClientImplementation hubClient;
 
@@ -609,6 +609,15 @@ public class HubClientImplementationTest
 
 
     @Test
+    public void testDownloadFile() throws Exception
+    {
+        hubClient.downloadFile( "id", "output" );
+
+        verify( kurjunClient ).downloadFile( "id", "output", "" );
+    }
+
+
+    @Test
     public void testShareFile() throws Exception
     {
         hubClient.shareFile( "id", "user" );
@@ -1043,6 +1052,17 @@ public class HubClientImplementationTest
                 .getClient( HubClient.HubEnv.PROD, "C:\\Users\\Dilshat\\Desktop\\test.d_all.asc", "" );
 
         System.out.println( hubClient.uploadFile( "C:\\Users\\Dilshat\\Desktop\\test-file.txt", "1.2.3" ) );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealDownloadFile() throws Exception
+    {
+        hubClient = ( HubClientImplementation ) HubClients
+                .getClient( HubClient.HubEnv.PROD, "C:\\Users\\saltanat\\Downloads\\test.d_all.asc", "" );
+
+        hubClient.downloadFile( FILE_ID, "C:\\Users\\saltanat\\Desktop" );
     }
 
 

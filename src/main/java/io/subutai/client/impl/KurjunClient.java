@@ -2,8 +2,12 @@ package io.subutai.client.impl;
 
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +44,8 @@ import io.subutai.client.api.Template;
 
 class KurjunClient
 {
+    private static final String UTF8 = "UTF-8";
+
     private final HubClient.HubEnv hubEnv;
 
     private Gson gson = new Gson();
@@ -166,13 +172,50 @@ class KurjunClient
     }
 
 
+    void downloadFile( final String fileId, final String outputDirectory, final String token )
+    {
+        try ( CloseableHttpClient client = HttpClients.createDefault(); )
+        {
+            HttpGet httpGet = new HttpGet( String.format( "%s/raw/download?id=%s&token=%s", getKurjunBaseUrl(),
+                    URLEncoder.encode( fileId, UTF8 ), token ) );
+
+            CloseableHttpResponse response = execute( client, httpGet );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "download file" );
+
+            HttpEntity entity = response.getEntity();
+            if ( entity != null )
+            {
+                String disposition = response.getFirstHeader( "Content-Disposition" ).getValue();
+                String fileName = disposition.replaceFirst( "(?i)^.*filename=\"([^\"]+)\".*$", "$1" );
+                try ( FileOutputStream fos = new FileOutputStream( Paths.get( outputDirectory, fileName ).toString() ) )
+                {
+                    entity.writeTo( fos );
+                }
+            }
+        }
+        catch ( UnsupportedEncodingException e )
+        {
+            throw new OperationFailedException( "Failed to encode request", e );
+        }
+        catch ( FileNotFoundException e )
+        {
+            throw new OperationFailedException( "Output file not found", e );
+        }
+        catch ( IOException e )
+        {
+            throw new OperationFailedException( "Error writing file", e );
+        }
+    }
+
+
     void removeFile( final String fileId, final String kurjunToken )
     {
         CloseableHttpClient client = HttpClients.createDefault();
         try
         {
             String url = String.format( "%s/raw/delete?id=%s&token=%s", getKurjunBaseUrl(),
-                    URLEncoder.encode( fileId, "UTF-8" ), kurjunToken );
+                    URLEncoder.encode( fileId, UTF8 ), kurjunToken );
 
             HttpDelete httpDelete = new HttpDelete( url );
 
@@ -246,7 +289,7 @@ class KurjunClient
         try
         {
             String url = String.format( "%s/share?id=%s&token=%s&repo=raw", getKurjunBaseUrl(),
-                    URLEncoder.encode( fileId, "UTF-8" ), StringUtil.isBlank( token ) ? "" : token );
+                    URLEncoder.encode( fileId, UTF8 ), StringUtil.isBlank( token ) ? "" : token );
 
             HttpGet httpGet = new HttpGet( url );
 
