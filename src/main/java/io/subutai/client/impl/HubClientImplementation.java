@@ -127,7 +127,7 @@ public class HubClientImplementation implements HubClient
         List<NameValuePair> nvps = new ArrayList<>();
         nvps.add( new BasicNameValuePair( "email", username ) );
         nvps.add( new BasicNameValuePair( "password", password ) );
-        request.setEntity( new UrlEncodedFormEntity( nvps, Charset.forName( "UTF-8" ) ) );
+        request.setEntity( new UrlEncodedFormEntity( nvps, Charset.forName( UTF8 ) ) );
 
         CloseableHttpResponse response = null;
         try
@@ -513,7 +513,7 @@ public class HubClientImplementation implements HubClient
 
         List<NameValuePair> nvps = new ArrayList<>();
         nvps.add( new BasicNameValuePair( "ssh-key", sshKey ) );
-        request.setEntity( new UrlEncodedFormEntity( nvps, Charset.forName( "UTF-8" ) ) );
+        request.setEntity( new UrlEncodedFormEntity( nvps, Charset.forName( UTF8 ) ) );
 
         CloseableHttpResponse response = null;
         try
@@ -540,7 +540,7 @@ public class HubClientImplementation implements HubClient
 
         List<NameValuePair> nvps = new ArrayList<>();
         nvps.add( new BasicNameValuePair( "ssh-key", sshKey ) );
-        request.setEntity( new UrlEncodedFormEntity( nvps, Charset.forName( "UTF-8" ) ) );
+        request.setEntity( new UrlEncodedFormEntity( nvps, Charset.forName( UTF8 ) ) );
 
         CloseableHttpResponse response = null;
         try
@@ -1337,6 +1337,13 @@ public class HubClientImplementation implements HubClient
     public String uploadFile( String filename, String version )
     {
         return kurjunClient.uploadFile( filename, version, getKurjunToken() );
+    }
+
+
+    @Override
+    public void downloadFile( final String fileId, final String outputDirectory )
+    {
+        kurjunClient.downloadFile( fileId, outputDirectory, getKurjunToken() );
     }
 
 
