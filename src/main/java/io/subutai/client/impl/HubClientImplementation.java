@@ -1341,9 +1341,23 @@ public class HubClientImplementation implements HubClient
 
 
     @Override
+    public void removeFile( final String fileId )
+    {
+        kurjunClient.removeFile( fileId, getKurjunToken() );
+    }
+
+
+    @Override
     public void shareFile( final String fileId, final String userFingerprint )
     {
         kurjunClient.shareFile( fileId, userFingerprint, getKurjunToken() );
+    }
+
+
+    @Override
+    public void unshareFile( final String fileId, final String userFingerprint )
+    {
+        kurjunClient.unshareFile( fileId, userFingerprint, getKurjunToken() );
     }
 
 

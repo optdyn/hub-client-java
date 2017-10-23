@@ -74,7 +74,7 @@ public class HubClientImplementationTest
     private static final long USER_ID = 164;
     private static final String NEW_PEER_NAME = "New Peer-Name";
     private static final String DOMAIN = "domain";
-    private static final String FILE_ID = "c3f72b82-97ff-481d-903d-6a6fc378b1f2";
+    private static final String FILE_ID = "1b082c58-a24d-474e-aeeb-ca2b902ce4ab";
 
     private HubClientImplementation hubClient;
 
@@ -618,6 +618,24 @@ public class HubClientImplementationTest
 
 
     @Test
+    public void testUnshareFile() throws Exception
+    {
+        hubClient.unshareFile( "id", "user" );
+
+        verify( kurjunClient ).unshareFile( "id", "user", "" );
+    }
+
+
+    @Test
+    public void testRemoveFile() throws Exception
+    {
+        hubClient.removeFile( "id" );
+
+        verify( kurjunClient ).removeFile( "id", "" );
+    }
+
+
+    @Test
     public void testGetSharedUsers() throws Exception
     {
         hubClient.getSharedUsers( "id" );
@@ -1030,10 +1048,21 @@ public class HubClientImplementationTest
 
     @Test
     @Ignore
+    public void testRealRemoveFile() throws Exception
+    {
+        hubClient = ( HubClientImplementation ) HubClients
+                .getClient( HubClient.HubEnv.PROD, "C:\\Users\\saltanat\\Downloads\\test.d_all.asc", "" );
+
+        hubClient.removeFile( FILE_ID );
+    }
+
+
+    @Test
+    @Ignore
     public void testRealShareFile() throws Exception
     {
         hubClient = ( HubClientImplementation ) HubClients
-                .getClient( HubClient.HubEnv.PROD, "C:\\Users\\Dilshat\\Desktop\\test.d_all.asc", "" );
+                .getClient( HubClient.HubEnv.PROD, "C:\\Users\\saltanat\\Downloads\\test.d_all.asc", "" );
 
         hubClient.login( EMAIL, PASSWORD );
 
@@ -1047,10 +1076,27 @@ public class HubClientImplementationTest
 
     @Test
     @Ignore
+    public void testRealUnshareFile() throws Exception
+    {
+        hubClient = ( HubClientImplementation ) HubClients
+                .getClient( HubClient.HubEnv.PROD, "C:\\Users\\saltanat\\Downloads\\test.d_all.asc", "" );
+
+        hubClient.login( EMAIL, PASSWORD );
+
+        //get user by username, get ourselves
+        User user = hubClient.findUserByEmail( EMAIL );
+
+        //share file with ourselves, effectively making it private
+        hubClient.unshareFile( FILE_ID, user.getFingerprint() );
+    }
+
+
+    @Test
+    @Ignore
     public void testRealGetSharedUsers() throws Exception
     {
         hubClient = ( HubClientImplementation ) HubClients
-                .getClient( HubClient.HubEnv.PROD, "C:\\Users\\Dilshat\\Desktop\\test.d_all.asc", "" );
+                .getClient( HubClient.HubEnv.PROD, "C:\\Users\\saltanat\\Downloads\\test.d_all.asc", "" );
 
         List<String> users = hubClient.getSharedUsers( FILE_ID );
 
@@ -1106,6 +1152,7 @@ public class HubClientImplementationTest
 
 
     @Test
+    @Ignore
     public void testForTesting() throws Exception
     {
         String t = "  ";
