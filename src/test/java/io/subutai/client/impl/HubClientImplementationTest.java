@@ -19,6 +19,7 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.reflect.TypeToken;
@@ -33,11 +34,13 @@ import io.subutai.client.api.FriendsInfo;
 import io.subutai.client.api.HubClient;
 import io.subutai.client.api.Organization;
 import io.subutai.client.api.Peer;
+import io.subutai.client.api.RawFile;
 import io.subutai.client.api.SshKey;
 import io.subutai.client.api.Template;
 import io.subutai.client.api.User;
 import io.subutai.client.pgp.SignerTest;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyList;
@@ -57,10 +60,10 @@ public class HubClientImplementationTest
     private static final String EMAIL = "test.d@mail.com";
     private static final String PASSWORD = "test";
     private static final String TEMPLATE_ID = "a697e70f3fc538b4f4763588a7868388";
-    private static final String PEER_ID = "94E0A1C6EB6718A608D8754EBD3BD7BB1F2B36A1";
-    private static final String RH_ID = "25127DD45F45417738248549BCEF91DF28AC3854";
-    private static final String ENVIRONMENT_ID = "3bd12be7-e2f7-4884-9a71-20e21381e2e9";
-    private static final String CONTAINER_ID = "1648E5166B5160DCB47CDF60D269772CC3337E1E";
+    private static final String PEER_ID = "EC17E3CDD93253E520069D0561D9002471CFC5A9";
+    private static final String RH_ID = "B9B9E764999071816F4120A313B662798D84A26E";
+    private static final String ENVIRONMENT_ID = "154958e4-a081-4cb8-bce3-daf79eebe2e3";
+    private static final String CONTAINER_ID = "6643FC1A1605F4FAA21246186DDA53B35E7917FD";
     private static final String SSH_KEY =
             "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCjUo/8VklFC8cRyHE502tUXit15L8Qg2z/47c6PMpQThR0sjhURgoILms"
                     + "/IX180yGqgkpjdX08MIkmANhbXDmSFh6T4lUzqGGoC7lerePwkA2yJWlsP+7JKk9oDSaYJ3lkfvKZnz8ZG7JS1jg"
@@ -71,6 +74,7 @@ public class HubClientImplementationTest
     private static final long USER_ID = 164;
     private static final String NEW_PEER_NAME = "New Peer-Name";
     private static final String DOMAIN = "domain";
+    private static final String FILE_ID = "1b082c58-a24d-474e-aeeb-ca2b902ce4ab";
 
     private HubClientImplementation hubClient;
 
@@ -282,15 +286,27 @@ public class HubClientImplementationTest
 
 
     @Test
+    public void tesGetRawFiles() throws Exception
+    {
+        hubClient.getRawFiles();
+
+        verify( kurjunClient ).getRawFiles( "" );
+    }
+
+
+    @Test
     public void testCreateEnvironment() throws Exception
     {
         returnHttpCode( HttpStatus.SC_ACCEPTED );
+
         doReturn( Lists.newArrayList( template ) ).when( hubClient ).getTemplates();
         doReturn( "template" ).when( hubClient ).getTemplateNameById( anyList(), anyString() );
         EnvironmentCreationRequestImpl.Node node = mock( EnvironmentCreationRequestImpl.Node.class );
         doReturn( Lists.newArrayList( node ) ).when( createEnvironmentRequest ).getNodes();
         doReturn( "" ).when( hubClient ).toJson( createEnvironmentRequest );
         doReturn( "template" ).when( node ).getTemplateName();
+        EnvironmentRefImpl user = mock( EnvironmentRefImpl.class );
+        doReturn( user ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
 
         hubClient.createEnvironment( createEnvironmentRequest );
 
@@ -324,6 +340,8 @@ public class HubClientImplementationTest
         Files.copy( SignerTest.getKeyFileAsStream(), keyFile.toPath(), StandardCopyOption.REPLACE_EXISTING );
 
         HubClients.getClient( HubClient.HubEnv.DEV, keyFile.getPath(), "" );
+
+        keyFile.delete();
     }
 
 
@@ -574,6 +592,55 @@ public class HubClientImplementationTest
         hubClient.createEnvironmentFromBlueprint( "blueprint" );
 
         verify( hubClient ).execute( any( HttpRequestBase.class ) );
+    }
+
+
+    @Test
+    public void testUploadFile() throws Exception
+    {
+        File rawFile = File.createTempFile( "raw-file", ".bin" );
+
+        hubClient.uploadFile( rawFile.getPath(), "version" );
+
+        verify( kurjunClient ).uploadFile( rawFile.getPath(), "version", "" );
+
+        rawFile.delete();
+    }
+
+
+    @Test
+    public void testShareFile() throws Exception
+    {
+        hubClient.shareFile( "id", "user" );
+
+        verify( kurjunClient ).shareFile( "id", "user", "" );
+    }
+
+
+    @Test
+    public void testUnshareFile() throws Exception
+    {
+        hubClient.unshareFile( "id", "user" );
+
+        verify( kurjunClient ).unshareFile( "id", "user", "" );
+    }
+
+
+    @Test
+    public void testRemoveFile() throws Exception
+    {
+        hubClient.removeFile( "id" );
+
+        verify( kurjunClient ).removeFile( "id", "" );
+    }
+
+
+    @Test
+    public void testGetSharedUsers() throws Exception
+    {
+        hubClient.getSharedUsers( "id" );
+
+        verify( kurjunClient ).getSharedUsers( "id", "" );
     }
 
 
@@ -947,11 +1014,93 @@ public class HubClientImplementationTest
     public void testRealGetTemplates() throws Exception
     {
         hubClient = ( HubClientImplementation ) HubClients
-                .getClient( HubClient.HubEnv.DEV, "C:\\Users\\Dilshat\\Desktop\\dilshat.aliev_all.asc", "" );
+                .getClient( HubClient.HubEnv.PROD, "C:\\Users\\Dilshat\\Desktop\\test.d_all.asc", "" );
 
         List<Template> templates = hubClient.getTemplates();
 
         System.out.println( templates );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealGetRawFiles() throws Exception
+    {
+        hubClient = ( HubClientImplementation ) HubClients
+                .getClient( HubClient.HubEnv.PROD, "C:\\Users\\Dilshat\\Desktop\\test.d_all.asc", "" );
+
+        List<RawFile> rawFiles = hubClient.getRawFiles();
+
+        System.out.println( rawFiles );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealUploadFile() throws Exception
+    {
+        hubClient = ( HubClientImplementation ) HubClients
+                .getClient( HubClient.HubEnv.PROD, "C:\\Users\\Dilshat\\Desktop\\test.d_all.asc", "" );
+
+        System.out.println( hubClient.uploadFile( "C:\\Users\\Dilshat\\Desktop\\test-file.txt", "1.2.3" ) );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealRemoveFile() throws Exception
+    {
+        hubClient = ( HubClientImplementation ) HubClients
+                .getClient( HubClient.HubEnv.PROD, "C:\\Users\\saltanat\\Downloads\\test.d_all.asc", "" );
+
+        hubClient.removeFile( FILE_ID );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealShareFile() throws Exception
+    {
+        hubClient = ( HubClientImplementation ) HubClients
+                .getClient( HubClient.HubEnv.PROD, "C:\\Users\\saltanat\\Downloads\\test.d_all.asc", "" );
+
+        hubClient.login( EMAIL, PASSWORD );
+
+        //get user by username, get ourselves
+        User user = hubClient.findUserByEmail( EMAIL );
+
+        //share file with ourselves, effectively making it private
+        hubClient.shareFile( FILE_ID, user.getFingerprint() );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealUnshareFile() throws Exception
+    {
+        hubClient = ( HubClientImplementation ) HubClients
+                .getClient( HubClient.HubEnv.PROD, "C:\\Users\\saltanat\\Downloads\\test.d_all.asc", "" );
+
+        hubClient.login( EMAIL, PASSWORD );
+
+        //get user by username, get ourselves
+        User user = hubClient.findUserByEmail( EMAIL );
+
+        //share file with ourselves, effectively making it private
+        hubClient.unshareFile( FILE_ID, user.getFingerprint() );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealGetSharedUsers() throws Exception
+    {
+        hubClient = ( HubClientImplementation ) HubClients
+                .getClient( HubClient.HubEnv.PROD, "C:\\Users\\saltanat\\Downloads\\test.d_all.asc", "" );
+
+        List<String> users = hubClient.getSharedUsers( FILE_ID );
+
+        System.out.println( users );
     }
 
 
@@ -964,7 +1113,7 @@ public class HubClientImplementationTest
         environmentCreationRequest.addNode( "test-container1", TEMPLATE_ID, ContainerSize.SMALL, PEER_ID, RH_ID );
         environmentCreationRequest.addNode( "test-container2", TEMPLATE_ID, ContainerSize.SMALL, PEER_ID, RH_ID );
 
-        hubClient.createEnvironment( environmentCreationRequest );
+        System.out.println( hubClient.createEnvironment( environmentCreationRequest ) );
     }
 
 
@@ -999,5 +1148,16 @@ public class HubClientImplementationTest
                         + "    }\n" + "  ]\n" + "}";
 
         hubClient.createEnvironmentFromBlueprint( blueprint );
+    }
+
+
+    @Test
+    @Ignore
+    public void testForTesting() throws Exception
+    {
+        String t = "  ";
+
+        assertFalse( Strings.isNullOrEmpty( t ) );
+        assertTrue( StringUtil.isBlank( t ) );
     }
 }

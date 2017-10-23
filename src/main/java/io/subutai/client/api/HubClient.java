@@ -5,24 +5,39 @@ import java.util.List;
 import java.util.Map;
 
 
+/**
+ * Hub client. Provides Hub functionality, e.g. environment creation and management API. All methods can throw unchecked
+ * exception {@link OperationFailedException} with the original exception in the cause
+ */
 public interface HubClient
 {
+    long KURJUN_TOKEN_TTL_MIN = 30;
+
+
     enum HubEnv
     {
-        DEV( "dev" ), STAGE( "stage" ), PROD( "hub" );
+        DEV( "dev", "dev" ), STAGE( "stage", "stage" ), PROD( "hub", "" );
 
         private String urlPrefix;
+        private String cdnPrefix;
 
 
-        HubEnv( final String urlPrefix )
+        HubEnv( final String urlPrefix, final String cdnPrefix )
         {
             this.urlPrefix = urlPrefix;
+            this.cdnPrefix = cdnPrefix;
         }
 
 
         public String getUrlPrefix()
         {
             return urlPrefix;
+        }
+
+
+        public String getCdnPrefix()
+        {
+            return cdnPrefix;
         }
     }
 
@@ -117,10 +132,6 @@ public interface HubClient
      */
     void destroyEnvironment( String envId );
 
-    /**
-     * Returns list of templates accessible to user
-     */
-    List<Template> getTemplates();
 
     /**
      * Creates environment creation request object that should be populated further by calling party.
@@ -141,12 +152,13 @@ public interface HubClient
      *
      * @param environmentCreationRequest create environment request object returned by call to HubClient#createRequest
      */
-    void createEnvironment( EnvironmentCreationRequest environmentCreationRequest );
+    EnvironmentRef createEnvironment( EnvironmentCreationRequest environmentCreationRequest );
 
     /**
      * Allows to modify environment
      *
-     * @param environmentModificationRequest modify environment request object returned by call to HubClient#modifyRequest
+     * @param environmentModificationRequest modify environment request object returned by call to
+     * HubClient#modifyRequest
      */
     void modifyEnvironment( EnvironmentModificationRequest environmentModificationRequest );
 
@@ -329,4 +341,68 @@ public interface HubClient
      * @param blueprint blueprint json
      */
     void createEnvironmentFromBlueprint( String blueprint );
+
+    //*********** KURJUN API ***************************
+
+    /**
+     * Returns list of templates accessible to user
+     */
+    List<Template> getTemplates();
+
+    /**
+     * Returns list of raw files accessible to user
+     */
+    List<RawFile> getRawFiles();
+
+    /**
+     * Uploads a file to Kurjun RAW category
+     *
+     * @param filename full path to file
+     * @param version optional version of file
+     *
+     * @return id of uploaded file
+     */
+    String uploadFile( String filename, String version );
+
+    /**
+     * Removes a RAW file from Kurjun
+     *
+     * @param fileId id of file
+     */
+    void removeFile( String fileId );
+
+    /**
+     * Shares a RAW file with a user
+     *
+     * @param fileId id of file
+     * @param userFingerprint fingerprint of user to share the file with
+     */
+    void shareFile( String fileId, String userFingerprint );
+
+    /**
+     * Unshares a RAW file with a user
+     *
+     * @param fileId id of file
+     * @param userFingerprint fingerprint of user to unshare the file with
+     */
+    void unshareFile( String fileId, String userFingerprint );
+
+    /**
+     * Returns a list for users with whom the file is shared with. If the returned list is empty, it means the file is
+     * public
+     *
+     * @param fileId id of file
+     *
+     * @return list of user fingerprints
+     */
+    List<String> getSharedUsers( String fileId );
+
+    /**
+     * Returns a currently active Kurjun token. The same token will be returned during {@link
+     * io.subutai.client.api.HubClient#KURJUN_TOKEN_TTL_MIN } for the same instance of the client. If no token is
+     * obtained yet or the current token is expired , a new token is attempted to be obtained. The client must be
+     * instantiated using factory method {@link io.subutai.client.impl.HubClients#getClient(String pgpKeyFilePath, *
+     * String pgpKeyPassword) } in order to be able to obtain a token from Kurjun.
+     */
+    String getKurjunToken();
 }

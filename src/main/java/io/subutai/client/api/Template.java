@@ -3,10 +3,10 @@ package io.subutai.client.api;
 
 import java.util.Set;
 
-import com.google.gson.annotations.SerializedName;
+import com.google.gson.GsonBuilder;
 
 
-public class Template
+public class Template extends KurjunArtifact
 {
     public enum HostArchitecture
     {
@@ -15,40 +15,9 @@ public class Template
     }
 
 
-    private String id;
-    private String name;
-    private long size;
-    @SerializedName( "owner" )
-    private Set<String> owners;
     private Set<String> tags;
     private String parent;
-    private String version;
-    private String filename;
     private HostArchitecture architecture;
-
-
-    public String getId()
-    {
-        return id;
-    }
-
-
-    public String getName()
-    {
-        return name;
-    }
-
-
-    public long getSize()
-    {
-        return size;
-    }
-
-
-    public Set<String> getOwners()
-    {
-        return owners;
-    }
 
 
     public Set<String> getTags()
@@ -63,18 +32,6 @@ public class Template
     }
 
 
-    public String getVersion()
-    {
-        return version;
-    }
-
-
-    public String getFilename()
-    {
-        return filename;
-    }
-
-
     public HostArchitecture getArchitecture()
     {
         return architecture;
@@ -84,8 +41,6 @@ public class Template
     @Override
     public String toString()
     {
-        return "Template{" + "id='" + id + '\'' + ", name='" + name + '\'' + ", size=" + size + ", owners=" + owners
-                + ", tags=" + tags + ", parent='" + parent + '\'' + ", version='" + version + '\'' + ", filename='"
-                + filename + '\'' + ", architecture=" + architecture + '}';
+        return new GsonBuilder().setPrettyPrinting().create().toJson( this );
     }
 }
