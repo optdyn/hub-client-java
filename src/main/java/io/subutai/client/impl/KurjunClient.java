@@ -152,6 +152,7 @@ class KurjunClient
             builder.setMode( HttpMultipartMode.BROWSER_COMPATIBLE );
             builder.addBinaryBody( "file", file, ContentType.DEFAULT_BINARY, file.getName() );
             builder.addTextBody( "token", token, ContentType.DEFAULT_BINARY );
+            builder.addTextBody( "private", "true", ContentType.DEFAULT_BINARY );
             if ( !StringUtil.isBlank( version ) )
             {
                 builder.addTextBody( "version", version, ContentType.DEFAULT_BINARY );
