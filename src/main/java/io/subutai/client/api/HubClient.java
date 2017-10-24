@@ -406,11 +406,22 @@ public interface HubClient
     List<String> getSharedUsers( String fileId );
 
     /**
+     * Returns user quota on Kurjun
+     *
+     * @return {@link KurjunQuota}
+     */
+    KurjunQuota getKurjunQuota();
+
+    User getCurrentUser();
+
+    /**
      * Returns a currently active Kurjun token. The same token will be returned during {@link
      * io.subutai.client.api.HubClient#KURJUN_TOKEN_TTL_MIN } for the same instance of the client. If no token is
      * obtained yet or the current token is expired , a new token is attempted to be obtained. The client must be
-     * instantiated using factory method {@link io.subutai.client.impl.HubClients#getClient(String pgpKeyFilePath, *
-     * String pgpKeyPassword) } in order to be able to obtain a token from Kurjun.
+     * instantiated using factory method
+     *
+     * {@link io.subutai.client.impl.HubClients#getClient(String pgpKeyFilePath, String pgpKeyPassword) } in order to be
+     * able to obtain a token from Kurjun.
      */
     String getKurjunToken();
 }
