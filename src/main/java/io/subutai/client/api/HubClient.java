@@ -412,6 +412,11 @@ public interface HubClient
      */
     KurjunQuota getKurjunQuota();
 
+    /**
+     * Returns current user
+     *
+     * @return {@link User}
+     */
     User getCurrentUser();
 
     /**
