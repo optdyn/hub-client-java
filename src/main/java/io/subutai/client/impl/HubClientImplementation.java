@@ -61,6 +61,7 @@ import io.subutai.client.api.EnvironmentModificationRequest;
 import io.subutai.client.api.EnvironmentRef;
 import io.subutai.client.api.FriendsInfo;
 import io.subutai.client.api.HubClient;
+import io.subutai.client.api.KurjunQuota;
 import io.subutai.client.api.OperationFailedException;
 import io.subutai.client.api.Organization;
 import io.subutai.client.api.Peer;
@@ -71,6 +72,7 @@ import io.subutai.client.api.User;
 import io.subutai.client.pgp.Signer;
 
 
+//TODO login method should return current user to avoid second request
 public class HubClientImplementation implements HubClient
 {
     private static final Logger LOG = LoggerFactory.getLogger( HubClientImplementation.class );
@@ -91,6 +93,7 @@ public class HubClientImplementation implements HubClient
     private PGPSecretKey secretKey;
     private long kurjunTokenSetTime;
     private String kurjunToken = "";
+    User currentUser;
 
 
     HubClientImplementation( HubEnv hubEnv )
@@ -135,6 +138,8 @@ public class HubClientImplementation implements HubClient
             response = execute( request );
 
             checkHttpStatus( response, HttpStatus.SC_OK, "login" );
+
+            currentUser = findUserByEmail( username );
         }
         finally
         {
@@ -1374,6 +1379,13 @@ public class HubClientImplementation implements HubClient
         return kurjunClient.getSharedUsers( fileId, getKurjunToken() );
     }
 
+
+    @Override
+    public KurjunQuota getKurjunQuota()
+    {
+        return kurjunClient.getQuota( currentUser.getFingerprint(), getKurjunToken() );
+    }
+
     // <<<<< KURJUN
 
     //**************
@@ -1464,6 +1476,12 @@ public class HubClientImplementation implements HubClient
 
             return kurjunToken;
         }
+    }
+
+
+    public User getCurrentUser()
+    {
+        return currentUser;
     }
 
 

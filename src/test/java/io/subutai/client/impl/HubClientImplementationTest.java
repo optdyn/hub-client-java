@@ -32,6 +32,7 @@ import io.subutai.client.api.EnvironmentCreationRequest;
 import io.subutai.client.api.EnvironmentModificationRequest;
 import io.subutai.client.api.FriendsInfo;
 import io.subutai.client.api.HubClient;
+import io.subutai.client.api.KurjunQuota;
 import io.subutai.client.api.Organization;
 import io.subutai.client.api.Peer;
 import io.subutai.client.api.RawFile;
@@ -46,6 +47,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -74,7 +76,14 @@ public class HubClientImplementationTest
     private static final long USER_ID = 164;
     private static final String NEW_PEER_NAME = "New Peer-Name";
     private static final String DOMAIN = "domain";
-    private static final String FILE_ID = "9d2bb08feae8b56ac1ef8833ede1f8c3";
+    private static final String FILE_ID = "cc20591b-9ef9-4c11-8cc7-9544c96ce9c1";
+    private static final String PGP_KEY_FILE = "C:\\Users\\saltanat\\Downloads\\test.d_all.asc";
+    private static final String DOWNLOAD_FOLDER = "C:\\Users\\saltanat\\Desktop";
+    private static final String UPLOAD_FILE = "C:\\Users\\saltanat\\Desktop\\calculate-container-limit.txt";
+    private static final String FINGERPRINT = "fingerprint";
+    private static final String TOKEN = "token";
+    private static final String VERSION = "1.2.3";
+    private static final String TEMPLATE = "template";
 
     private HubClientImplementation hubClient;
 
@@ -92,6 +101,8 @@ public class HubClientImplementationTest
     private EnvironmentModificationRequestImpl modifyEnvironmentRequest;
     @Mock
     private KurjunClient kurjunClient;
+    @Mock
+    private UserImpl currentUser;
 
 
     @Before
@@ -101,6 +112,9 @@ public class HubClientImplementationTest
         doReturn( response ).when( hubClient ).execute( any( HttpRequestBase.class ) );
         returnHttpCode( HttpStatus.SC_OK );
         hubClient.kurjunClient = kurjunClient;
+        hubClient.currentUser = currentUser;
+        doReturn( FINGERPRINT ).when( currentUser ).getFingerprint();
+        doReturn( TOKEN ).when( hubClient ).getKurjunToken();
     }
 
 
@@ -115,9 +129,11 @@ public class HubClientImplementationTest
     @Test
     public void testLogin() throws Exception
     {
+        doReturn( currentUser ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
+
         hubClient.login( EMAIL, PASSWORD );
 
-        verify( hubClient ).execute( any( HttpRequestBase.class ) );
+        verify( hubClient, atLeastOnce() ).execute( any( HttpRequestBase.class ) );
     }
 
 
@@ -281,7 +297,7 @@ public class HubClientImplementationTest
     {
         hubClient.getTemplates();
 
-        verify( kurjunClient ).getTemplates( "" );
+        verify( kurjunClient ).getTemplates( TOKEN );
     }
 
 
@@ -290,7 +306,7 @@ public class HubClientImplementationTest
     {
         hubClient.getRawFiles();
 
-        verify( kurjunClient ).getRawFiles( "" );
+        verify( kurjunClient ).getRawFiles( TOKEN );
     }
 
 
@@ -300,11 +316,11 @@ public class HubClientImplementationTest
         returnHttpCode( HttpStatus.SC_ACCEPTED );
 
         doReturn( Lists.newArrayList( template ) ).when( hubClient ).getTemplates();
-        doReturn( "template" ).when( hubClient ).getTemplateNameById( anyList(), anyString() );
+        doReturn( TEMPLATE ).when( hubClient ).getTemplateNameById( anyList(), anyString() );
         EnvironmentCreationRequestImpl.Node node = mock( EnvironmentCreationRequestImpl.Node.class );
         doReturn( Lists.newArrayList( node ) ).when( createEnvironmentRequest ).getNodes();
         doReturn( "" ).when( hubClient ).toJson( createEnvironmentRequest );
-        doReturn( "template" ).when( node ).getTemplateName();
+        doReturn( TEMPLATE ).when( node ).getTemplateName();
         EnvironmentRefImpl user = mock( EnvironmentRefImpl.class );
         doReturn( user ).when( hubClient ).parse( eq( response ), any( TypeToken.class ) );
 
@@ -319,11 +335,11 @@ public class HubClientImplementationTest
     {
         returnHttpCode( HttpStatus.SC_ACCEPTED );
         doReturn( Lists.newArrayList( template ) ).when( hubClient ).getTemplates();
-        doReturn( "template" ).when( hubClient ).getTemplateNameById( anyList(), anyString() );
+        doReturn( TEMPLATE ).when( hubClient ).getTemplateNameById( anyList(), anyString() );
         EnvironmentCreationRequestImpl.Node createNode = mock( EnvironmentCreationRequestImpl.Node.class );
         doReturn( Lists.newArrayList( createNode ) ).when( modifyEnvironmentRequest ).getNodesToAdd();
         doReturn( "" ).when( hubClient ).toJson( modifyEnvironmentRequest );
-        doReturn( "template" ).when( createNode ).getTemplateName();
+        doReturn( TEMPLATE ).when( createNode ).getTemplateName();
         EnvironmentModificationRequestImpl.Node destroyNodeDto = mock( EnvironmentModificationRequestImpl.Node.class );
         doReturn( Lists.newArrayList( destroyNodeDto ) ).when( modifyEnvironmentRequest ).getNodesToRemove();
 
@@ -600,9 +616,9 @@ public class HubClientImplementationTest
     {
         File rawFile = File.createTempFile( "raw-file", ".bin" );
 
-        hubClient.uploadFile( rawFile.getPath(), "version" );
+        hubClient.uploadFile( rawFile.getPath(), VERSION );
 
-        verify( kurjunClient ).uploadFile( rawFile.getPath(), "version", "" );
+        verify( kurjunClient ).uploadFile( rawFile.getPath(), VERSION, TOKEN );
 
         rawFile.delete();
     }
@@ -611,45 +627,54 @@ public class HubClientImplementationTest
     @Test
     public void testDownloadFile() throws Exception
     {
-        hubClient.downloadFile( "id", "output" );
+        hubClient.downloadFile( FILE_ID, DOWNLOAD_FOLDER );
 
-        verify( kurjunClient ).downloadFile( "id", "output", "" );
+        verify( kurjunClient ).downloadFile( FILE_ID, DOWNLOAD_FOLDER, TOKEN );
     }
 
 
     @Test
     public void testShareFile() throws Exception
     {
-        hubClient.shareFile( "id", "user" );
+        hubClient.shareFile( FILE_ID, FINGERPRINT );
 
-        verify( kurjunClient ).shareFile( "id", "user", "" );
+        verify( kurjunClient ).shareFile( FILE_ID, FINGERPRINT, TOKEN );
     }
 
 
     @Test
     public void testUnshareFile() throws Exception
     {
-        hubClient.unshareFile( "id", "user" );
+        hubClient.unshareFile( FILE_ID, FINGERPRINT );
 
-        verify( kurjunClient ).unshareFile( "id", "user", "" );
+        verify( kurjunClient ).unshareFile( FILE_ID, FINGERPRINT, TOKEN );
     }
 
 
     @Test
     public void testRemoveFile() throws Exception
     {
-        hubClient.removeFile( "id" );
+        hubClient.removeFile( FILE_ID );
 
-        verify( kurjunClient ).removeFile( "id", "" );
+        verify( kurjunClient ).removeFile( FILE_ID, TOKEN );
     }
 
 
     @Test
     public void testGetSharedUsers() throws Exception
     {
-        hubClient.getSharedUsers( "id" );
+        hubClient.getSharedUsers( FILE_ID );
 
-        verify( kurjunClient ).getSharedUsers( "id", "" );
+        verify( kurjunClient ).getSharedUsers( FILE_ID, TOKEN );
+    }
+
+
+    @Test
+    public void testGetKurjunQuota() throws Exception
+    {
+        hubClient.getKurjunQuota();
+
+        verify( kurjunClient ).getQuota( FINGERPRINT, TOKEN );
     }
 
 
@@ -1022,8 +1047,7 @@ public class HubClientImplementationTest
     @Ignore
     public void testRealGetTemplates() throws Exception
     {
-        hubClient = ( HubClientImplementation ) HubClients
-                .getClient( HubClient.HubEnv.PROD, "C:\\Users\\Dilshat\\Desktop\\test.d_all.asc", "" );
+        hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV, PGP_KEY_FILE, "" );
 
         List<Template> templates = hubClient.getTemplates();
 
@@ -1035,8 +1059,7 @@ public class HubClientImplementationTest
     @Ignore
     public void testRealGetRawFiles() throws Exception
     {
-        hubClient = ( HubClientImplementation ) HubClients
-                .getClient( HubClient.HubEnv.PROD, "C:\\Users\\Dilshat\\Desktop\\test.d_all.asc", "" );
+        hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV, PGP_KEY_FILE, "" );
 
         List<RawFile> rawFiles = hubClient.getRawFiles();
 
@@ -1048,10 +1071,9 @@ public class HubClientImplementationTest
     @Ignore
     public void testRealUploadFile() throws Exception
     {
-        hubClient = ( HubClientImplementation ) HubClients
-                .getClient( HubClient.HubEnv.PROD, "C:\\Users\\Dilshat\\Desktop\\test.d_all.asc", "" );
+        hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV, PGP_KEY_FILE, "" );
 
-        System.out.println( hubClient.uploadFile( "C:\\Users\\Dilshat\\Desktop\\test-file.txt", "1.2.3" ) );
+        System.out.println( hubClient.uploadFile( UPLOAD_FILE, VERSION ) );
     }
 
 
@@ -1059,10 +1081,9 @@ public class HubClientImplementationTest
     @Ignore
     public void testRealDownloadFile() throws Exception
     {
-        hubClient = ( HubClientImplementation ) HubClients
-                .getClient( HubClient.HubEnv.PROD, "C:\\Users\\saltanat\\Downloads\\test.d_all.asc", "" );
+        hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV, PGP_KEY_FILE, "" );
 
-        hubClient.downloadFile( FILE_ID, "C:\\Users\\saltanat\\Desktop" );
+        hubClient.downloadFile( FILE_ID, DOWNLOAD_FOLDER );
     }
 
 
@@ -1070,8 +1091,7 @@ public class HubClientImplementationTest
     @Ignore
     public void testRealRemoveFile() throws Exception
     {
-        hubClient = ( HubClientImplementation ) HubClients
-                .getClient( HubClient.HubEnv.PROD, "C:\\Users\\saltanat\\Downloads\\test.d_all.asc", "" );
+        hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV, PGP_KEY_FILE, "" );
 
         hubClient.removeFile( FILE_ID );
     }
@@ -1081,15 +1101,15 @@ public class HubClientImplementationTest
     @Ignore
     public void testRealShareFile() throws Exception
     {
-        hubClient = ( HubClientImplementation ) HubClients
-                .getClient( HubClient.HubEnv.PROD, "C:\\Users\\saltanat\\Downloads\\test.d_all.asc", "" );
+        hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV, PGP_KEY_FILE, "" );
 
         hubClient.login( EMAIL, PASSWORD );
 
-        //get user by username, get ourselves
-        User user = hubClient.findUserByEmail( EMAIL );
+        //get current user
+        User user = hubClient.getCurrentUser();
 
-        //share file with ourselves, effectively making it private
+        //share file with current user, effectively making it private
+
         hubClient.shareFile( FILE_ID, user.getFingerprint() );
     }
 
@@ -1098,8 +1118,7 @@ public class HubClientImplementationTest
     @Ignore
     public void testRealUnshareFile() throws Exception
     {
-        hubClient = ( HubClientImplementation ) HubClients
-                .getClient( HubClient.HubEnv.PROD, "C:\\Users\\saltanat\\Downloads\\test.d_all.asc", "" );
+        hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV, PGP_KEY_FILE, "" );
 
         hubClient.login( EMAIL, PASSWORD );
 
@@ -1115,12 +1134,25 @@ public class HubClientImplementationTest
     @Ignore
     public void testRealGetSharedUsers() throws Exception
     {
-        hubClient = ( HubClientImplementation ) HubClients
-                .getClient( HubClient.HubEnv.PROD, "C:\\Users\\saltanat\\Downloads\\test.d_all.asc", "" );
+        hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV, PGP_KEY_FILE, "" );
 
         List<String> users = hubClient.getSharedUsers( FILE_ID );
 
         System.out.println( users );
+    }
+
+
+    @Test
+    @Ignore
+    public void testRealGetKurjunQuota() throws Exception
+    {
+        hubClient = ( HubClientImplementation ) HubClients.getClient( HubClient.HubEnv.DEV, PGP_KEY_FILE, "" );
+
+        hubClient.login( EMAIL, PASSWORD );
+
+        KurjunQuota kurjunQuota = hubClient.getKurjunQuota();
+
+        System.out.println( kurjunQuota );
     }
 
 
