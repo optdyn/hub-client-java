@@ -61,6 +61,7 @@ import io.subutai.client.hub.api.EnvironmentModificationRequest;
 import io.subutai.client.hub.api.EnvironmentRef;
 import io.subutai.client.hub.api.FriendsInfo;
 import io.subutai.client.hub.api.HubClient;
+import io.subutai.client.hub.api.KurjunQuota;
 import io.subutai.client.hub.api.OperationFailedException;
 import io.subutai.client.hub.api.Organization;
 import io.subutai.client.hub.api.Peer;

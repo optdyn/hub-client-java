@@ -1,4 +1,4 @@
-package io.subutai.client.api;
+package io.subutai.client.hub.api;
 
 
 import com.google.gson.GsonBuilder;

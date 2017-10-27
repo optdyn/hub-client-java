@@ -37,10 +37,11 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import io.subutai.client.hub.api.HubClient;
+import io.subutai.client.hub.api.KurjunQuota;
 import io.subutai.client.hub.api.OperationFailedException;
 import io.subutai.client.hub.api.RawFile;
 import io.subutai.client.hub.api.Template;
-import io.subutai.client.api.KurjunQuota;
+
 
 //TODO add precondition checks for token where applicable
 class KurjunClient
