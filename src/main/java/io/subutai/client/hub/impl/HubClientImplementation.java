@@ -71,6 +71,7 @@ import io.subutai.client.hub.api.User;
 import io.subutai.client.hub.pgp.Signer;
 
 
+//TODO login method should return current user to avoid second request
 public class HubClientImplementation implements HubClient
 {
     private static final Logger LOG = LoggerFactory.getLogger( HubClientImplementation.class );
@@ -91,6 +92,7 @@ public class HubClientImplementation implements HubClient
     private PGPSecretKey secretKey;
     private long kurjunTokenSetTime;
     private String kurjunToken = "";
+    User currentUser;
 
 
     HubClientImplementation( HubEnv hubEnv )
@@ -135,6 +137,8 @@ public class HubClientImplementation implements HubClient
             response = execute( request );
 
             checkHttpStatus( response, HttpStatus.SC_OK, "login" );
+
+            currentUser = findUserByEmail( username );
         }
         finally
         {
@@ -1374,6 +1378,13 @@ public class HubClientImplementation implements HubClient
         return kurjunClient.getSharedUsers( fileId, getKurjunToken() );
     }
 
+
+    @Override
+    public KurjunQuota getKurjunQuota()
+    {
+        return kurjunClient.getQuota( currentUser.getFingerprint(), getKurjunToken() );
+    }
+
     // <<<<< KURJUN
 
     //**************
@@ -1464,6 +1475,12 @@ public class HubClientImplementation implements HubClient
 
             return kurjunToken;
         }
+    }
+
+
+    public User getCurrentUser()
+    {
+        return currentUser;
     }
 
 

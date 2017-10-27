@@ -40,8 +40,9 @@ import io.subutai.client.hub.api.HubClient;
 import io.subutai.client.hub.api.OperationFailedException;
 import io.subutai.client.hub.api.RawFile;
 import io.subutai.client.hub.api.Template;
+import io.subutai.client.api.KurjunQuota;
 
-
+//TODO add precondition checks for token where applicable
 class KurjunClient
 {
     private static final String UTF8 = "UTF-8";
@@ -175,7 +176,7 @@ class KurjunClient
 
     void downloadFile( final String fileId, final String outputDirectory, final String token )
     {
-        try ( CloseableHttpClient client = HttpClients.createDefault(); )
+        try ( CloseableHttpClient client = HttpClients.createDefault() )
         {
             HttpGet httpGet = new HttpGet( String.format( "%s/raw/download?id=%s&token=%s", getKurjunBaseUrl(),
                     URLEncoder.encode( fileId, UTF8 ), token ) );
@@ -210,13 +211,13 @@ class KurjunClient
     }
 
 
-    void removeFile( final String fileId, final String kurjunToken )
+    void removeFile( final String fileId, final String token )
     {
         CloseableHttpClient client = HttpClients.createDefault();
         try
         {
             String url = String.format( "%s/raw/delete?id=%s&token=%s", getKurjunBaseUrl(),
-                    URLEncoder.encode( fileId, UTF8 ), kurjunToken );
+                    URLEncoder.encode( fileId, UTF8 ), token );
 
             HttpDelete httpDelete = new HttpDelete( url );
 
@@ -314,6 +315,33 @@ class KurjunClient
         }
 
         return users;
+    }
+
+
+    KurjunQuota getQuota( final String userFingerprint, final String token )
+    {
+        KurjunQuota quota;
+
+        HttpGet httpGet = new HttpGet( String.format( "%s/quota?user=%s&token=%s", getKurjunBaseUrl(), userFingerprint,
+                StringUtil.isBlank( token ) ? "" : token ) );
+
+        CloseableHttpClient client = HttpClients.createDefault();
+        try
+        {
+            CloseableHttpResponse response = execute( client, httpGet );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "get quota" );
+
+            quota = parse( response, new TypeToken<KurjunQuota>()
+            {
+            } );
+        }
+        finally
+        {
+            IOUtils.closeQuietly( client );
+        }
+
+        return quota;
     }
 
 
