@@ -1,0 +1,33 @@
+package io.subutai.client.hub.impl;
+
+
+import com.google.gson.GsonBuilder;
+
+import io.subutai.client.hub.api.RhNetData;
+
+
+public class RhNetDataImpl implements RhNetData
+{
+    private double netIn;
+
+    private double netOut;
+
+
+    public double getNetIn()
+    {
+        return netIn;
+    }
+
+
+    public double getNetOut()
+    {
+        return netOut;
+    }
+
+
+    @Override
+    public String toString()
+    {
+        return new GsonBuilder().setPrettyPrinting().create().toJson( this );
+    }
+}
