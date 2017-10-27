@@ -4,6 +4,8 @@ package io.subutai.client.hub.api;
 import java.util.List;
 import java.util.Map;
 
+import io.subutai.client.api.BlueprintDto;
+
 
 /**
  * Hub client. Provides Hub functionality, e.g. environment creation and management API. All methods can throw unchecked
@@ -124,6 +126,8 @@ public interface HubClient
      * @param contId container id
      */
     void destroyContainer( String envId, String contId );
+
+    void createEnvironmentFromBlueprint( BlueprintDto blueprintDto );
 
     /**
      * Destroys environment
