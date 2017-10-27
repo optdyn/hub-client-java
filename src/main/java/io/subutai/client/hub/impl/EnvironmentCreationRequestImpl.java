@@ -6,8 +6,8 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
+import io.subutai.client.hub.api.Container.ContainerSize;
 import io.subutai.client.hub.api.EnvironmentCreationRequest;
-import io.subutai.client.hub.api.Container;
 
 
 public class EnvironmentCreationRequestImpl implements EnvironmentCreationRequest
@@ -30,7 +30,7 @@ public class EnvironmentCreationRequestImpl implements EnvironmentCreationReques
     }
 
 
-    public void addNode( final String hostname, final String templateId, final Container.ContainerSize containerSize,
+    public void addNode( final String hostname, final String templateId, final ContainerSize containerSize,
                          final String peerId, final String resourceHostId )
     {
         this.nodes.add( new Node( hostname, templateId, containerSize, peerId, resourceHostId ) );
@@ -45,10 +45,10 @@ public class EnvironmentCreationRequestImpl implements EnvironmentCreationReques
 
     static class ContainerQuota
     {
-        private final Container.ContainerSize containerSize;
+        private final ContainerSize containerSize;
 
 
-        ContainerQuota( final Container.ContainerSize containerSize )
+        ContainerQuota( final ContainerSize containerSize )
         {
             Preconditions.checkNotNull( containerSize );
 
@@ -72,7 +72,7 @@ public class EnvironmentCreationRequestImpl implements EnvironmentCreationReques
         private final String resourceHostId;
 
 
-        Node( final String hostname, final String templateId, final Container.ContainerSize containerSize, final String peerId,
+        Node( final String hostname, final String templateId, final ContainerSize containerSize, final String peerId,
               final String resourceHostId )
         {
             Preconditions.checkArgument( !StringUtil.isBlank( hostname ) );
