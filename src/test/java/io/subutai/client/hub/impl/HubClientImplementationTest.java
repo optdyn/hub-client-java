@@ -53,7 +53,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
-
+//TODO move all "real" tests into integration test class in a separate directory on the same level with src/test
 @RunWith( MockitoJUnitRunner.class )
 public class HubClientImplementationTest
 {

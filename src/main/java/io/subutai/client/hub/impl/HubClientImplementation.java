@@ -73,6 +73,7 @@ import io.subutai.client.hub.pgp.Signer;
 
 
 //TODO login method should return current user to avoid second request
+//TODO rename HubClient to Client (also HubClients, HubClientImplementation)
 public class HubClientImplementation implements HubClient
 {
     private static final Logger LOG = LoggerFactory.getLogger( HubClientImplementation.class );
