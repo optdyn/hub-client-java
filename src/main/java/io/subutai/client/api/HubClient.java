@@ -342,6 +342,13 @@ public interface HubClient
      */
     void createEnvironmentFromBlueprint( String blueprint );
 
+    /**
+     * Allows to create environment from blueprint json with additional parameters
+     *
+     * @param blueprintDto blueprint DTO
+     */
+    void createEnvironmentFromBlueprint( BlueprintDto blueprintDto );
+
     //*********** KURJUN API ***************************
 
     /**

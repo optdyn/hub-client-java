@@ -45,6 +45,8 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -53,6 +55,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import io.subutai.client.api.BlueprintDto;
 import io.subutai.client.api.Domain;
 import io.subutai.client.api.DomainAssignment;
 import io.subutai.client.api.Environment;
@@ -90,6 +93,7 @@ public class HubClientImplementation implements HubClient
     private String pgpKeyPassword;
     private PGPSecretKey secretKey;
     private long kurjunTokenSetTime;
+    private ObjectMapper objectMapper = new ObjectMapper(  );
     private String kurjunToken = "";
 
 
@@ -160,8 +164,7 @@ public class HubClientImplementation implements HubClient
             checkHttpStatus( response, HttpStatus.SC_OK, "list environments" );
 
             List<EnvironmentImpl> envList = parse( response, new TypeToken<List<EnvironmentImpl>>()
-            {
-            } );
+            {} );
 
             environments.addAll( envList );
         }
@@ -189,8 +192,7 @@ public class HubClientImplementation implements HubClient
             checkHttpStatus( response, HttpStatus.SC_OK, LIST_PEERS );
 
             List<PeerImpl> peerList = parse( response, new TypeToken<List<PeerImpl>>()
-            {
-            } );
+            {} );
 
             peers.addAll( peerList );
         }
@@ -219,8 +221,7 @@ public class HubClientImplementation implements HubClient
             checkHttpStatus( response, HttpStatus.SC_OK, LIST_PEERS );
 
             List<PeerImpl> peerList = parse( response, new TypeToken<List<PeerImpl>>()
-            {
-            } );
+            {} );
 
             peers.addAll( peerList );
         }
@@ -249,8 +250,7 @@ public class HubClientImplementation implements HubClient
             checkHttpStatus( response, HttpStatus.SC_OK, LIST_PEERS );
 
             List<PeerImpl> peerList = parse( response, new TypeToken<List<PeerImpl>>()
-            {
-            } );
+            {} );
 
             peers.addAll( peerList );
         }
@@ -279,8 +279,7 @@ public class HubClientImplementation implements HubClient
             checkHttpStatus( response, HttpStatus.SC_OK, LIST_PEERS );
 
             List<PeerImpl> peerList = parse( response, new TypeToken<List<PeerImpl>>()
-            {
-            } );
+            {} );
 
             peers.addAll( peerList );
         }
@@ -309,8 +308,7 @@ public class HubClientImplementation implements HubClient
             checkHttpStatus( response, HttpStatus.SC_OK, LIST_PEERS );
 
             List<PeerImpl> peerList = parse( response, new TypeToken<List<PeerImpl>>()
-            {
-            } );
+            {} );
 
             peers.addAll( peerList );
         }
@@ -490,8 +488,7 @@ public class HubClientImplementation implements HubClient
             checkHttpStatus( response, HttpStatus.SC_OK, "Get ssh keys" );
 
             sshKeys.addAll( parse( response, new TypeToken<List<SshKeyImpl>>()
-            {
-            } ) );
+            {} ) );
         }
         finally
         {
@@ -669,8 +666,7 @@ public class HubClientImplementation implements HubClient
             checkHttpStatus( response, HttpStatus.SC_ACCEPTED, "create environment" );
 
             environmentRef = parse( response, new TypeToken<EnvironmentRefImpl>()
-            {
-            } );
+            {} );
         }
         finally
         {
@@ -761,6 +757,36 @@ public class HubClientImplementation implements HubClient
     }
 
 
+    @Override
+    public void createEnvironmentFromBlueprint( final BlueprintDto blueprintDto )
+    {
+        HttpPost request = new HttpPost(
+                String.format( "https://%s.subut.ai/rest/v1/client/environments/wizard", hubEnv.getUrlPrefix() ) );
+
+        CloseableHttpResponse response = null;
+        try
+        {
+            String json = objectMapper.writeValueAsString( blueprintDto );
+            request.setEntity( new StringEntity( json, ContentType.APPLICATION_JSON ) );
+            request.addHeader( KURJUN_TOKEN_HEADER, getKurjunToken() );
+
+            response = execute( request );
+
+            checkHttpStatus( response, HttpStatus.SC_ACCEPTED, "create environment from blueprint" );
+
+            System.out.println( readContent( response ) );
+        }
+        catch ( JsonProcessingException e )
+        {
+            throw new IllegalArgumentException( "Invalid blueprint: " + e.getMessage() );
+        }
+        finally
+        {
+            close( response );
+        }
+    }
+
+
     public void destroyEnvironment( final String envId )
     {
         Preconditions.checkArgument( !StringUtil.isBlank( envId ) );
@@ -796,8 +822,7 @@ public class HubClientImplementation implements HubClient
             checkHttpStatus( response, HttpStatus.SC_OK, "get balance" );
 
             result = parse( response, new TypeToken<ResultDto>()
-            {
-            } );
+            {} );
         }
         finally
         {
@@ -825,8 +850,7 @@ public class HubClientImplementation implements HubClient
             checkHttpStatus( response, HttpStatus.SC_OK, "get user" );
 
             user = parse( response, new TypeToken<UserImpl>()
-            {
-            } );
+            {} );
         }
         finally
         {
@@ -855,8 +879,7 @@ public class HubClientImplementation implements HubClient
             checkHttpStatus( response, HttpStatus.SC_OK, SEARCH_USER_INFO );
 
             user = parse( response, new TypeToken<UserImpl>()
-            {
-            } );
+            {} );
         }
         catch ( UnsupportedEncodingException e )
         {
@@ -891,8 +914,7 @@ public class HubClientImplementation implements HubClient
             checkHttpStatus( response, HttpStatus.SC_OK, SEARCH_USER_INFO );
 
             user = parse( response, new TypeToken<UserImpl>()
-            {
-            } );
+            {} );
         }
         catch ( UnsupportedEncodingException e )
         {
@@ -927,8 +949,7 @@ public class HubClientImplementation implements HubClient
             checkHttpStatus( response, HttpStatus.SC_OK, "get user peers" );
 
             List<PeerImpl> peerList = parse( response, new TypeToken<List<PeerImpl>>()
-            {
-            } );
+            {} );
 
             peers.addAll( peerList );
         }
@@ -959,8 +980,7 @@ public class HubClientImplementation implements HubClient
             checkHttpStatus( response, HttpStatus.SC_OK, "get peer users" );
 
             List<UserImpl> userList = parse( response, new TypeToken<List<UserImpl>>()
-            {
-            } );
+            {} );
 
             users.addAll( userList );
         }
@@ -992,8 +1012,7 @@ public class HubClientImplementation implements HubClient
             checkHttpStatus( response, HttpStatus.SC_OK, GET_USER_ORGANIZATIONS );
 
             List<OrganizationImpl> organizationList = parse( response, new TypeToken<List<OrganizationImpl>>()
-            {
-            } );
+            {} );
 
             organizations.addAll( organizationList );
         }
@@ -1023,8 +1042,7 @@ public class HubClientImplementation implements HubClient
             checkHttpStatus( response, HttpStatus.SC_OK, GET_USER_ORGANIZATIONS );
 
             List<OrganizationImpl> organizationList = parse( response, new TypeToken<List<OrganizationImpl>>()
-            {
-            } );
+            {} );
 
             organizations.addAll( organizationList );
         }
@@ -1056,8 +1074,7 @@ public class HubClientImplementation implements HubClient
             checkHttpStatus( response, HttpStatus.SC_OK, "list domains" );
 
             List<DomainImpl> domainList = parse( response, new TypeToken<List<DomainImpl>>()
-            {
-            } );
+            {} );
 
             domains.addAll( domainList );
         }
@@ -1145,8 +1162,7 @@ public class HubClientImplementation implements HubClient
 
             Map<String, List<DomainAssignmentImpl>> assignmentsList =
                     parse( response, new TypeToken<Map<String, List<DomainAssignmentImpl>>>()
-                    {
-                    } );
+                    {} );
 
             assignmentsList.forEach( ( k, v ) -> assignments.put( k, Lists.newArrayList( v ) ) );
         }
@@ -1178,8 +1194,7 @@ public class HubClientImplementation implements HubClient
             checkHttpStatus( response, HttpStatus.SC_OK, "get friends info" );
 
             friendsInfo = parse( response, new TypeToken<FriendsInfoImpl>()
-            {
-            } );
+            {} );
         }
         finally
         {
