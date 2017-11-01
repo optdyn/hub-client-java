@@ -54,6 +54,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 
+//TODO move all "real" test into integration tests class
 @RunWith( MockitoJUnitRunner.class )
 public class HubClientImplementationTest
 {
