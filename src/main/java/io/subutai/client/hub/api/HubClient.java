@@ -4,8 +4,6 @@ package io.subutai.client.hub.api;
 import java.util.List;
 import java.util.Map;
 
-import io.subutai.client.api.BlueprintDto;
-
 
 /**
  * Hub client. Provides Hub functionality, e.g. environment creation and management API. All methods can throw unchecked
@@ -127,7 +125,6 @@ public interface HubClient
      */
     void destroyContainer( String envId, String contId );
 
-    void createEnvironmentFromBlueprint( BlueprintDto blueprintDto );
 
     /**
      * Destroys environment
@@ -340,18 +337,13 @@ public interface HubClient
 
 
     /**
-     * Allows to create environment from blueprint json
-     *
-     * @param blueprint blueprint json
-     */
-    void createEnvironmentFromBlueprint( String blueprint );
-
-    /**
      * Allows to create environment from blueprint json with additional parameters
      *
-     * @param blueprintDto blueprint DTO
+     * @param blueprint blueprint content
+     * @param blueprintVariables map of substitution variables in case there is any, where a key is the name and a value
+     * is the value of a variable, can be null if not variables are passed
      */
-    void createEnvironmentFromBlueprint( BlueprintDto blueprintDto );
+    void createEnvironmentFromBlueprint( String blueprint, Map<String, String> blueprintVariables );
 
     //*********** KURJUN API ***************************
 
