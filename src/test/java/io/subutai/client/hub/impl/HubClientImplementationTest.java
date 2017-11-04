@@ -605,7 +605,7 @@ public class HubClientImplementationTest
     {
         returnHttpCode( HttpStatus.SC_ACCEPTED );
 
-        hubClient.createEnvironmentFromBlueprint( "blueprint" );
+        hubClient.createEnvironmentFromBlueprint( "blueprint", null );
 
         verify( hubClient ).execute( any( HttpRequestBase.class ) );
     }
@@ -1199,7 +1199,7 @@ public class HubClientImplementationTest
                         + "      },\n" + "      \"zonePreferences\": {},\n" + "      \"proximityPreferences\": {}\n"
                         + "    }\n" + "  ]\n" + "}";
 
-        hubClient.createEnvironmentFromBlueprint( blueprint );
+        hubClient.createEnvironmentFromBlueprint( blueprint, null );
     }
 
 

@@ -11,6 +11,7 @@ import org.bouncycastle.openpgp.PGPSecretKeyRing;
 import org.bouncycastle.openpgp.PGPSecretKeyRingCollection;
 import org.bouncycastle.openpgp.PGPUtil;
 import org.bouncycastle.openpgp.operator.jcajce.JcaKeyFingerprintCalculator;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import org.apache.commons.io.IOUtils;
@@ -18,6 +19,7 @@ import org.apache.commons.io.IOUtils;
 import static junit.framework.Assert.assertEquals;
 
 
+@Ignore
 public class SignerTest
 {
 

@@ -143,6 +143,7 @@ class KurjunClient
     }
 
 
+    //TODO we need to sign the file id and post it to "auth/sign" endpoint as a last step
     String uploadFile( final String filename, final String version, final String token )
     {
         HttpPost post = new HttpPost( String.format( "%s/raw/upload", getKurjunBaseUrl() ) );

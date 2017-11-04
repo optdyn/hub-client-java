@@ -125,6 +125,7 @@ public interface HubClient
      */
     void destroyContainer( String envId, String contId );
 
+
     /**
      * Destroys environment
      *
@@ -336,11 +337,13 @@ public interface HubClient
 
 
     /**
-     * Allows to create environment from blueprint json
+     * Allows to create environment from blueprint json with additional parameters
      *
-     * @param blueprint blueprint json
+     * @param blueprint blueprint content
+     * @param blueprintVariables map of substitution variables in case there is any, where a key is the name and a value
+     * is the value of a variable, can be null if not variables are passed
      */
-    void createEnvironmentFromBlueprint( String blueprint );
+    void createEnvironmentFromBlueprint( String blueprint, Map<String, String> blueprintVariables );
 
     //*********** KURJUN API ***************************
 

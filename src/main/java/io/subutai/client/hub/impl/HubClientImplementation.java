@@ -742,22 +742,24 @@ public class HubClientImplementation implements HubClient
 
 
     @Override
-    public void createEnvironmentFromBlueprint( final String blueprint )
+    public void createEnvironmentFromBlueprint( final String blueprint, final Map<String, String> blueprintVariables )
     {
-        HttpPost request = new HttpPost(
-                String.format( "https://%s.subut.ai/rest/v1/client/environments/blueprint", hubEnv.getUrlPrefix() ) );
+        Preconditions.checkArgument( !StringUtil.isBlank( blueprint ) );
 
-        request.setEntity( new StringEntity( blueprint, ContentType.APPLICATION_JSON ) );
-        request.addHeader( KURJUN_TOKEN_HEADER, getKurjunToken() );
+        HttpPost request = new HttpPost(
+                String.format( "https://%s.subut.ai/rest/v1/client/environments/wizard", hubEnv.getUrlPrefix() ) );
 
         CloseableHttpResponse response = null;
         try
         {
+            String json = toJson( new BlueprintDto( blueprint,
+                    blueprintVariables == null ? Maps.newHashMap() : blueprintVariables ) );
+            request.setEntity( new StringEntity( json, ContentType.APPLICATION_JSON ) );
+            request.addHeader( KURJUN_TOKEN_HEADER, getKurjunToken() );
+
             response = execute( request );
 
             checkHttpStatus( response, HttpStatus.SC_ACCEPTED, "create environment from blueprint" );
-
-            System.out.println( readContent( response ) );
         }
         finally
         {
