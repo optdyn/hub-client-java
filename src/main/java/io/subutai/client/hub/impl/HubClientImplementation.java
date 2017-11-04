@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 
 import org.bouncycastle.openpgp.PGPException;
@@ -73,6 +72,7 @@ import io.subutai.client.hub.pgp.Signer;
 
 
 //TODO login method should return current user to avoid second request
+//TODO rename HubClient to Client (also HubClients, HubClientImplementation)
 public class HubClientImplementation implements HubClient
 {
     private static final Logger LOG = LoggerFactory.getLogger( HubClientImplementation.class );
@@ -1397,7 +1397,7 @@ public class HubClientImplementation implements HubClient
     {
         String theKeys = Files.toString( new File( pgpKeyFilePath ), Charset.forName( UTF8 ) );
 
-        InputStream secretKeyStream = new ByteArrayInputStream( getPrivateKeyBlock( theKeys ).getBytes( UTF8 ) );
+        InputStream secretKeyStream = new ByteArrayInputStream( Signer.getKeyBlock( theKeys, true ).getBytes( UTF8 ) );
 
         PGPSecretKeyRingCollection secretKeyRingCollection =
                 new PGPSecretKeyRingCollection( PGPUtil.getDecoderStream( secretKeyStream ),
@@ -1407,37 +1407,6 @@ public class HubClientImplementation implements HubClient
                 .getSecretKeyRing( secretKeyRingCollection.iterator().next().getPublicKey().getKeyID() );
 
         secretKey = secretKeyRing.getSecretKey();
-    }
-
-
-    private String getPrivateKeyBlock( String keys )
-    {
-        StringTokenizer lineSplitter = new StringTokenizer( keys, "\n" );
-
-        StringBuilder keyBuffer = new StringBuilder();
-        boolean append = false;
-
-        while ( lineSplitter.hasMoreTokens() )
-        {
-            String nextLine = lineSplitter.nextToken();
-
-            if ( nextLine.contains( String.format( "-----BEGIN PGP %s KEY BLOCK-----", "PRIVATE" ) ) )
-            {
-                append = true;
-            }
-
-            if ( append )
-            {
-                keyBuffer.append( nextLine );
-            }
-
-            if ( nextLine.contains( String.format( "-----END PGP %s KEY BLOCK-----", "PRIVATE" ) ) )
-            {
-                break;
-            }
-        }
-
-        return keyBuffer.toString();
     }
 
 
