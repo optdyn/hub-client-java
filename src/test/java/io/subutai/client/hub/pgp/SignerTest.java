@@ -3,7 +3,6 @@ package io.subutai.client.hub.pgp;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.StringTokenizer;
 
 import org.bouncycastle.openpgp.PGPPublicKeyRing;
 import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
@@ -36,7 +35,7 @@ public class SignerTest
     {
         String theKeys = IOUtils.toString( getKeyFileAsStream(), UTF8 );
 
-        InputStream secretKeyStream = new ByteArrayInputStream( getKeyBlock( theKeys, true ).getBytes( UTF8 ) );
+        InputStream secretKeyStream = new ByteArrayInputStream( Signer.getKeyBlock( theKeys, true ).getBytes( UTF8 ) );
 
         PGPSecretKeyRingCollection secretKeyRingCollection =
                 new PGPSecretKeyRingCollection( PGPUtil.getDecoderStream( secretKeyStream ),
@@ -56,7 +55,7 @@ public class SignerTest
 
         System.out.println( signedMessage );
 
-        InputStream publicKeyStream = new ByteArrayInputStream( getKeyBlock( theKeys, false ).getBytes( UTF8 ) );
+        InputStream publicKeyStream = new ByteArrayInputStream( Signer.getKeyBlock( theKeys, false ).getBytes( UTF8 ) );
 
         PGPPublicKeyRingCollection publicKeyRingCollection =
                 new PGPPublicKeyRingCollection( PGPUtil.getDecoderStream( publicKeyStream ),
@@ -77,38 +76,5 @@ public class SignerTest
         }
 
         assertEquals( true, result );
-    }
-
-
-    private String getKeyBlock( String keys, boolean privateBlock )
-    {
-        StringTokenizer lineSplitter = new StringTokenizer( keys, "\n" );
-
-        StringBuilder keyBuffer = new StringBuilder();
-        boolean append = false;
-
-        while ( lineSplitter.hasMoreTokens() )
-        {
-            String nextLine = lineSplitter.nextToken();
-
-            if ( nextLine.contains(
-                    String.format( "-----BEGIN PGP %s KEY BLOCK-----", privateBlock ? "PRIVATE" : "PUBLIC" ) ) )
-            {
-                append = true;
-            }
-
-            if ( append )
-            {
-                keyBuffer.append( nextLine );
-            }
-
-            if ( nextLine.contains(
-                    String.format( "-----END PGP %s KEY BLOCK-----", privateBlock ? "PRIVATE" : "PUBLIC" ) ) )
-            {
-                break;
-            }
-        }
-
-        return keyBuffer.toString();
     }
 }

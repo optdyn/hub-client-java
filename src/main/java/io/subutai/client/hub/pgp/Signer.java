@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.security.Security;
 import java.security.SignatureException;
 import java.util.Iterator;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.bouncycastle.bcpg.ArmoredInputStream;
 import org.bouncycastle.bcpg.ArmoredOutputStream;
@@ -30,6 +31,8 @@ import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentVerifierBuilderProv
 import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyDecryptorBuilder;
 
 import org.apache.commons.codec.binary.Hex;
+
+import com.google.common.base.Splitter;
 
 
 public class Signer
@@ -205,6 +208,41 @@ public class Signer
         aOut.close();
 
         return out.toByteArray();
+    }
+
+
+    /**
+     * Extract public or private key block from armored key exported from E2E plugin
+     *
+     * @param keys exported key
+     * @param privateBlock true will return private block, else public
+     */
+    public static String getKeyBlock( String keys, boolean privateBlock )
+    {
+        Iterable<String> parts = Splitter.on( '\n' ).split( keys );
+        StringBuilder keyBuffer = new StringBuilder();
+        AtomicBoolean append = new AtomicBoolean( false );
+
+        parts.forEach( s ->
+        {
+            if ( s.contains(
+                    String.format( "-----BEGIN PGP %s KEY BLOCK-----", privateBlock ? "PRIVATE" : "PUBLIC" ) ) )
+            {
+                append.set( true );
+            }
+
+            if ( append.get() )
+            {
+                keyBuffer.append( s ).append( "\r" );
+            }
+
+            if ( s.contains( String.format( "-----END PGP %s KEY BLOCK-----", privateBlock ? "PRIVATE" : "PUBLIC" ) ) )
+            {
+                append.set( false );
+            }
+        } );
+
+        return keyBuffer.toString();
     }
 
 
