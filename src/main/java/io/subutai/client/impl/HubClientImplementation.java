@@ -1341,7 +1341,25 @@ public class HubClientImplementation implements HubClient
 
     public String uploadFile( String filename, String version )
     {
-        return kurjunClient.uploadFile( filename, version, getKurjunToken() );
+        String fileId = kurjunClient.uploadFile( filename, version, getKurjunToken() );
+
+        if ( secretKey != null )
+        {
+            try
+            {
+                byte[] signedAuthId =
+                        Signer.clearSign( ( fileId.trim() + "\n" ).getBytes(), secretKey, pgpKeyPassword.toCharArray(),
+                                "" );
+
+                kurjunClient.signFile( new String( signedAuthId, UTF8 ), getKurjunToken() );
+            }
+            catch ( Exception e )
+            {
+                throw new OperationFailedException( "Failed to send file signature to Kurjun", e );
+            }
+        }
+
+        return fileId;
     }
 
 
