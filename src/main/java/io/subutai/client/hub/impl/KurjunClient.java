@@ -176,6 +176,30 @@ class KurjunClient
     }
 
 
+    void signFile( final String signedFileId, final String token )
+    {
+        HttpPost post = new HttpPost( String.format( "%s/auth/sign", getKurjunBaseUrl() ) );
+        CloseableHttpClient client = HttpClients.createDefault();
+        try
+        {
+            MultipartEntityBuilder entityBuilder = MultipartEntityBuilder.create();
+            entityBuilder.setMode( HttpMultipartMode.BROWSER_COMPATIBLE );
+            entityBuilder.addTextBody( "signature", signedFileId );
+            entityBuilder.addTextBody( "token", token );
+            HttpEntity httpEntity = entityBuilder.build();
+            post.setEntity( httpEntity );
+
+            CloseableHttpResponse response = execute( client, post );
+
+            checkHttpStatus( response, HttpStatus.SC_OK, "sign file" );
+        }
+        finally
+        {
+            IOUtils.closeQuietly( client );
+        }
+    }
+
+
     void downloadFile( final String fileId, final String outputDirectory, final String token )
     {
         try ( CloseableHttpClient client = HttpClients.createDefault() )
