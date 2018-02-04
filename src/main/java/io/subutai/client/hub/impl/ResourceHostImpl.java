@@ -18,6 +18,8 @@ public class ResourceHostImpl implements ResourceHost
 {
     @SerializedName( "rh_id" )
     private String rhId;
+    @SerializedName( "rh_local_ip" )
+    private String rhIp;
     @SerializedName( "rh_name" )
     private String rhName;
     @SerializedName( "rh_creation_date" )
@@ -119,6 +121,13 @@ public class ResourceHostImpl implements ResourceHost
     public P2pStatus getRhP2pStatus()
     {
         return rhP2pStatus;
+    }
+
+
+    @Override
+    public String getRhIp()
+    {
+        return rhIp;
     }
 
 

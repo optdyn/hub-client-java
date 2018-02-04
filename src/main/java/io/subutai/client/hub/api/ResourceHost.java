@@ -11,7 +11,11 @@ public interface ResourceHost
         WORKS, FAILS
     }
 
+
     String getRhId();
+
+
+    String getRhIp();
 
 
     String getRhName();
