@@ -125,7 +125,7 @@ public class HubClientImplementation implements HubClient
         Preconditions.checkArgument( !StringUtil.isBlank( password ) );
 
         HttpPost request =
-                new HttpPost( String.format( "https://%s.subut.ai/rest/v1/client/login", hubEnv.getUrlPrefix() ) );
+                new HttpPost( String.format( "https://%s.subutai.io/rest/v1/client/login", hubEnv.getUrlPrefix() ) );
 
         List<NameValuePair> nvps = new ArrayList<>();
         nvps.add( new BasicNameValuePair( "email", username ) );
@@ -154,7 +154,7 @@ public class HubClientImplementation implements HubClient
         List<Environment> environments = Lists.newArrayList();
 
         HttpGet request = new HttpGet(
-                String.format( "https://%s.subut.ai/rest/v1/client/environments", hubEnv.getUrlPrefix() ) );
+                String.format( "https://%s.subutai.io/rest/v1/client/environments", hubEnv.getUrlPrefix() ) );
 
 
         CloseableHttpResponse response = null;
@@ -184,7 +184,7 @@ public class HubClientImplementation implements HubClient
         List<Peer> peers = Lists.newArrayList();
 
         HttpGet request =
-                new HttpGet( String.format( "https://%s.subut.ai/rest/v1/client/peers/all", hubEnv.getUrlPrefix() ) );
+                new HttpGet( String.format( "https://%s.subutai.io/rest/v1/client/peers/all", hubEnv.getUrlPrefix() ) );
 
         CloseableHttpResponse response = null;
         try
@@ -214,7 +214,7 @@ public class HubClientImplementation implements HubClient
         List<Peer> peers = Lists.newArrayList();
 
         HttpGet request =
-                new HttpGet( String.format( "https://%s.subut.ai/rest/v1/client/peers/own", hubEnv.getUrlPrefix() ) );
+                new HttpGet( String.format( "https://%s.subutai.io/rest/v1/client/peers/own", hubEnv.getUrlPrefix() ) );
 
         CloseableHttpResponse response = null;
         try
@@ -244,7 +244,7 @@ public class HubClientImplementation implements HubClient
         List<Peer> peers = Lists.newArrayList();
 
         HttpGet request = new HttpGet(
-                String.format( "https://%s.subut.ai/rest/v1/client/peers/shared", hubEnv.getUrlPrefix() ) );
+                String.format( "https://%s.subutai.io/rest/v1/client/peers/shared", hubEnv.getUrlPrefix() ) );
 
         CloseableHttpResponse response = null;
         try
@@ -274,7 +274,7 @@ public class HubClientImplementation implements HubClient
         List<Peer> peers = Lists.newArrayList();
 
         HttpGet request = new HttpGet(
-                String.format( "https://%s.subut.ai/rest/v1/client/peers/favorite", hubEnv.getUrlPrefix() ) );
+                String.format( "https://%s.subutai.io/rest/v1/client/peers/favorite", hubEnv.getUrlPrefix() ) );
 
         CloseableHttpResponse response = null;
         try
@@ -304,7 +304,7 @@ public class HubClientImplementation implements HubClient
         List<Peer> peers = Lists.newArrayList();
 
         HttpGet request = new HttpGet(
-                String.format( "https://%s.subut.ai/rest/v1/client/peers/public", hubEnv.getUrlPrefix() ) );
+                String.format( "https://%s.subutai.io/rest/v1/client/peers/public", hubEnv.getUrlPrefix() ) );
 
         CloseableHttpResponse response = null;
         try
@@ -335,7 +335,7 @@ public class HubClientImplementation implements HubClient
         Preconditions.checkArgument( userId > 0 );
 
         HttpPut request = new HttpPut(
-                String.format( "https://%s.subut.ai/rest/v1/client/peers/%s/share/%s", hubEnv.getUrlPrefix(), peerId,
+                String.format( "https://%s.subutai.io/rest/v1/client/peers/%s/share/%s", hubEnv.getUrlPrefix(), peerId,
                         userId ) );
 
         CloseableHttpResponse response = null;
@@ -359,7 +359,7 @@ public class HubClientImplementation implements HubClient
         Preconditions.checkArgument( userId > 0 );
 
         HttpDelete request = new HttpDelete(
-                String.format( "https://%s.subut.ai/rest/v1/client/peers/%s/share/%s", hubEnv.getUrlPrefix(), peerId,
+                String.format( "https://%s.subutai.io/rest/v1/client/peers/%s/share/%s", hubEnv.getUrlPrefix(), peerId,
                         userId ) );
 
         CloseableHttpResponse response = null;
@@ -382,7 +382,7 @@ public class HubClientImplementation implements HubClient
         Preconditions.checkArgument( !StringUtil.isBlank( peerId ) );
 
         HttpPut request = new HttpPut(
-                String.format( "https://%s.subut.ai/rest/v1/client/peers/favorite/%s", hubEnv.getUrlPrefix(),
+                String.format( "https://%s.subutai.io/rest/v1/client/peers/favorite/%s", hubEnv.getUrlPrefix(),
                         peerId ) );
 
         CloseableHttpResponse response = null;
@@ -405,7 +405,7 @@ public class HubClientImplementation implements HubClient
         Preconditions.checkArgument( !StringUtil.isBlank( peerId ) );
 
         HttpDelete request = new HttpDelete(
-                String.format( "https://%s.subut.ai/rest/v1/client/peers/favorite/%s", hubEnv.getUrlPrefix(),
+                String.format( "https://%s.subutai.io/rest/v1/client/peers/favorite/%s", hubEnv.getUrlPrefix(),
                         peerId ) );
 
         CloseableHttpResponse response = null;
@@ -429,7 +429,7 @@ public class HubClientImplementation implements HubClient
         Preconditions.checkNotNull( scope );
 
         HttpPut request = new HttpPut(
-                String.format( "https://%s.subut.ai/rest/v1/client/peers/%s/scope/%s", hubEnv.getUrlPrefix(), peerId,
+                String.format( "https://%s.subutai.io/rest/v1/client/peers/%s/scope/%s", hubEnv.getUrlPrefix(), peerId,
                         scope.name() ) );
 
         CloseableHttpResponse response = null;
@@ -456,7 +456,7 @@ public class HubClientImplementation implements HubClient
         try
         {
             HttpPut request = new HttpPut(
-                    String.format( "https://%s.subut.ai/rest/v1/client/peers/%s/name/%s", hubEnv.getUrlPrefix(), peerId,
+                    String.format( "https://%s.subutai.io/rest/v1/client/peers/%s/name/%s", hubEnv.getUrlPrefix(), peerId,
                             URLEncoder.encode( name, UTF8 ) ) );
 
             response = execute( request );
@@ -484,7 +484,7 @@ public class HubClientImplementation implements HubClient
         List<SshKey> sshKeys = Lists.newArrayList();
 
         HttpGet request = new HttpGet(
-                String.format( "https://%s.subut.ai/rest/v1/client/environments/%s/ssh-keys", hubEnv.getUrlPrefix(),
+                String.format( "https://%s.subutai.io/rest/v1/client/environments/%s/ssh-keys", hubEnv.getUrlPrefix(),
                         envId ) );
 
         CloseableHttpResponse response = null;
@@ -513,7 +513,7 @@ public class HubClientImplementation implements HubClient
         Preconditions.checkArgument( !StringUtil.isBlank( sshKey ) );
 
         HttpPost request = new HttpPost(
-                String.format( "https://%s.subut.ai/rest/v1/client/environments/%s/ssh-keys/add", hubEnv.getUrlPrefix(),
+                String.format( "https://%s.subutai.io/rest/v1/client/environments/%s/ssh-keys/add", hubEnv.getUrlPrefix(),
                         envId ) );
 
         List<NameValuePair> nvps = new ArrayList<>();
@@ -540,7 +540,7 @@ public class HubClientImplementation implements HubClient
         Preconditions.checkArgument( !StringUtil.isBlank( sshKey ) );
 
         HttpPost request = new HttpPost(
-                String.format( "https://%s.subut.ai/rest/v1/client/environments/%s/ssh-keys/remove",
+                String.format( "https://%s.subutai.io/rest/v1/client/environments/%s/ssh-keys/remove",
                         hubEnv.getUrlPrefix(), envId ) );
 
         List<NameValuePair> nvps = new ArrayList<>();
@@ -567,7 +567,7 @@ public class HubClientImplementation implements HubClient
         Preconditions.checkArgument( !StringUtil.isBlank( contId ) );
 
         HttpPut request = new HttpPut(
-                String.format( "https://%s.subut.ai/rest/v1/client/environments/%s/containers/%s/start",
+                String.format( "https://%s.subutai.io/rest/v1/client/environments/%s/containers/%s/start",
                         hubEnv.getUrlPrefix(), envId, contId ) );
 
         CloseableHttpResponse response = null;
@@ -590,7 +590,7 @@ public class HubClientImplementation implements HubClient
         Preconditions.checkArgument( !StringUtil.isBlank( contId ) );
 
         HttpPut request = new HttpPut(
-                String.format( "https://%s.subut.ai/rest/v1/client/environments/%s/containers/%s/stop",
+                String.format( "https://%s.subutai.io/rest/v1/client/environments/%s/containers/%s/stop",
                         hubEnv.getUrlPrefix(), envId, contId ) );
 
         CloseableHttpResponse response = null;
@@ -613,7 +613,7 @@ public class HubClientImplementation implements HubClient
         Preconditions.checkArgument( !StringUtil.isBlank( contId ) );
 
         HttpDelete request = new HttpDelete(
-                String.format( "https://%s.subut.ai/rest/v1/client/environments/%s/containers/%s",
+                String.format( "https://%s.subutai.io/rest/v1/client/environments/%s/containers/%s",
                         hubEnv.getUrlPrefix(), envId, contId ) );
 
         CloseableHttpResponse response = null;
@@ -660,7 +660,7 @@ public class HubClientImplementation implements HubClient
 
 
         HttpPost request = new HttpPost(
-                String.format( "https://%s.subut.ai/rest/v1/client/environments", hubEnv.getUrlPrefix() ) );
+                String.format( "https://%s.subutai.io/rest/v1/client/environments", hubEnv.getUrlPrefix() ) );
 
         request.setEntity( new StringEntity( toJson( createEnvironmentReq ), ContentType.APPLICATION_JSON ) );
         request.addHeader( KURJUN_TOKEN_HEADER, getKurjunToken() );
@@ -720,7 +720,7 @@ public class HubClientImplementation implements HubClient
         //WORKAROUND!!!
 
         HttpPut request = new HttpPut(
-                String.format( "https://%s.subut.ai/rest/v1/client/environments", hubEnv.getUrlPrefix() ) );
+                String.format( "https://%s.subutai.io/rest/v1/client/environments", hubEnv.getUrlPrefix() ) );
 
         request.setEntity( new StringEntity( toJson( modifyEnvironmentReq ), ContentType.APPLICATION_JSON ) );
         request.addHeader( KURJUN_TOKEN_HEADER, getKurjunToken() );
@@ -747,7 +747,7 @@ public class HubClientImplementation implements HubClient
         Preconditions.checkArgument( !StringUtil.isBlank( blueprint ) );
 
         HttpPost request = new HttpPost(
-                String.format( "https://%s.subut.ai/rest/v1/client/environments/wizard", hubEnv.getUrlPrefix() ) );
+                String.format( "https://%s.subutai.io/rest/v1/client/environments/wizard", hubEnv.getUrlPrefix() ) );
 
         CloseableHttpResponse response = null;
         try
@@ -773,7 +773,7 @@ public class HubClientImplementation implements HubClient
         Preconditions.checkArgument( !StringUtil.isBlank( envId ) );
 
         HttpDelete request = new HttpDelete(
-                String.format( "https://%s.subut.ai/rest/v1/client/environments/%s", hubEnv.getUrlPrefix(), envId ) );
+                String.format( "https://%s.subutai.io/rest/v1/client/environments/%s", hubEnv.getUrlPrefix(), envId ) );
 
         CloseableHttpResponse response = null;
         try
@@ -792,7 +792,7 @@ public class HubClientImplementation implements HubClient
     public Double getBalance()
     {
         HttpGet request =
-                new HttpGet( String.format( "https://%s.subut.ai/rest/v1/client/balance", hubEnv.getUrlPrefix() ) );
+                new HttpGet( String.format( "https://%s.subutai.io/rest/v1/client/balance", hubEnv.getUrlPrefix() ) );
 
         ResultDto result;
         CloseableHttpResponse response = null;
@@ -821,7 +821,7 @@ public class HubClientImplementation implements HubClient
         Preconditions.checkArgument( userId > 0 );
 
         HttpGet request = new HttpGet(
-                String.format( "https://%s.subut.ai/rest/v1/client/users/%s", hubEnv.getUrlPrefix(), userId ) );
+                String.format( "https://%s.subutai.io/rest/v1/client/users/%s", hubEnv.getUrlPrefix(), userId ) );
 
         UserImpl user;
         CloseableHttpResponse response = null;
@@ -854,7 +854,7 @@ public class HubClientImplementation implements HubClient
         try
         {
             HttpGet request = new HttpGet(
-                    String.format( "https://%s.subut.ai/rest/v1/client/users/search?name=%s", hubEnv.getUrlPrefix(),
+                    String.format( "https://%s.subutai.io/rest/v1/client/users/search?name=%s", hubEnv.getUrlPrefix(),
                             URLEncoder.encode( name, UTF8 ) ) );
 
             response = execute( request );
@@ -890,7 +890,7 @@ public class HubClientImplementation implements HubClient
         try
         {
             HttpGet request = new HttpGet(
-                    String.format( "https://%s.subut.ai/rest/v1/client/users/search?email=%s", hubEnv.getUrlPrefix(),
+                    String.format( "https://%s.subutai.io/rest/v1/client/users/search?email=%s", hubEnv.getUrlPrefix(),
                             URLEncoder.encode( email, UTF8 ) ) );
 
             response = execute( request );
@@ -924,7 +924,7 @@ public class HubClientImplementation implements HubClient
         List<Peer> peers = Lists.newArrayList();
 
         HttpGet request = new HttpGet(
-                String.format( "https://%s.subut.ai/rest/v1/client/users/%s/peers", hubEnv.getUrlPrefix(), userId ) );
+                String.format( "https://%s.subutai.io/rest/v1/client/users/%s/peers", hubEnv.getUrlPrefix(), userId ) );
 
         CloseableHttpResponse response = null;
         try
@@ -956,7 +956,7 @@ public class HubClientImplementation implements HubClient
         List<User> users = Lists.newArrayList();
 
         HttpGet request = new HttpGet(
-                String.format( "https://%s.subut.ai/rest/v1/client/peers/%s/users", hubEnv.getUrlPrefix(), peerId ) );
+                String.format( "https://%s.subutai.io/rest/v1/client/peers/%s/users", hubEnv.getUrlPrefix(), peerId ) );
 
         CloseableHttpResponse response = null;
         try
@@ -988,7 +988,7 @@ public class HubClientImplementation implements HubClient
         List<Organization> organizations = Lists.newArrayList();
 
         HttpGet request = new HttpGet(
-                String.format( "https://%s.subut.ai/rest/v1/client/users/%s/organizations?own=%s",
+                String.format( "https://%s.subutai.io/rest/v1/client/users/%s/organizations?own=%s",
                         hubEnv.getUrlPrefix(), userId, own ? "true" : "false" ) );
 
         CloseableHttpResponse response = null;
@@ -1019,7 +1019,7 @@ public class HubClientImplementation implements HubClient
         List<Organization> organizations = Lists.newArrayList();
 
         HttpGet request = new HttpGet(
-                String.format( "https://%s.subut.ai/rest/v1/client/organizations?own=%s", hubEnv.getUrlPrefix(),
+                String.format( "https://%s.subutai.io/rest/v1/client/organizations?own=%s", hubEnv.getUrlPrefix(),
                         own ? "true" : "false" ) );
 
         CloseableHttpResponse response = null;
@@ -1053,7 +1053,7 @@ public class HubClientImplementation implements HubClient
         List<Domain> domains = Lists.newArrayList();
 
         HttpGet request =
-                new HttpGet( String.format( "https://%s.subut.ai/rest/v1/client/domains", hubEnv.getUrlPrefix() ) );
+                new HttpGet( String.format( "https://%s.subutai.io/rest/v1/client/domains", hubEnv.getUrlPrefix() ) );
 
         CloseableHttpResponse response = null;
         try
@@ -1086,7 +1086,7 @@ public class HubClientImplementation implements HubClient
         try
         {
             HttpPut request = new HttpPut(
-                    String.format( "https://%s.subut.ai/rest/v1/client/domains/%s", hubEnv.getUrlPrefix(),
+                    String.format( "https://%s.subutai.io/rest/v1/client/domains/%s", hubEnv.getUrlPrefix(),
                             URLEncoder.encode( domainName, UTF8 ) ) );
 
             response = execute( request );
@@ -1115,7 +1115,7 @@ public class HubClientImplementation implements HubClient
         try
         {
             HttpDelete request = new HttpDelete(
-                    String.format( "https://%s.subut.ai/rest/v1/client/domains/%s", hubEnv.getUrlPrefix(),
+                    String.format( "https://%s.subutai.io/rest/v1/client/domains/%s", hubEnv.getUrlPrefix(),
                             URLEncoder.encode( domainName, UTF8 ) ) );
 
             response = execute( request );
@@ -1141,7 +1141,7 @@ public class HubClientImplementation implements HubClient
         Map<String, List<DomainAssignment>> assignments = Maps.newHashMap();
 
         HttpGet request = new HttpGet(
-                String.format( "https://%s.subut.ai/rest/v1/client/domains/assignments", hubEnv.getUrlPrefix() ) );
+                String.format( "https://%s.subutai.io/rest/v1/client/domains/assignments", hubEnv.getUrlPrefix() ) );
 
         CloseableHttpResponse response = null;
         try
@@ -1178,7 +1178,7 @@ public class HubClientImplementation implements HubClient
         try
         {
             HttpGet request =
-                    new HttpGet( String.format( "https://%s.subut.ai/rest/v1/client/friends", hubEnv.getUrlPrefix() ) );
+                    new HttpGet( String.format( "https://%s.subutai.io/rest/v1/client/friends", hubEnv.getUrlPrefix() ) );
 
             response = execute( request );
 
@@ -1206,7 +1206,7 @@ public class HubClientImplementation implements HubClient
         try
         {
             HttpPut request = new HttpPut(
-                    String.format( "https://%s.subut.ai/rest/v1/client/friends/%s/request", hubEnv.getUrlPrefix(),
+                    String.format( "https://%s.subutai.io/rest/v1/client/friends/%s/request", hubEnv.getUrlPrefix(),
                             userId ) );
 
             response = execute( request );
@@ -1229,7 +1229,7 @@ public class HubClientImplementation implements HubClient
         try
         {
             HttpPut request = new HttpPut(
-                    String.format( "https://%s.subut.ai/rest/v1/client/friends/%s/accept", hubEnv.getUrlPrefix(),
+                    String.format( "https://%s.subutai.io/rest/v1/client/friends/%s/accept", hubEnv.getUrlPrefix(),
                             userId ) );
 
             response = execute( request );
@@ -1252,7 +1252,7 @@ public class HubClientImplementation implements HubClient
         try
         {
             HttpPut request = new HttpPut(
-                    String.format( "https://%s.subut.ai/rest/v1/client/friends/%s/reject", hubEnv.getUrlPrefix(),
+                    String.format( "https://%s.subutai.io/rest/v1/client/friends/%s/reject", hubEnv.getUrlPrefix(),
                             userId ) );
 
             response = execute( request );
@@ -1275,7 +1275,7 @@ public class HubClientImplementation implements HubClient
         try
         {
             HttpPut request = new HttpPut(
-                    String.format( "https://%s.subut.ai/rest/v1/client/friends/%s/cancel", hubEnv.getUrlPrefix(),
+                    String.format( "https://%s.subutai.io/rest/v1/client/friends/%s/cancel", hubEnv.getUrlPrefix(),
                             userId ) );
 
             response = execute( request );
@@ -1298,7 +1298,7 @@ public class HubClientImplementation implements HubClient
         try
         {
             HttpDelete request = new HttpDelete(
-                    String.format( "https://%s.subut.ai/rest/v1/client/friends/%s", hubEnv.getUrlPrefix(), userId ) );
+                    String.format( "https://%s.subutai.io/rest/v1/client/friends/%s", hubEnv.getUrlPrefix(), userId ) );
 
             response = execute( request );
 

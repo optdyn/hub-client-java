@@ -16,7 +16,7 @@ public interface HubClient
 
     enum HubEnv
     {
-        DEV( "dev", "dev" ), STAGE( "stage", "stage" ), PROD( "hub", "" );
+        DEV( "dev", "dev" ), MASTER( "master", "master" ), PROD( "hub", "" );
 
         private String urlPrefix;
         private String cdnPrefix;
