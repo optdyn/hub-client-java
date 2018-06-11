@@ -15,10 +15,11 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import io.subutai.client.api.Container;
-import io.subutai.client.api.Environment;
-import io.subutai.client.api.EnvironmentCreationRequest;
-import io.subutai.client.api.HubClient;
+import io.subutai.client.hub.api.Container;
+import io.subutai.client.hub.api.Environment;
+import io.subutai.client.hub.api.EnvironmentCreationRequest;
+import io.subutai.client.hub.api.HubClient;
+import io.subutai.client.hub.impl.HubClients;
 
 import static junit.framework.TestCase.assertEquals;
 
