@@ -9,7 +9,8 @@ public interface HubClient
 {
     enum HubEnv
     {
-        DEV( "chub", "dev" ), STAGE( "stage", "stage" ), PROD( "hub", "" );
+        HUB1("newdev1.subutai.io", "dev"), HUB2("newdev2.subutai.io", "dev"), HUB3("newdev3.subutai.io", "dev"), HUB4("msa.subutai.io", "master"), DEV( "devbazaar", "dev" ), STAGE( "masterbazaar", "master" ), PROD( "bazaar", "" );
+//        HUB1("hub1.subutai.io", "dev"), HUB2("hub2.subutai.io", "dev"), HUB3("hub3.subutai.io", "dev"), DEV( "devbazaar", "dev" ), STAGE( "masterbazaar", "master" ), PROD( "bazaar", "" );
 
         private String urlPrefix;
         private String cdnPrefix;

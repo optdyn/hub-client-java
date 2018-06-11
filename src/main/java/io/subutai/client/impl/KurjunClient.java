@@ -64,7 +64,7 @@ class KurjunClient
     {
         List<Template> templates = Lists.newArrayList();
 
-        HttpGet httpGet = new HttpGet( String.format( "%s/template/info?token=%s", getKurjunBaseUrl(),
+        HttpGet httpGet = new HttpGet( String.format( "%s/template/list?token=%s", getKurjunBaseUrl(),
                 Strings.isNullOrEmpty( token ) ? "" : token ) );
 
         CloseableHttpClient client = HttpClients.createDefault();
@@ -164,7 +164,7 @@ class KurjunClient
 
     private String getKurjunBaseUrl()
     {
-        return String.format( "https://%scdn.subut.ai:8338/kurjun/rest",
+        return String.format( "https://%scdn.subutai.io:8338/kurjun/rest",
                 hubEnv == HubClient.HubEnv.PROD ? "" : hubEnv.getCdnPrefix() );
     }
 
