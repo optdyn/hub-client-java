@@ -9,6 +9,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
@@ -23,6 +24,7 @@ import io.subutai.client.hub.impl.HubClients;
 import static junit.framework.TestCase.assertEquals;
 
 
+@Ignore
 public class HubLoadTest2
 {
     // https://devcdn.subutai.io:8338/kurjun/rest/template/info?id=ea886a22-2994-481e-8354-3a3032c598ba
