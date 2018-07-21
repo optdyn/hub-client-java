@@ -28,7 +28,7 @@ import static junit.framework.TestCase.assertEquals;
 public class HubLoadTest2
 {
     // https://devcdn.subutai.io:8338/kurjun/rest/template/info?id=ea886a22-2994-481e-8354-3a3032c598ba
-    private static final String TEMPLATE_ID = "12805646-9684-48af-986c-07ae9ff69d12";
+    private static final String TEMPLATE_ID = "QmQZMYoPx6uQcRREfQWUt9CKubhy8bka3NyB9hshSi8NKZ";
 
     private static final String EMAIL = "a@od.com";
     private static final String PASSWORD = "zzzzzz";
@@ -40,41 +40,29 @@ public class HubLoadTest2
     private static int envCounter = 1;
     private static int contCounter = 1;
 
-//    private static final String PEER1_ID = "2A4B0F3B155B3E5675DDA3981011973D049A4E3E";
-//    private static final String PEER1_MH_ID = "8FDF91832F35DA11FC7031B881DBEF5AB864559E";
-    private static final String PEER1_ID = "759C7B59821AC08BE565DB6B4A5D6D64050E4713";
-    private static final String PEER1_MH_ID = "43DE9CB5F92900D4D12F6CF45150F0555B71D080";
-    private static final String PEER1_RH1_ID = "BAE02769D355F2C6100267654708F1A8376FBA9B";
+    private static final String PEER1_ID = "8B3981FB0C9A2B78697CAB51B86140D6CF1685C8";
+    private static final String PEER1_MH_ID = "002EA5726830A7C96EEFB70DB623EBCEE9AAF637";
+    private static final String PEER1_RH1_ID = "002EA5726830A7C96EEFB70DB623EBCEE9AAF637";
 
-//    private static final String PEER2_ID = "B987E720E63F4D09CD0908952FB7D2DF608630A5";
-//    private static final String PEER2_MH_ID = "14FE85B4AF6A47D250A576EA3E565AAA22B09C2A";
-//    private static final String PEER2_RH1_ID = "14FE85B4AF6A47D250A576EA3E565AAA22B09C2A";
-    // master-peer-eu-1
-    private static final String PEER2_ID = "EB02A6415B956E212AD275C749600C49FA63CDAD";
-    private static final String PEER2_MH_ID = "46487165CE7BEA0114AB71EE7FC38BDD5957F4BB";
+//    private static final String PEER2_ID = "16BBC2C3A423A8C6823F0DCD37AA83A83CCCFA48";
+//    private static final String PEER2_MH_ID = "D193527A9C023A4C1E5546F10AE8B579D23B75CE";
+    private static final String PEER2_ID = "FE000F93E937E580D176BA6107804C96F03F48A2";
+    private static final String PEER2_MH_ID = "F114E036F7822F5330F3D0BC31A950058400DBB6";
 
-//    private static final String PEER3_ID = "5DCC6D98F08E9F10513342DAE0067A8EC8FC93B7";
-//    private static final String PEER3_MH_ID = "5A2D10AE0A1DD383C54B7CE1407B435073CE177F";
-    private static final String PEER3_ID = "50DA020D572FF3C8EB1BDF919E60D3EF70BB80C4";
-    private static final String PEER3_MH_ID = "14B399E7F4C815FC5F574A5972C4EE65678965F5";
-
-    // master-peer-eu-2
-//    private static final String PEER4_ID = "08C0510B8F25CFBE0F7DA0AA68BD65E2C8A6313C";
-//    private static final String PEER4_MH_ID = "BFDF6A62CB78FEE79AFD806DBD00261C4246E247";
-
-    // master-peer-us-2
-//    private static final String PEER5_ID = "22326577364CD867623480D6C8A17DE83B37F22E";
-//    private static final String PEER5_MH_ID = "003B7D4CF50F3FB1B2300002DC8FC8051A438D10";
+//    private static final String PEER3_ID = "F3998F379345CD87CD50EA4BE68532A390F85D19";
+//    private static final String PEER3_MH_ID = "3DB1C8DAC31785C56F17609E5A7F299F76038AC9";
+    private static final String PEER3_ID = "D32193A1BC697420F651FBE809E0134C12DC3354";
+    private static final String PEER3_MH_ID = "4C374EF8898A43CEAFBE7BF55725738D3E43878B";
 
 
     @Before
     public void setUp() throws Exception
     {
         // create client for DEV Hub
-        hubClient = HubClients.getClient( HubClient.HubEnv.DEV );
+//        hubClient = HubClients.getClient( HubClient.HubEnv.DEV );
 
         //login to Hub
-        hubClient.login( EMAIL, PASSWORD );
+//        hubClient.login( EMAIL, PASSWORD );
     }
 
 
@@ -342,5 +330,57 @@ public class HubLoadTest2
             System.out.println( "Failed to create env. with name: " + envName );
             e.printStackTrace();
         }
+    }
+
+
+    @Test
+    public void testTwoUsersCreateEnvInParallel() throws InterruptedException, ExecutionException
+    {
+        HubClient hubClient1 = HubClients.getClient( HubClient.HubEnv.DEV );
+        //hubClient1.login( "a@od.com", "abc" );
+        hubClient1.login( "abdisamat@mail.ru", "abc" );
+
+        HubClient hubClient2 = HubClients.getClient( HubClient.HubEnv.DEV );
+        hubClient2.login( "samsonbek@gmail.com", "abc" );
+
+        List<CompletableFuture> futures = Lists.newArrayList();
+
+        futures.add( CompletableFuture
+                .runAsync( () -> this.createEnvOnOnePeer( hubClient1, "abc-111", 1, PEER3_ID, PEER3_MH_ID ) ) );
+        futures.add( CompletableFuture
+                .runAsync( () -> this.createEnvOnOnePeer( hubClient1, "abc-222", 1, PEER2_ID, PEER2_MH_ID ) ) );
+        futures.add( CompletableFuture.runAsync( () -> this
+                .createEnvOnTwoPeers( hubClient1, "abd-333", 1, PEER3_ID, PEER3_MH_ID, PEER2_ID, PEER2_MH_ID ) ) );
+        futures.add( CompletableFuture.runAsync( () -> this
+                .createEnvOnTwoPeers( hubClient1, "abd-444", 1, PEER3_ID, PEER3_MH_ID, PEER2_ID, PEER2_MH_ID ) ) );
+
+        futures.add( CompletableFuture
+                .runAsync( () -> this.createEnvOnOnePeer( hubClient2, "sam-111", 1, PEER3_ID, PEER3_MH_ID ) ) );
+        futures.add( CompletableFuture
+                .runAsync( () -> this.createEnvOnOnePeer( hubClient2, "sam-222", 1, PEER2_ID, PEER2_MH_ID ) ) );
+        futures.add( CompletableFuture.runAsync( () -> this
+                .createEnvOnTwoPeers( hubClient2, "sam-333", 1, PEER3_ID, PEER3_MH_ID, PEER2_ID, PEER2_MH_ID ) ) );
+        futures.add( CompletableFuture.runAsync( () -> this
+                .createEnvOnTwoPeers( hubClient2, "sam-444", 1, PEER3_ID, PEER3_MH_ID, PEER2_ID, PEER2_MH_ID ) ) );
+
+
+        CompletableFuture.allOf( futures.toArray( new CompletableFuture[0] ) ).get();
+
+
+        //wait while there are still env-s under modification
+        List<Environment> environments = new ArrayList<>();
+        do
+        {
+            environments.clear();
+            Thread.sleep( 30000 );
+            environments.addAll( hubClient1.getEnvironments() );
+            environments.addAll( hubClient2.getEnvironments() );
+        }
+        while ( environments.stream().filter( e -> envNames.contains( e.getEnvironmentName().toLowerCase() ) ).anyMatch(
+                e -> e.getEnvironmentStatus() == Environment.EnvironmentStatus.UNDER_MODIFICATION ) );
+
+        //assert that the newly ordered  environments are HEALTHY
+        environments.stream().filter( e -> envNames.contains( e.getEnvironmentName().toLowerCase() ) )
+                    .forEach( e -> assertEquals( Environment.EnvironmentStatus.HEALTHY, e.getEnvironmentStatus() ) );
     }
 }

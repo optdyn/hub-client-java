@@ -16,7 +16,13 @@ public interface HubClient
 
     enum HubEnv
     {
-        HUB1("newdev1.subutai.io", "dev"), HUB2("newdev2.subutai.io", "dev"), HUB3("newdev3.subutai.io", "dev"), HUB4("newdev4.subutai.io", "master"), DEV( "devbazaar", "dev" ), STAGE( "masterbazaar", "master" ), PROD( "bazaar", "" );
+        HUB1("dev1.subutai.io", "dev"),
+        HUB2("dev2.subutai.io", "dev"),
+        HUB3("dev3.subutai.io", "dev"),
+
+        DEV( "localbazaar.subutai.io", "dev" ),
+        STAGE( "masterbazaar.subutai.io", "master" ),
+        PROD( "bazaar", "" );
 
         private String urlPrefix;
         private String cdnPrefix;

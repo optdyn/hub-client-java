@@ -29,7 +29,7 @@ test for masterbazaar
  */
 public class HubLoadTest3
 {
-    private static final String TEMPLATE_ID = "82570b29-2ec6-4777-be6a-29e77262ef96"; // debian-stretch:0.4.1
+    private static final String TEMPLATE_ID = "QmQZMYoPx6uQcRREfQWUt9CKubhy8bka3NyB9hshSi8NKZ"; // debian-stretch:0.4.5
 
     private static final int NUM_OF_PARALLEL_ENV_CREATIONS = 20;
     private static final int NUM_OF_CONTAINERS_PER_ENV = 1;
@@ -37,16 +37,16 @@ public class HubLoadTest3
     private Set<String> envNames = Sets.newConcurrentHashSet();
 
     // 2698: qavms-kg0_mast-AF
-    private static final String PEER1_ID = "AF5E99107114F82108BE3D0D5A1FE5236FA17BF5";
-    private static final String PEER1_MH_ID = "0742F5D215D56E573D4ABE752442EB4D8DBA00F6";
+    private static final String PEER1_ID = "BEC35BFC902728788EEE71B94F352A78057863DA";
+    private static final String PEER1_MH_ID = "844BB20D1454DCABE2F7F9AAA5197F44A69E796A";
 
     // 3001: qavms-kg2_mast-BD // cannot accommodate
-    private static final String PEER2_ID = "BD07D037B2EF417CD2676FBE3354810F037827FD";
-    private static final String PEER2_MH_ID = "7249E495C93A844CD9BD37F88FCAB8EF2E5DA798";
+    private static final String PEER2_ID = "5A345C8E90853817F9F9DA3847224819281617EC";
+    private static final String PEER2_MH_ID = "DD1A6E94CB741B7824B059EFACBF41E619B003B1";
 
     // 2706: qavms-kg3_mast-B8 // cannot accommodate
-    private static final String PEER3_ID = "B881B527A6E93674C84E4806B95CF514B2003B82";
-    private static final String PEER3_MH_ID = "EC327880B06CEBDA2BF73428745E757A6DA391B5";
+    private static final String PEER3_ID = "226CA74A48F82B98CDA55A2EE46CF4ADBB29F665";
+    private static final String PEER3_MH_ID = "4C009ABCE8B25FF46B3D0BBC47742BAF0689F40D";
 
     // 2993: eu2
     private static final String PEER4_ID = "7EB3E3974A9F27B97F1DC99A93B5AF2973CAB446";
@@ -81,23 +81,23 @@ public class HubLoadTest3
         List<HubClient> clients = Lists.newArrayList();
 
         HubClient hubClient1 = HubClients.getClient( HubClient.HubEnv.STAGE );
-        hubClient1.login( "a@od.com", "zzzzzzzzz" );
+        hubClient1.login( "a@od.com", "abc" );
         clients.add( hubClient1 );
 
         HubClient hubClient2 = HubClients.getClient( HubClient.HubEnv.STAGE );
-        hubClient2.login( "abdisamat@mail.ru", "zzzzzzzz" );
+        hubClient2.login( "abdisamat@mail.ru", "abc" );
         clients.add( hubClient2 );
 
         HubClient hubClient3 = HubClients.getClient( HubClient.HubEnv.STAGE );
-        hubClient3.login( "samsonbek@gmail.com", "zzzzzzzzzz" );
+        hubClient3.login( "samsonbek@gmail.com", "abc" );
         clients.add( hubClient3 );
 
         HubClient hubClient4 = HubClients.getClient( HubClient.HubEnv.STAGE );
-        hubClient4.login( "abdysamat.mamutov@gmail.com", "zzzzzzzzzzzzzz" );
+        hubClient4.login( "abdysamat.mamutov@gmail.com", "abc" );
         clients.add( hubClient4 );
 
         HubClient hubClient5 = HubClients.getClient( HubClient.HubEnv.STAGE );
-        hubClient5.login( "amamutov@optimal-dynamics.com", "zzzzzzzzzzz" );
+        hubClient5.login( "amamutov@optimal-dynamics.com", "abc" );
         clients.add( hubClient5 );
 
 

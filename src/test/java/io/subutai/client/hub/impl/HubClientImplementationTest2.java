@@ -122,7 +122,7 @@ public class HubClientImplementationTest2
 
         List<CompletableFuture> futures = Lists.newArrayList();
 
-        for ( int i = 0; i < 10; i++ )
+        for ( int i = 0; i < 100; i++ )
         {
 //            final int ii = i + 1;
             futures.add( CompletableFuture.runAsync( () -> hubClient1.updatePeerName( PEER_ID, "one-"+ UUID.randomUUID() ) ) );

@@ -648,10 +648,10 @@ public class HubClientImplementation implements HubClient
         Preconditions.checkArgument( !createEnvironmentReq.getNodes().isEmpty() );
 
         //WORKAROUND!!!
-        List<Template> templates = getTemplates();
+//        List<Template> templates = getTemplates();
         for ( EnvironmentCreationRequestImpl.Node node : createEnvironmentReq.getNodes() )
         {
-            node.setTemplateName( getTemplateNameById( templates, node.getTemplateId() ) );
+            node.setTemplateName( "debian-stretch"/*getTemplateNameById( templates, node.getTemplateId() )*/ );
 
             Preconditions.checkArgument( !StringUtil.isBlank( node.getTemplateName() ),
                     "Template not found by id " + node.getTemplateId() );
